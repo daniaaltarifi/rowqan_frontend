@@ -1,0 +1,150 @@
+.cont_card_chalets {
+  box-shadow: 12px 12px 4px 0px #6da6ba;
+  margin-bottom: 5vh;
+  /* height: 400px; */
+}
+.title_chalets {
+  text-align: center;
+  font-family: Merriweather;
+  font-size: 21.25px;
+  font-weight: 700;
+  line-height: 28.26px;
+}
+
+.cont_rating {
+  text-align: center;
+}
+.text_card_det {
+  font-weight: 600;
+  color: #1c3988;
+}
+.container_big_img {
+  position: relative;
+  text-align: center;
+  color: white;
+}
+.chalet_big_img {
+  width: 100%;
+  height: 80vh;
+  object-fit: cover;
+  filter: brightness(0.7);
+}
+.centered_big_img_chalets {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.chalets_btn {
+  width: 277px;
+  height: 78px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #6da6ba 0%, #afb7ab 50%, #f2c79d 100%);
+  border: none;
+  font-weight: 600;
+  font-size: 20px;
+  margin: 16px;
+}
+.chalets_btn:hover {
+  box-shadow: 8px 8px 4px 0px #6da6ba;
+  transition: all ease-in-out 450ms;
+}
+/* BASIC CHALETS DETAILS */
+.img_chalets_basic_details {
+  border-radius: 25px;
+  box-shadow: 4px 4px 4px 0px var(--beige-color);
+  object-fit: cover;
+}
+.box_start_booking {
+  border: 4px solid var(--beige-color);
+  width: 387px;
+  height: 180px;
+  border-radius: 15px;
+  display: grid;
+  place-items: center;
+}
+.price_chalets {
+  font-size: 25px;
+  font-weight: 700;
+  background: linear-gradient(90deg, #f2c79d 0%, #6da6ba 100%);
+  background-clip: text;
+  color: transparent;
+}
+.box_price{
+  background: #F3F3FA;
+  width: 100%;
+  height: 98px;
+  border-radius: 14px ;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
+}
+.cont_Brief_characteristics{
+  display: flex;
+  justify-content: center;
+  margin-top: 38px;
+}
+.box_Brief_characteristics{
+  background: #F3F3FA;
+  width: 300px;
+  border-radius: 14px ;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+ padding: 10px;
+ box-shadow: 10px 10px 4px 0px var(--beige-color);
+
+}
+/* BOOKING CHALETS PAGE */
+.box_overview_chalets{
+  background: #F3F3FA;
+  width: 100%;
+  height: auto;
+  border-radius: 14px ;
+  padding: 35px;
+ box-shadow: 5px 5px 4px 0px var(--beige-color);
+
+}
+.plus-minus-container {
+  display: flex;
+padding-top: 5px;
+padding-bottom: 5px;
+}
+
+.plus-minus-button {
+  background: linear-gradient(90deg, #6DA6BA 0%, #B0B7AC 50%, #F2C79D 100%);
+  border: none;
+  border-radius: 5px;
+  font-size: 20px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* .plus-minus-button:hover {
+  background-color: #0056b3;
+}
+
+.plus-minus-button:focus {
+  outline: none;
+} */
+
+.value {
+  font-size: 20px;
+  margin: 0 10px;
+  width: 50px;
+  text-align: center;
+}
+
+/* .plus-minus-container button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+} */
+
+/* Chalets.css */

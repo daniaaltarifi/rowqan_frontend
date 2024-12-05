@@ -1,0 +1,32 @@
+.cont_footer{
+    display: grid;
+    place-items: center;
+}
+.title_footer {
+    font-size: 26px;
+    font-weight: 500;
+    line-height: 39px;
+    background: linear-gradient(90deg, #D1BFA4 38.5%, #AFB7AB 100%);
+    -webkit-background-clip: text; 
+    color: transparent; 
+  }
+  
+  .parg_footer{
+font-size: 16px;
+font-weight: 300;
+line-height: 24px;
+color: #B0B0B0;
+width: 40%;
+  }
+  .cont_copyright{
+    background: linear-gradient(90deg, #F2C79D 0%, #D1BFA4 50%, #AFB7AB 100%);
+    width: 100%;
+    height: 60.93px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 8vh;
+  }
+  .text_copyright{
+    color: #fff;
+  }

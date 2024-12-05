@@ -1,0 +1,119 @@
+.image-container {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  max-width: 100%;
+  z-index: -1;
+
+}
+
+.text-overlay {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  z-index: 2;
+  box-shadow: 12px 12px 4px 0px #f2c79d;
+  background: #ffffff3b;
+  height: 90vh;
+  width: 80%;
+  border-radius: 15px;
+  border: 1px solid #e5e5e5a6;
+}
+
+.auth_img {
+  width: 100%;
+  height: 100vh;
+  object-fit: cover;
+  border-radius: 15px;
+  filter: brightness(0.7);
+  
+}
+
+.create_acc_title {
+  font-size: 40px;
+  font-weight: 500;
+  line-height: 60px;
+  text-align: center;
+  background: linear-gradient(90deg, #d1bfa4 38.5%, #afb7ab 100%);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.cont_form {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  width: 100%;
+}
+.form_input_auth {
+  border: 3px solid #d1bfa4;
+  margin-bottom: 1vh;
+}
+.link_auth {
+  font-size: 16px;
+  color: #6da6ba;
+}
+/* LOGIN */
+.cont_auth {
+  display: grid;
+  place-items: center;
+}
+.login_auth_img {
+  height: 80vh;
+}
+.text-overlay_img {
+  height: 70vh;
+}
+.cont_social {
+  display: flex;
+  justify-content: space-evenly;
+}
+.forget_password {
+  color: #d1bfa4;
+  font-size: 13px;
+}
+/* FORGET PASSWORD */
+.title_forgetpass {
+  background: linear-gradient(90deg, #6da6ba 0%, #f2c79d 100%);
+  -webkit-background-clip: text;
+  color: transparent;
+  font-size: 40px;
+  font-weight: 600;
+}
+.parg_forgetpass {
+  color: #686767;
+  font-size: 16px;
+  font-weight: 400;
+  margin-bottom: 5vh;
+  margin-top: 3vh;
+}
+/* EYE ICON FOR DISPLAY PASSWORD */
+.password-input-wrapper {
+  position: relative;
+  /* z-index: -1; */
+}
+
+.password-visibility-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2em;
+}
+
+@media screen and (max-width: 768px) {
+  .auth_img {
+    height: 50vh;
+  }
+  .text-overlay {
+    height: 40vh;
+  }
+}

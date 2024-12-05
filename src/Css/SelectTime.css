@@ -1,0 +1,59 @@
+.dropdown_select_time {
+    position: relative;
+    z-index: 2;
+    
+  }
+  
+  .dropdown_select_time .down,
+  .dropdown_select_time .up {
+    position: absolute;
+    right: 0.75em;
+  }
+  
+  .dropdown_select_time .up {
+    display: none;
+  }
+  
+  .dropdown_select_time ul {
+    max-height: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+    list-style: none;
+    margin: 0;
+    padding: 5px;
+    transition: max-height 0.2s ease-in-out;
+  background: #D5E6F6F7;
+border-radius: 10px;
+
+  }
+  
+  .dropdown_select_time ul li a {
+    color: inherit;
+    display: block;
+    text-decoration: none;
+    padding: 0.300em 0.750em;
+  }
+  
+  .dropdown_select_time ul li a h6:hover {
+    font-weight: bold;
+  }
+  
+  /* When clicked, expand the dropdown_select_time and position it at the bottom */
+  .dropdown_select_time ul {
+    width: 100%; /* Full width */
+    position: fixed; /* Fixed to the bottom of the page */
+    left: 0; /* Align to the left of the screen */
+    bottom: 0; /* Position at the bottom */
+    z-index: 3; /* Ensure it's above other content */
+    max-height: 215px; /* Adjust height */
+    border-bottom: 1px solid #dddad6;
+  }
+  
+  .dropdown_select_time .down {
+    display: inline-block;
+  }
+  
+  .dropdown_select_time .up {
+    display: inline-block;
+  }
+  

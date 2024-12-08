@@ -103,7 +103,9 @@ function Events() {
               </Col>
             ))
           ) : (
-            <div>No events found for this category</div>
+            // <div>No events found for this category</div>
+            <div></div>
+
           )}
         </Row>
       </Container>

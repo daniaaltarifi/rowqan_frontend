@@ -1,22 +1,52 @@
 import { Container, Row, Col } from "react-bootstrap";
-import chal from "../assets/chal.png";
-import chalet from "../assets/chalet.jpeg";
-import top3 from "../assets/top3.jpg";
-import top4 from "../assets/top4.jpg";
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import arrow from "../assets/arrow.png";
-import { FaRegBuilding } from "react-icons/fa";
-import { Link, useLocation } from "react-router-dom";
-import { TbMeterSquare } from "react-icons/tb";
-import { CiLocationOn } from "react-icons/ci";
+import { Link, useLocation, useParams } from "react-router-dom";
+import axios from "axios";
+import { API_URL } from "../App";
 function ChaletsDetails() {
   const location = useLocation();
+  const { id } = useParams();
   const lang = location.pathname.split("/")[1] || "en";
-  const [largeImage, setLargeImage] = useState(chalet);
-  const [activeImage, setActiveImage] = useState(largeImage);
-  const images = [chal, chalet, top3, top4, chalet, chal];
+  const price = location.state?.price || null;
+  const [largeImage, setLargeImage] = useState(null);
+  const [activeImage, setActiveImage] = useState(null);
   const smallImagesContainerRef = useRef(null); // Ref for small images container
 
+  const [chaletsImages, setChaletsImages] = useState([]);
+  const [detailsChalets, setDetailsChalets] = useState([]);
+  const [briefChalets, setBriefChalets] = useState([]);
+  const [properitesChalets, setProperiteChalets] = useState([]);
+
+  const fetchData = useCallback(async () => {
+    try {
+      const [imgchaletRes, detailsChalets, briefRes, properitesRes] =
+        await Promise.all([
+          axios.get(`${API_URL}/chaletsimages/chaletgetChaletImage/${id}`),
+          axios.get(
+            `${API_URL}/chaletsdetails/getChaletDetailsByChaletId/${id}/${lang}`
+          ),
+          axios.get(
+            `${API_URL}/BreifDetailsChalets/getBreifsByChaletId/${id}/${lang}`
+          ),
+          axios.get(`${API_URL}/propschalets/getAllPropsChalet/${lang}`),
+        ]);
+      setChaletsImages(imgchaletRes.data.images);
+      setDetailsChalets(detailsChalets.data.chaletDetails);
+      setLargeImage(imgchaletRes.data.images[0]);
+      setActiveImage(imgchaletRes.data[0]);
+      setBriefChalets(briefRes.data.breifDetails);
+      setProperiteChalets(properitesRes.data.data);
+      // console.log("first iteration", properitesRes.data.data);
+    } catch (error) {
+      console.error("Error fetching best rated services:", error);
+    }
+  }, [lang]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    fetchData();
+  }, [lang]);
   const handleNextImages = () => {
     if (smallImagesContainerRef.current) {
       smallImagesContainerRef.current.scrollBy({
@@ -49,7 +79,7 @@ function ChaletsDetails() {
             {/* Big Image */}
             <div className="mb-3">
               <img
-                src={largeImage}
+                src={`https://res.cloudinary.com/durjqlivi/${largeImage}`}
                 alt="image"
                 height={"350px"}
                 width={"100%"}
@@ -83,7 +113,7 @@ function ChaletsDetails() {
                   className="small-images-container"
                   ref={smallImagesContainerRef}
                 >
-                  {images.map((image, index) => (
+                  {chaletsImages.map((image, index) => (
                     <Col
                       xs={3}
                       sm={3}
@@ -93,9 +123,12 @@ function ChaletsDetails() {
                       className="d-flex justify-content-center"
                     >
                       <img
-                        src={image}
+                        src={`https://res.cloudinary.com/durjqlivi/${image}`}
                         className={`img-fluid small-image ${
-                          activeImage === image ? "active" : ""
+                          activeImage ===
+                          `https://res.cloudinary.com/durjqlivi/${image}`
+                            ? "active"
+                            : ""
                         }`}
                         alt={`Small Product ${index + 1}`}
                         onClick={() => handleImageClick(image)}
@@ -146,17 +179,20 @@ function ChaletsDetails() {
             sm={12}
             md={6}
             lg={6}
-            className="d-flex justify-content-between mt-5"
+            className="d-flex justify-content-around mt-5"
           >
-            <div className="d-flex">
-              <FaRegBuilding className="mx-2" /> Flat
-            </div>
-            <div className="d-flex">
-              224m2 <TbMeterSquare className="mx-2" />
-            </div>
-            <div className="d-flex">
-              <CiLocationOn className="mx-2" /> Amman,Jordan{" "}
-            </div>
+            {properitesChalets.map((prop) => (
+              <div className="d-flex" key={prop.id}>
+                <img
+                  src={`https://res.cloudinary.com/durjqlivi/${prop.image}`}
+                  className="rounded-circle mx-2"
+                  height={"25px"}
+                  width={"25px"}
+                  alt="properites"
+                />{" "}
+                {prop.title}
+              </div>
+            ))}
           </Col>
         </Row>
         <Row>
@@ -168,94 +204,39 @@ function ChaletsDetails() {
               >
                 Price:
               </h4>
-              <h5>800 $</h5>
+              <h5>{price}</h5>
             </div>
-            <h6>
-              FEDORS GROUP offers an exclusive FOR SALE elegant large 5-room
-              apartment on Vincent Hložník Street in the Condominium Renaissance
-              residential complex. Thanks to its unique location, the property
-              has access to a large Japanese garden with an area of 35 m2, which
-              can be accessed directly from the bedroom. The front of the
-              apartment is at the height of the third floor, so the terrace is
-              located just above the treetops, which gives the apartment a
-              unique atmosphere. Overall, the apartment has a direct view of the
-              extraordinary comfort, has a first-class interior from the leading
-              Danube River and the surrounding forests. The apartment offers
-              architectural office Cakov Makara and equipment from renowned
-              world furniture manufacturers. The overall atmosphere of the
-              apartment is completed
-            </h6>
-          </Col>{" "}
+            {detailsChalets.map((details) => (
+              <>
+                <h6>{details.Detail_Type}</h6>
+              </>
+            ))}
+            <Link
+              to={`/${lang}/bookingchalet/${id}`}
+              state={{
+                chaletsImages,
+                price,
+                detailsChalets,
+                properitesChalets,
+              }}
+            >
+              <button className="booknow_button_events mt-4">
+                Reserve Now
+              </button>
+            </Link>
+          </Col>
           <Col sm={12} md={6} lg={6} className="cont_Brief_characteristics">
             <div className="box_Brief_characteristics">
-            <ul>
-                <h5 style={{fontWeight:"bold"}}>Brief characteristics</h5>
-                <li>Air-Conditioning</li>
-                <li>Balcony</li>
-                <li>Bathroom</li>
-                <li>Bedroom</li>
-                <li>Kitchen</li>
-                <li>Bathroom</li>
-                <li>Living Room</li>
-                <li>Dining Room</li>
-                <li>Sofa</li>
-                <li>TV</li>
-                <li>Internet</li>
-                <li>Washing Machine</li>
-                <li>Kitchen Appliances</li>
-                <li>Fireplace</li>
-                <li>Security</li>
-                <li>Laundry</li>
+              <ul>
+                <h5 style={{ fontWeight: "bold" }}>Brief characteristics</h5>
+                {briefChalets.map((brief) => (
+                  <li key={brief.id}>
+                    <b>{brief.type}:</b>
+                    {brief.value}
+                  </li>
+                ))}
               </ul>
             </div>
-          </Col>
-        </Row>
-        <Row>
-          <Col sm={12} md={6} lg={6} className="mt-5">
-           
-            <h4>Layout solution:</h4>
-            <h6>
-              FEDORS GROUP offers an exclusive FOR SALE elegant large 5-room
-              apartment on Vincent Hložník Street in the Condominium Renaissance
-              residential complex. Thanks to its unique location, the property
-              has access to a large Japanese garden with an area of 35 m2, which
-              can be accessed directly from the bedroom. The front of the
-              apartment is at the height of the third floor, so the terrace is
-              located just above the treetops, which gives the apartment a
-              unique atmosphere. Overall, the apartment has a direct view of the
-              Danube River and the surrounding forests. The apartment offers
-              extraordinary comfort, has a first-class interior from the leading
-              architectural office Cakov Makara and equipment from renowned
-              world furniture manufacturers. The overall atmosphere of the
-              apartment is completed
-            </h6>
-            <h4>Execution and furnishing of the apartment:</h4>
-            <h6>
-              FOR SALE elegant large 5-room apartment on Vincent Hložník Street
-              in the Condominium Renaissance residential complex. Thanks to its
-              unique location, the property has access to a large Japanese
-              garden with an area of 35 m2, which can be accessed directly from
-              the bedroom. The front of the apartment is at the height of the
-              third floor, so the terrace is located just above the treetops,
-              which gives the apartment a unique atmosphere. Overall, the
-              apartment has a direct view of the Danube River and the
-              surrounding forests. The apartment offers extraordinary comfort,
-              has a first-class interior from the leading architectural office
-              Cakov Makara and equipment from renowned world furniture
-              manufacturers. The overall atmosphere of the apartment is
-              completed
-            </h6>
-
-            <h4>Location:</h4>
-            <h6>
-              has a first-class interior from the leading architectural office
-              Cakov Makara and equipment from renowned world furniture
-              manufacturers. The overall atmosphere of the apartment is
-              completed
-            </h6>
-            <Link to={`/${lang}/bookingchalet/${"1"}`}>
-              <button className="booknow_button_events">Reserve Now</button>
-            </Link>
           </Col>
         </Row>
       </Container>

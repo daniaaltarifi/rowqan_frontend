@@ -57,12 +57,12 @@ function Home() {
             <Col className="col_cont_search">
               <Button variant="light" className="filter_home">
                 <img src={calendar} alt="calendar icon" />
-                <span className="btn_text_filter">Check Available</span>
+                <span className="btn_text_filter">{lang === 'ar' ? 'هل متاح':'Check Available'}</span>
               </Button>
               <Dropdown>
                 <Dropdown.Toggle variant="light" className="filter_home">
                   <img src={user} alt="user icon" />
-                  <span className="btn_text_filter">Person 2</span>
+                  <span className="btn_text_filter"> {lang === 'ar' ? 'الاشخاص':'Person'}</span>
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
@@ -76,10 +76,10 @@ function Home() {
               </Dropdown>
               <Button variant="light" className="filter_home">
                 <img src={locations} alt="location icon" />
-                <span className="btn_text_filter">Select Location</span>
+                <span className="btn_text_filter"> {lang === 'ar' ? 'الموقع':'Select Location'}</span>
               </Button>
 
-              <button className="Login-button search_btn_home">Search</button>
+              <button className="Login-button search_btn_home">{lang === 'ar' ? 'بحث':'Search'}</button>
             </Col>
           </div>
         </section>

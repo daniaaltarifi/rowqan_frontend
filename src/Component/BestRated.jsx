@@ -13,7 +13,6 @@ function BestRated() {
       const res = await axios.get(
         `${API_URL}/services/getAllServicesByServiceStatus/Best Rated/${lang}`
       );
-      console.log("first response", res.data);
       setBestRated(res.data);
     } catch (error) {
       console.error("Error fetching best rated services:", error);

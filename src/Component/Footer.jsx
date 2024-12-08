@@ -1,6 +1,33 @@
 import { Container, Row, Col } from "react-bootstrap";
 import "../Css/Footer.css";
+import chal from "../assets/chal.png";
+import chalet from "../assets/chalet.jpeg";
+import top3 from "../assets/top3.jpg";
+import top4 from "../assets/top4.jpg";
+import { useCallback, useEffect, useState } from "react";
+import axios from "axios";
+import { API_URL } from "../App";
+import { Link } from "react-router-dom";
 function Footer() {
+  const lang = location.pathname.split("/")[1] || "en";
+  const [footer, setFooter] = useState([]);
+  const [iconfooter, setIconFooter] = useState([]);
+  const getData = useCallback(async () => {
+    try {
+      const [footerRes, iconFooterRes] = await Promise.all([
+        axios.get(`${API_URL}/footer/getAllFooters/${lang}`),
+        axios.get(`${API_URL}/footericons/getAllFooterIcons`),
+      ]);
+      setFooter(footerRes.data.footers);
+      setIconFooter(iconFooterRes.data.icons);
+    } catch (error) {
+      console.error("Error fetching footer:", error);
+    }
+  }, [lang]);
+
+  useEffect(() => {
+    getData();
+  }, [lang]);
   return (
     <>
       <section className="margin_section">
@@ -9,9 +36,11 @@ function Footer() {
           <Row>
             <Col xl={6} md={6} sm={12}>
               <h1 className="title_footer">Rowqan</h1>
-              <h6 className="parg_footer">
-                We kaboom your beauty holiday instantly and memorable.
-              </h6>
+              {footer.map((foot) => (
+                <h6 className="parg_footer" key={foot.id}>
+                  {foot.title}
+                </h6>
+              ))}
             </Col>
             <Col xl={6} md={6} sm={12}>
               <h1 className="title_footer">Become hotel Owner</h1>
@@ -20,6 +49,18 @@ function Footer() {
           </Row>
         </Container>
         <Col xl={12} md={12} sm={12} className="cont_copyright">
+          {iconfooter.map((icons) => (
+            <Link target="blank" to={icons.link_to} key={icons.id}>
+              <img
+                src={`https://res.cloudinary.com/durjqlivi/${icons.icon}`}
+                alt="icon"
+                className="rounded-circle mx-3"
+                height={"25px"}
+                width={"25px"}
+              />
+            </Link>
+          ))}
+
           <h6 className="text_copyright">
             Copyright 2024 • All rights reserved • Salman Faris
           </h6>

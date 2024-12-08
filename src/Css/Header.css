@@ -22,7 +22,6 @@ nav {
 .logo {
   padding: 1vh 5vw;
   text-align: center;
-  /* margin-left: 10vh; */
 }
 
 .logo img {
@@ -73,8 +72,6 @@ nav {
 }
 
 .Login-button:hover {
-  /* color: #f2f5f7; */
-  /* background-color: transparent; */
   border: 1.5px solid #f2f5f7;
   transition: all ease-in-out 350ms;
 }

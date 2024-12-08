@@ -13,7 +13,6 @@ function TopPicks() {
       const res = await axios.get(
         `${API_URL}/services/getAllServicesByServiceStatus/most picked/${lang}`
       );
-      console.log("first response", res.data);
       settopPicks(res.data);
     } catch (error) {
       console.error("Error fetching top rated services:", error);

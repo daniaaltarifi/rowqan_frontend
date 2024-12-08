@@ -17,7 +17,7 @@ function Lands() {
         `${API_URL}/categorieslands/getAllcategoryLand/${lang}`
       );
 
-      setlandsData(landRes.data);
+      setlandsData(landRes.data.categoryLands);
     } catch (error) {
       console.error("Error fetching best rated services:", error);
     }
@@ -69,22 +69,21 @@ function Lands() {
                         {land.price}
                       </Card.Text>
                     </Card.Body>
+                          <Card.Body className="d-flex justify-content-between flex-wrap">
                     {land.PropertiesLands &&
                       land.PropertiesLands.map((prop) => (
-                        <>
-                          <Card.Body className="d-flex justify-content-between flex-wrap">
-                            <span>
+                            <span key={prop.id}>
                               <img
                                 src={`https://res.cloudinary.com/durjqlivi/${prop.image}`}
                                 alt="wide"
                                 height={"35px"}
                                 width={"35px"}
+                                className="rounded-circle"
                               />
                               {prop.property}
                             </span>
-                          </Card.Body>
-                        </>
                       ))}
+                          </Card.Body>
                   </Card>
                 </Link>
               </Col>

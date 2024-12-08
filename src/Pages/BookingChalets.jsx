@@ -1,17 +1,23 @@
 import { Row, Container, Col } from "react-bootstrap";
 import BreadCrumbs from "../Component/BreadCrumbs";
-import chal from "../assets/chal.png";
 import Carousel from "react-bootstrap/Carousel";
 import PropTypes from "prop-types";
-import { FaRegBuilding } from "react-icons/fa";
-import { TbMeterSquare } from "react-icons/tb";
-import { CiLocationOn } from "react-icons/ci";
 import check from "../assets/check.png";
 import whats from "../assets/whats.png";
 import TopPicks from "../Component/TopPicks";
 import SelectTime from "../Component/SelectTime.jsx";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import axios from "axios";
+import { API_URL } from "../App.jsx";
 function BookingChalets() {
+  const location = useLocation();
+  const lang = location.pathname.split("/")[1] || "en";
+  const chaletsImages = location.state?.chaletsImages || [];
+  const price = location.state?.price || null;
+  const detailsChalets = location.state?.detailsChalets || [];
+  const properitesChalets = location.state?.properitesChalets || [];
+  const [contact, setContact] = useState([]);
   const rating = 5;
 
   const colors = {
@@ -43,44 +49,47 @@ function BookingChalets() {
   const toggleDropdown = () => {
     setIsOpen((prevIsOpen) => !prevIsOpen);
   };
+  const getContact = useCallback(async () => {
+    try {
+      const contactRes = await axios.get(
+        `${API_URL}/ContactUs/getAllContactUs/${lang}`
+      );
 
+      setContact(contactRes.data.contactUs);
+    } catch (error) {
+      console.error("Error fetching best rated services:", error);
+    }
+  }, [lang]);
+
+  useEffect(() => {
+    getContact();
+  }, [lang]);
   return (
     <div>
-      {/* <BreadCrumbs page_to={"Booking Chalet"}/>  */}
       <Container>
         <Carousel fade>
-          <Carousel.Item>
-            <img src={chal} alt="slider" className="slider_img rounded" />
-            <div className="top_left custom-breadcrumbs">
-              <BreadCrumbs page_to="/ Booking Chalet" />
-            </div>
-          </Carousel.Item>
-
-          <Carousel.Item>
-            <img src={chal} alt="slider" className="slider_img" />
-            <div className="top_left custom-breadcrumbs">
-              <BreadCrumbs page_to="/ Booking Chalet" />
-            </div>
-          </Carousel.Item>
-          <Carousel.Item>
-            <img src={chal} alt="slider" className="slider_img" />
-            <div className="top_left custom-breadcrumbs">
-              <BreadCrumbs page_to="/ Booking Chalet" />
-            </div>
-          </Carousel.Item>
+          {chaletsImages.map((image, index) => (
+            <Carousel.Item key={index}>
+              <img
+                src={`https://res.cloudinary.com/durjqlivi/${image}`} // Make sure `image` contains the correct path
+                alt={`slider-${index}`}
+                className="slider_img rounded"
+              />
+              <div className="top_left custom-breadcrumbs">
+                <BreadCrumbs page_to="/ Booking Chalet" />
+              </div>
+            </Carousel.Item>
+          ))}
         </Carousel>
         <Row>
           <Col xl={6} md={12} sm={12}>
             <button className="booknow_button_events w-100 mt-5">
-              Chalets and farms / distinctive chalets
+              Booking Chalets
             </button>
           </Col>{" "}
           <Col xl={6} md={12} sm={12}>
             <div className="d-flex justify-content-center mt-5">
-              <h4>100 JOD </h4>
-              <del style={{ color: "#bcbcbc" }} className="mx-2">
-                150.00
-              </del>
+              <h4>{price} JOD</h4>
             </div>
             <div className="cont_rating">
               {[...Array(5)].map((_, index) => (
@@ -99,42 +108,45 @@ function BookingChalets() {
             <div className="box_overview_chalets">
               <h5>Overview</h5>
               <div className="d-flex flex-wrap justify-content-evenly">
-                <div className="d-flex ">
-                  <FaRegBuilding className="mx-2" /> Flat
-                </div>
-                <div className="d-flex">
-                  224m2 <TbMeterSquare className="mx-2" />
-                </div>
-                <div className="d-flex">
-                  <CiLocationOn className="mx-2" /> Amman,Jordan{" "}
-                </div>
+                {properitesChalets.map((prop) => (
+                  <div className="d-flex " key={prop.id}>
+                    <img
+                      src={`https://res.cloudinary.com/durjqlivi/${prop.image}`}
+                      className="rounded-circle mx-2"
+                      height={"25px"}
+                      width={"25px"}
+                      alt="properites"
+                    />{" "}
+                    {prop.title}
+                  </div>
+                ))}
               </div>
               <h5 className="mt-3">Description</h5>
-              <h6 className="mt-3">Al Ghazal Farm and Chalet</h6>
-              <div className="d-flex mt-3">
-                <img src={check} height={"25px"} width={"25px"} alt="people" />
-                outdoor bathroom
-              </div>
-              <div>
-                <img src={check} height={"25px"} width={"25px"} alt="people" />
-                outdoor bathroom
-              </div>
+              {detailsChalets.map((details) => (
+                <div className="d-flex mt-3" key={details.id}>
+                  <img
+                    src={check}
+                    height={"25px"}
+                    width={"25px"}
+                    alt="people"
+                  />
+                  {details.Detail_Type}
+                </div>
+              ))}
             </div>
           </Col>
           <Col xl={4} md={12} sm={12}>
-            <SelectTime isOpen={isOpen} toggleDropdown={toggleDropdown} />
+            <SelectTime isOpen={isOpen} toggleDropdown={toggleDropdown} price={price} />
             <div className="box_overview_chalets text-center">
               <img src={whats} alt="whats" height={"100px"} width={"100px"} />
               <h6 className="my-3">We are pleased to contact you </h6>
-              <button className="booknow_button_events w-100 mb-3">
-                <b>Contact us</b>{" "}
-              </button>
-              <button className="booknow_button_events w-100 mb-3">
-                <b>WhatsApp</b>{" "}
-              </button>
-              <button className="booknow_button_events w-100 mb-3">
-                <b>Email </b>{" "}
-              </button>
+              {contact.map((contactus) => (
+                <Link to={`${contactus.action}`} key={contactus.id}>
+                  <button className="booknow_button_events w-100 mb-3">
+                    <b>{contactus.title}</b>{" "}
+                  </button>
+                </Link>
+              ))}
             </div>
           </Col>
         </Row>

@@ -1,10 +1,55 @@
 import "../Css/SelectTime.css"; // CSS for styling
-import morning from "../assets/morning.png";
-import evening from "../assets/evening.png";
-import fullday from "../assets/fullday.png";
-import { Link } from "react-router-dom";
-const SelectTime = ({ isOpen, toggleDropdown }) => {
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import axios from "axios";
+import { API_URL } from "../App";
+const SelectTime = ({ isOpen, toggleDropdown ,price}) => {
+  console.log("Selected Price:", price);
+
   const lang = location.pathname.split("/")[1] || "en";
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const [times, setTimes] = useState([]);
+  const gettimes = useCallback(async () => {
+    try {
+      const res = await axios.get(
+        `${API_URL}/RightTimes/getallrighttimes/${lang}/${id}`
+      );
+      setTimes(res.data.rightTimes);
+    } catch (error) {
+      console.error("Error fetching top rated services:", error);
+    }
+  }, [lang]);
+
+  useEffect(() => {
+    gettimes();
+  }, [lang]);
+  const handleTimeSelection = (timeId) => {
+    navigate(`/${lang}/reservechalet/${id}`, {
+      state: {timeId,price} 
+    });
+  };
+  const reserveTime = async (timeId) => {
+    if (!timeId) {
+      alert("Please choose a time");
+      return;
+    }
+
+    try {
+      const res = await axios.post(
+        `${API_URL}/ReservationDates/createreservationdate`,
+        {
+          chalet_id: id,
+          right_time_id: timeId,
+        }
+      );
+      handleTimeSelection(timeId)
+    
+    } catch (error) {
+      console.error("Error making reservation:", error);
+    }
+    toggleDropdown(); // Close the dropdown after reservation
+  };
 
   return (
     <div className="dropdown_select_time">
@@ -18,26 +63,27 @@ const SelectTime = ({ isOpen, toggleDropdown }) => {
       {isOpen && (
         <ul>
           <h5>Choose the right time</h5>
-          <li>
-            <Link to={`/${lang}/reservechalet/${"1"}`} className="d-flex align-items-center ">
-              <img src={morning} alt="morning" height={"50px"} width={"50px"} />
-              <h6 className="px-3">Mornning</h6>
-              <h6>Enterrance: 10.00 - Exit: 21.00</h6>{" "}
-            </Link>
-          </li>
-          <li>
-          <Link to={`/${lang}/reservechalet/${"1"}`} className="d-flex align-items-center ">
-          <img src={evening} alt="morning" height={"50px"} width={"50px"} />
-              <h6 className="px-3">Evenning</h6>
-              <h6>Enterrance:  22.00  -   Exit: 9.00</h6>{" "}
-            </Link>          </li>
-          <li>
-          <Link to={`/${lang}/reservechalet/${"1"}`} className="d-flex align-items-center ">
-          <img src={fullday} alt="morning" height={"50px"} width={"50px"} />
-              <h6 className="px-3">Full day</h6>
-              <h6>Enterrance:  10.00  -   Exit: 10.00</h6>{" "}
-            </Link>          </li>
-       
+          {times.map((timeReservation) => (
+            <li key={timeReservation.id}>
+              <Link
+               
+                className="d-flex align-items-center"
+                onClick={() => {
+                  reserveTime(timeReservation.id);
+                }}
+              >
+                <img
+                  src={`https://res.cloudinary.com/durjqlivi/${timeReservation.image}`}
+                  alt="morning"
+                  className="rounded-circle"
+                  height={"50px"}
+                  width={"50px"}
+                />
+                <h6 className="px-3">{timeReservation.name}</h6>
+                <h6>{timeReservation.time}</h6>
+              </Link>
+            </li>
+          ))}
         </ul>
       )}
     </div>

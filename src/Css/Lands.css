@@ -160,6 +160,11 @@
   padding: 8px;
 }
 
+.calendar-day.reserved {
+  color: red;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
 
 
 /* Responsive Design */

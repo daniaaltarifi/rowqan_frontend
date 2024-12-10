@@ -32,6 +32,7 @@ function Chalets() {
   }, [lang, statusId]);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     fetchData();
   }, [lang, statusId]);
 

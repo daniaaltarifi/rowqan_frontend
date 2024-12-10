@@ -221,7 +221,7 @@ function EventDetails() {
         </Row>
             </>
           ))}
-          <Link to={`/${lang}/reserveevent/${"1"}`}>
+          <Link to={`/${lang}/reserveevent/${id}`}>
             <button className="booknow_button_events">Reserve Now</button>
           </Link>
       </Container>

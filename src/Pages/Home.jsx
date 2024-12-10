@@ -14,7 +14,7 @@ import BestRated from "../Component/BestRated";
 import { useCallback, useEffect, useState } from "react";
 import { API_URL } from "../App";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 function Home() {
   const location = useLocation();
   const lang = location.pathname.split("/")[1] || "en";
@@ -27,7 +27,7 @@ function Home() {
     ]);
     setHeroes(heroRes.data);
     setServices(servRes.data);
-  }, []);
+  }, [lang]);
   useEffect(() => {
     getHero();
   }, [lang]);
@@ -105,6 +105,7 @@ function Home() {
                     className="cont_img_home_serv"
                     key={service.id}
                   >
+                <Link to={`/${lang}/${service.url}`}>
                     <img
                       src={`https://res.cloudinary.com/durjqlivi/${service.image}`}
                       alt="service"
@@ -114,7 +115,9 @@ function Home() {
                     />
 
                     <div className="bottom-right">{service.title}</div>
+                </Link>
                   </Col>
+
                 </>
               ))}
             </Row>

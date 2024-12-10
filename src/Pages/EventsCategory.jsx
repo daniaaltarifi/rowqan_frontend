@@ -45,12 +45,12 @@ function EventsCategory() {
 try {
   const res=await axios.get(`${API_URL}/availablevents/subevent/${id}/${lang}`)
   setEventsAvailable(res.data)
-  console.log("first event available", res.data)
 } catch (error) {
   console.log("Error fetching data",error)
 }
   },[lang],id)
   useEffect(()=>{
+    window.scrollTo(0,0);
 fetchData()
   },[lang,id])
   return (

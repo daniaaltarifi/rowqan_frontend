@@ -34,6 +34,7 @@ function Events() {
   }, [lang,categoryId]);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     fetchData();
   }, [lang,categoryId]);
 

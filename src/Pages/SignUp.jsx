@@ -2,20 +2,77 @@ import { useState } from "react";
 import { Container, Row, Col, Form } from "react-bootstrap";
 import auth from "../assets/auth.jpg";
 import "../Css/Auth.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { API_URL } from "../App";
 function SignUp() {
+  const navigate=useNavigate()
   const [validated, setValidated] = useState(false);
   const lang = location.pathname.split("/")[1] || "en";
-  const handleSubmit = (event) => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone_number: "",
+    country: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [error, setError] = useState(null);
+
+  const handleSubmit = async (event) => {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
+    } else {
+      event.preventDefault();
     }
-
+  
+    // Check if the email or any required field is empty
+    if (!formData.email || !formData.password || !formData.confirmPassword || !formData.name || !formData.phone_number || !formData.country) {
+      setError(lang === "ar" ? "جميع الحقول مطلوبة" : "All fields are required");
+      return;
+    }
+  
+    // Check password and confirm password match
+    if (formData.password !== formData.confirmPassword) {
+      setError(lang === "ar" ? "كلمة المرور غير متطابقة" : "Passwords do not match");
+      return;
+    }
+  
+    try {
+      await axios.post(
+        `${API_URL}/users/createUser`,
+        {
+          name: formData.name,
+          email: formData.email,
+          phone_number: formData.phone_number,
+          country: formData.country,
+          password: formData.password,
+          lang: lang
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      navigate(`/${lang}/login`);
+    } catch (error) {
+      console.log(`Error fetching post data ${error}`);
+    }
     setValidated(true);
-  };
 
+  };
+  
+
+    const handleChange = (e) => {
+      const { name, value } = e.target;
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    };
   return (
     <Container>
       <Row>
@@ -43,6 +100,8 @@ function SignUp() {
                 type="text"
                 placeholder="Enter your name"
                 className="form_input_auth"
+                onChange={handleChange}
+                name="name"
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
@@ -53,6 +112,8 @@ function SignUp() {
                 type="email"
                 placeholder="name@gmail.com"
                 className="form_input_auth"
+                onChange={handleChange}
+                name="email"
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
@@ -63,6 +124,8 @@ function SignUp() {
                 type="number"
                 placeholder="0799999999"
                 className="form_input_auth"
+                onChange={handleChange}
+                name="phone_number"
               />
               <Form.Control.Feedback type="invalid">
                 Please provide a valid Phone No.
@@ -75,6 +138,8 @@ function SignUp() {
                 placeholder="Country Name"
                 required
                 className="form_input_auth"
+                onChange={handleChange}
+                name="country"
               />
               <Form.Control.Feedback type="invalid">
                 Please provide a valid Country Name.
@@ -84,9 +149,12 @@ function SignUp() {
               <Form.Label>Password</Form.Label>
               <Form.Control
                 type="password"
+                minLength={6}
                 placeholder="Enter your password"
                 required
                 className="form_input_auth"
+                onChange={handleChange}
+                name="password"
               />
               <Form.Control.Feedback type="invalid">
                 Please provide a valid Password.
@@ -95,10 +163,13 @@ function SignUp() {
             <Form.Group controlId="validationCustom05" className="w-50">
               <Form.Label>Confirm Password</Form.Label>
               <Form.Control
-                type="text"
+                type="password"
+                minLength={6}
                 placeholder="Confirm Password"
                 required
                 className="form_input_auth"
+                onChange={handleChange}
+                name="confirmPassword"
               />
               <Form.Control.Feedback type="invalid">
                 Please provide a Confirm Password.
@@ -107,7 +178,8 @@ function SignUp() {
             <button type="submit" className="Login-button w-50 mt-3">
               Register
             </button>
-            <Link to={`/${lang}/login`}className="link_auth">
+            {error && <p style={{color:"red"}}>{error}</p>}
+            <Link to={`/${lang}/login`} className="link_auth">
               Login
             </Link>
           </Form>

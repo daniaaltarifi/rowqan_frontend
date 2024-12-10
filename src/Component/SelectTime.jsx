@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { API_URL } from "../App";
 const SelectTime = ({ isOpen, toggleDropdown ,price}) => {
-  console.log("Selected Price:", price);
 
   const lang = location.pathname.split("/")[1] || "en";
   const navigate = useNavigate();

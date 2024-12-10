@@ -24,6 +24,7 @@ function Lands() {
   }, [lang]);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     getlandsData();
   }, [lang]);
 

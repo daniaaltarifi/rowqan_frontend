@@ -2,25 +2,66 @@ import { useState } from "react";
 import { Container, Row, Col, Form } from "react-bootstrap";
 import auth from "../assets/auth.jpg";
 import "../Css/Auth.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import gmail from "../assets/gmail.png";
 import facebook from "../assets/facebook.png";
 import instagram from "../assets/instagram.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import Cookies from "cookies-js"; 
+import axios from "axios";
+import { API_URL } from "../App";
+import { useUser } from "../Component/UserContext";
 
 function Login() {
+  const { setUserId } = useUser();
+  const navigate=useNavigate()
   const lang = location.pathname.split("/")[1] || "en";
   const [validated, setValidated] = useState(false);
   const [passwordvisible, setPasswordvisible] = useState(false);
-  const handleSubmit = (event) => {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: ""
+  });
+  const handleSubmit = async (event) => {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
     }
-
+  
     setValidated(true);
+    event.preventDefault();
+  
+    try {
+      const response = await axios.post(
+        `${API_URL}/users/login`,
+        {
+          email: formData.email,
+          password: formData.password,
+          lang: lang
+        },
+        {
+          withCredentials: true // Ensure cookies are handled
+        }
+      );
+  
+      if (response.status === 200) {
+        Cookies.set("token", response.data.token, { expires: 7, secure: true });
+        setUserId(response.data.userId);
+        navigate(`/${lang}`); 
+      }
+    } catch (error) {
+      console.error("Error logging in:", error);
+    }
   };
+  
+  const handleChange=(e)=>{
+    const {name,value}=e.target;
+    setFormData((prevdata)=>({
+      ...prevdata,
+      [name]:value
+    }))
+  }
   const togglePasswordVisible = () => {
     setPasswordvisible(!passwordvisible);
   };
@@ -56,6 +97,8 @@ function Login() {
                 type="email"
                 placeholder="name@gmail.com"
                 className="form_input_auth"
+                onChange={handleChange}
+                name="email"
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
@@ -67,6 +110,8 @@ function Login() {
                   placeholder="Enter your password"
                   required
                   className="form_input_auth"
+                  onChange={handleChange}
+                  name="password"
                 />
                 <Form.Control.Feedback type="invalid">
                   Please provide a valid Password.

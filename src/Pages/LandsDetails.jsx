@@ -193,7 +193,7 @@ function LandsDetails() {
               </ul>
             </div>
           </Col>
-          <Link to={`/${lang}/bookingland/${"1"}`}>
+          <Link to={`/${lang}/bookingland/${id}`}>
             <button className="booknow_button_events mt-5">{lang==='ar'?"احجز الان":"Reserve Now"}</button>
           </Link>
         </Row>

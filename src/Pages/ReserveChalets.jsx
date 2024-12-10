@@ -11,8 +11,10 @@ import axios from "axios";
 import { API_URL } from "../App";
 import { useLocation, useParams } from "react-router-dom";
 import ModelAlert from "../Component/ModelAlert";
+import { useUser } from "../Component/UserContext";
 
 const ReserveChalets = () => {
+  const{userId}=useUser()
   const location = useLocation();
   const lang = location.pathname.split("/")[1] || "en";
   const { id } = useParams();
@@ -66,7 +68,6 @@ const ReserveChalets = () => {
       day
     );
     setSelectedDate(newDate);
-    console.log("first day selected", newDate);
   };
 
   const handlePrevMonth = () => {
@@ -132,7 +133,7 @@ const ReserveChalets = () => {
           lang: lang,
           additional_visitors: additional_visitorsvalue,
           number_of_days: number_of_daysvalue,
-          user_id: "1",
+          user_id: userId,
           chalet_id: id,
           right_time_id: timeId,
         }

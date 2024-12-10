@@ -1,9 +1,5 @@
 import { Container, Row, Col } from "react-bootstrap";
 import "../Css/Footer.css";
-import chal from "../assets/chal.png";
-import chalet from "../assets/chalet.jpeg";
-import top3 from "../assets/top3.jpg";
-import top4 from "../assets/top4.jpg";
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { API_URL } from "../App";

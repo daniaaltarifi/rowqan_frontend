@@ -37,7 +37,6 @@ function ChaletsDetails() {
       setActiveImage(imgchaletRes.data[0]);
       setBriefChalets(briefRes.data.breifDetails);
       setProperiteChalets(properitesRes.data.data);
-      // console.log("first iteration", properitesRes.data.data);
     } catch (error) {
       console.error("Error fetching best rated services:", error);
     }

@@ -4,6 +4,7 @@ import Col from "react-bootstrap/Col";
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { API_URL } from "../App";
+import { Link } from "react-router-dom";
 function TopPicks() {
   const lang = location.pathname.split("/")[1] || "en";
   const [topPicks, settopPicks] = useState([]);
@@ -30,6 +31,8 @@ function TopPicks() {
           {topPicks.map((top) => (
             <>
               <Col xl={3} md={6} sm={12} key={top.id}>
+              <Link to={`/${lang}/${top.url}`} style={{textDecoration:"none"}}>
+
                 <img
                   src={`https://res.cloudinary.com/durjqlivi/${top.image}`}
                   alt="top picks"
@@ -39,10 +42,8 @@ function TopPicks() {
                 />
                 <div>
                   <h5 className="title_of_toppick">{top.title}</h5>
-                  {/* <p className="parg_of_toppicks">
-                Colombo, Sri Lanka
-                </p> */}
                 </div>
+                </Link>
               </Col>
             </>
           ))}

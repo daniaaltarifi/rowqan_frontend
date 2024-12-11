@@ -2,20 +2,20 @@
 import { useCallback, useEffect, useState } from "react";
 import "../Css/Header.css"; // Assuming you have the CSS saved in Nav.css
 import { Link } from "react-router-dom";
-import logo from "../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../App";
 import { useUser } from "./UserContext.jsx";
 
 const Header = () => {
-  const { userId,logout } = useUser() ;
+  const { userId, logout } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const lang = location.pathname.split("/")[1] || "en";
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const [headers, setHeaders] = useState([]);
+  const [logo, setLogo] = useState([]);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -31,8 +31,12 @@ const Header = () => {
   };
   const getheader = useCallback(async () => {
     try {
-      const res = await axios.get(`${API_URL}/header/getAllHeaders/${lang}`);
-      setHeaders(res.data.headers);
+      const [headerRes, logoRes] = await Promise.all([
+        axios.get(`${API_URL}/header/getAllHeaders/${lang}`),
+        axios.get(`${API_URL}/logos/getalllogos`),
+      ]);
+      setHeaders(headerRes.data.headers);
+      setLogo(logoRes.data);
     } catch (error) {
       console.error("Error fetching header :", error);
     }
@@ -43,18 +47,22 @@ const Header = () => {
   }, [lang]);
   const handleAuth = useCallback(async () => {
     if (userId) {
-      await logout();  // Call logout from context
-      console.log('User logged out');
+      await logout(); // Call logout from context
     } else {
-      navigate(`/${lang}/login`);  // Navigate to login page if not logged in
+      navigate(`/${lang}/login`); // Navigate to login page if not logged in
     }
   }, [userId, logout, navigate, lang]);
-  
+
   return (
     <nav>
-      <div className="logo">
-        <img src={logo} alt="Logo" />
-      </div>
+      {logo.map((logos) => (
+        <div className="logo" key={logos.id}>
+          <img
+            src={`https://res.cloudinary.com/durjqlivi/${logos.image}`}
+            alt="Logo"
+          />
+        </div>
+      ))}
 
       <div
         className={`hamburger ${isOpen ? "toggle" : ""}`}
@@ -75,6 +83,12 @@ const Header = () => {
             </Link>
           </li>
         ))}
+        {userId ? (
+          <li>
+            <Link to={`/${lang}/cashback`}>{lang === "ar" ? "الرصيد" : "Cashback"}</Link>
+          </li>
+        ) : null}
+
         {/* <li><Link to= {`/${lang}`}>{lang ==='ar' ?"الرئيسية": "Home"}</Link></li>
         <li><Link to={`/${lang}/chalets`}>{lang ==='ar' ?"الشاليهات": "Chalets"}</Link></li>
         <li><Link to={`${lang}/events`}>{lang ==='ar' ?"الفعاليات": "Events"}</Link></li>

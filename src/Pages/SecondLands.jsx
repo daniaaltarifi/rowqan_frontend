@@ -13,7 +13,6 @@ function SecondLands() {
         `${API_URL}/categorieslands/getAllcategoryLand/${lang}`
       );
       setlandsimage(landRes.data.categoryLands);
-      console.log(landRes.data);
     } catch (error) {
       console.error("Error fetching category lands:", error);
     }

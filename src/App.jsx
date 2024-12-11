@@ -25,6 +25,7 @@ import ReserveChalets from './Pages/ReserveChalets';
 import ReserveEvents from './Pages/ReserveEvents';
 import Playgrounds from './Pages/Playgrounds';
 import { UserProvider } from './Component/UserContext.jsx';
+import CashBack from './Pages/CashBack.jsx';
 export const API_URL="http://localhost:5000";
 // export const API_URL="https://rowqanbackend.rowqan.com";
 const DirectionHandler = () => {
@@ -72,6 +73,7 @@ function App() {
       <Route path="/:lang/bookingland/:id" element={ <BookingLand/>} />
       {/* PLAYGROUND ROUTES */}
       <Route path="/:lang/playgrounds" element={ <Playgrounds/>} />
+      <Route path="/:lang/cashback" element={ <CashBack/>} />
 
     </Routes>
       </UserProvider>

@@ -4,9 +4,12 @@ import axios from "axios";
 import { API_URL } from "../App";
 import { useParams } from "react-router-dom";
 import ModelAlert from "../Component/ModelAlert";
+import { useUser } from "../Component/UserContext";
 
 const BookingLand = () => {
   const { id } = useParams();
+  const { userId } = useUser();
+
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
   const [reservedTimes, setReservedTimes] = useState([]);
@@ -116,6 +119,7 @@ const BookingLand = () => {
         lang: lang,
         time: selectedTime,
         available_land_id: id,
+        user_id: userId
       });
       // On success, show the success modal
       setModalTitle("Success");

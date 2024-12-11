@@ -50,7 +50,6 @@ function EventDetails() {
         setLargeImage(imageRes.data.images[0]?.image);
         setActiveImage(imageRes.data[0]?.image);
         setPlansEvent(plansRes.data.plans);
-        console.log("first event available", plansRes.data.plans);
       } catch (error) {
         console.log("Error fetching data", error);
       }

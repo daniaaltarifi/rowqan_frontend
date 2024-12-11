@@ -3,9 +3,11 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { API_URL } from "../App";
 import ModelAlert from "../Component/ModelAlert";
+import { useUser } from "../Component/UserContext";
 
 const ReservationEvents = () => {
   const { id } = useParams();
+  const { userId } = useUser();
   const lang = location.pathname.split("/")[1] || "en";
 
   const [reservations, setReservations] = useState([]);
@@ -118,6 +120,7 @@ const ReservationEvents = () => {
             start_time: startTime,
             end_time: endTime,
             available_event_id: id,
+            user_id: userId
           }
         );
         // On success, show the success modal

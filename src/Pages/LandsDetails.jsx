@@ -24,7 +24,6 @@ function LandsDetails() {
           `${API_URL}/propertyLands/getAllPropertyLandsByLandId/${id}/${lang}`
         ),
       ]);
-      console.log("Land details imageResponse", propertyRes.data);
       setlandDetails(imageRes.data);
       setLargeImage(imageRes.data[0]?.image);
       setActiveImage(imageRes.data[0]?.image);

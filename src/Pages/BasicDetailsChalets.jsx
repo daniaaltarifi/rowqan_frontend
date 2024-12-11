@@ -24,7 +24,6 @@ function BasicDetailsChalets() {
       setChaletsImages(chaletRes.data.images);
       setDetailsChalets(detailsChalets.data.chaletDetails);
 
-      console.log("first iteration", detailsChalets.data.chaletDetails);
     } catch (error) {
       console.error("Error fetching best rated services:", error);
     }

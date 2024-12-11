@@ -3,9 +3,9 @@ import { Container, Row, Col, Form } from "react-bootstrap";
 import auth from "../assets/auth.jpg";
 import "../Css/Auth.css";
 import { Link, useNavigate } from "react-router-dom";
-import gmail from "../assets/gmail.png";
-import facebook from "../assets/facebook.png";
-import instagram from "../assets/instagram.png";
+// import gmail from "../assets/gmail.png";
+// import facebook from "../assets/facebook.png";
+// import instagram from "../assets/instagram.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Cookies from "cookies-js"; 
 import axios from "axios";
@@ -134,7 +134,7 @@ function Login() {
             <Link to={`/${lang}/signup`} className="link_auth">
               SignUp
             </Link>
-            <div>
+            {/* <div>
               <img
                 src={gmail}
                 alt="social icon"
@@ -155,7 +155,7 @@ function Login() {
                 width={"30px"}
                 className="ms-2"
               />
-            </div>
+            </div> */}
           </Form>
         </Col>
       </Row>

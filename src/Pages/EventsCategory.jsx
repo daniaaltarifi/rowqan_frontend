@@ -2,7 +2,6 @@ import { Col, Container, Row, Card } from "react-bootstrap";
 import wedding from "../assets/wedding.jpg";
 import PropTypes from "prop-types";
 import { Link, useParams } from "react-router-dom";
-import wedd2 from "../assets/wedd2.jpg";
 import people from "../assets/people.jpg";
 import dollar from "../assets/dollar.png";
 import loca from "../assets/loca.png";
@@ -64,7 +63,7 @@ fetchData()
             <Card className="cont_card_chalets">
               <Card.Img
                 variant="top"
-                src={wedd2}
+                src={`https://res.cloudinary.com/durjqlivi/${event.image}`}
                 height={"250px"}
                 className="object-fit-cover"
               />

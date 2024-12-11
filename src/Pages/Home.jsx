@@ -41,7 +41,7 @@ function Home() {
               <Col md={6} key={hero.id}>
                 <h1 className="maintext_home">{hero.title} </h1>
                 <p className="text_home">{hero.description}</p>
-                <button className="Login-button">{hero.title_btn}</button>
+                <Link to={`/${lang}/chalets`}><button className="Login-button">{hero.title_btn}</button></Link>
               </Col>
               <Col md={6}>
                 <Image

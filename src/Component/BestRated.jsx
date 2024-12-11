@@ -4,6 +4,7 @@ import Col from "react-bootstrap/Col";
 import { useCallback, useEffect, useState } from "react";
 import { API_URL } from "../App";
 import axios from "axios";
+import { Link } from "react-router-dom";
 function BestRated() {
   const lang = location.pathname.split("/")[1] || "en";
   const [BestRated, setBestRated] = useState([]);
@@ -30,6 +31,7 @@ function BestRated() {
           {BestRated.map((best) => (
             <>
               <Col xl={3} md={6} sm={12} key={best.id}>
+              <Link to={`/${lang}/${best.url}`} style={{textDecoration:"none"}}>
                 <img
                   src={`https://res.cloudinary.com/durjqlivi/${best.image}`}
                   alt="top picks"
@@ -39,10 +41,9 @@ function BestRated() {
                 />
                 <div>
                   <h5 className="title_of_toppick">{best.title}</h5>
-                  {/* <p className="parg_of_toppicks">
-                Colombo, Sri Lanka
-                </p> */}
                 </div>
+              </Link>
+
               </Col>
             </>
           ))}

@@ -7,28 +7,33 @@ import { Link, useNavigate } from "react-router-dom";
 // import facebook from "../assets/facebook.png";
 // import instagram from "../assets/instagram.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import Cookies from "cookies-js"; 
+import Cookies from "cookies-js";
 import axios from "axios";
 import { API_URL } from "../App";
 import { useUser } from "../Component/UserContext";
 
 function Login() {
   const { setUserId } = useUser();
-  const navigate=useNavigate()
+  const navigate = useNavigate();
   const lang = location.pathname.split("/")[1] || "en";
   const [validated, setValidated] = useState(false);
   const [passwordvisible, setPasswordvisible] = useState(false);
+  const [error, setError] = useState(null);
+
   const [formData, setFormData] = useState({
     email: "",
-    password: ""
+    password: "",
   });
   const handleSubmit = async (event) => {
     const form = event.currentTarget;
+  
+    // Prevent form submission if it's invalid
     if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
     }
   
+    // Set validated state to true (you can adjust as per your form's behavior)
     setValidated(true);
     event.preventDefault();
   
@@ -38,30 +43,44 @@ function Login() {
         {
           email: formData.email,
           password: formData.password,
-          lang: lang
+          lang: lang,
         },
         {
-          withCredentials: true // Ensure cookies are handled
+          withCredentials: true, // Ensure cookies are handled
         }
       );
   
+      // Check if login is successful (status 200)
       if (response.status === 200) {
         Cookies.set("token", response.data.token, { expires: 7, secure: true });
         setUserId(response.data.userId);
-        navigate(`/${lang}`); 
+        navigate(`/${lang}`);
       }
+  
     } catch (error) {
-      console.error("Error logging in:", error);
+      // If the error response is from the backend, handle different error statuses
+      if (error.response) {  
+        if (error.response.status === 404) {
+          setError(lang === 'en' ? 'User not found' : 'المستخدم غير موجود');
+        } else if (error.response.status === 401) {
+          setError(lang === 'en' ? 'Invalid credentials' : 'بيانات الاعتماد غير صحيحة');
+        } else {
+          setError(lang === 'en' ? 'An error occurred. Please try again.' : 'حدث خطأ. يرجى المحاولة مرة أخرى.');
+        }
+      } else {
+        setError(lang === 'en' ? 'An error occurred. Please try again.' : 'حدث خطأ. يرجى المحاولة مرة أخرى.');
+      }
     }
   };
   
-  const handleChange=(e)=>{
-    const {name,value}=e.target;
-    setFormData((prevdata)=>({
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevdata) => ({
       ...prevdata,
-      [name]:value
-    }))
-  }
+      [name]: value,
+    }));
+  };
   const togglePasswordVisible = () => {
     setPasswordvisible(!passwordvisible);
   };
@@ -100,7 +119,6 @@ function Login() {
                 onChange={handleChange}
                 name="email"
               />
-              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
             <Form.Group controlId="validationCustom04" className="w-75">
               <Form.Label>Password</Form.Label>
@@ -131,6 +149,8 @@ function Login() {
             <button type="submit" className="Login-button w-50 mt-3">
               Login
             </button>
+            {error && <p style={{color:"red"}}>{error}</p>}
+
             <Link to={`/${lang}/signup`} className="link_auth">
               SignUp
             </Link>

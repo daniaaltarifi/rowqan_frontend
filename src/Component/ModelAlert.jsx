@@ -1,7 +1,14 @@
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-
+import PropTypes from 'prop-types';
 function ModelAlert({ show, handleClose, title, message }) {
+  ModelAlert.propTypes = {
+    show: PropTypes.string.isRequired, 
+    handleClose: PropTypes.func.isRequired, 
+    title: PropTypes.string.isRequired, 
+    message: PropTypes.string.isRequired, 
+
+  };
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>

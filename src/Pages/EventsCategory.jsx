@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { Link, useParams } from "react-router-dom";
 import people from "../assets/people.jpg";
 import dollar from "../assets/dollar.png";
+import rating from "../assets/rating.png";
 import loca from "../assets/loca.png";
 import chat from "../assets/chat.png";
 import cashback from "../assets/cashback.jpg";
@@ -92,6 +93,13 @@ fetchData()
                 </Card.Text>
                 <Card.Text className="text_card_det">
                   <div className="cont_rating">
+                  <img
+                    src={rating}
+                    height={"40px"}
+                    width={"50px"}
+                    alt="rating"
+                  />
+                  
                     {[...Array(5)].map((_, index) => (
                       <span
                         key={index}
@@ -100,7 +108,6 @@ fetchData()
                         <StarIcon filled={event.rating > index} />
                       </span>
                     ))}
-                    Number Of Stars
                   </div>
                 </Card.Text>
                 <Card.Text className="text_card_det">

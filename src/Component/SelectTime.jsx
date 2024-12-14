@@ -3,12 +3,15 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { API_URL } from "../App";
-const SelectTime = ({ isOpen, toggleDropdown ,price}) => {
+import PropTypes from 'prop-types';
+const SelectTime = ({ isOpen, toggleDropdown}) => {
 
   const lang = location.pathname.split("/")[1] || "en";
   const navigate = useNavigate();
   const { id } = useParams();
   const [times, setTimes] = useState([]);
+const [fulldayState, setFulldayState] = useState(false)
+
   const gettimes = useCallback(async () => {
     try {
       const res = await axios.get(
@@ -23,40 +26,52 @@ const SelectTime = ({ isOpen, toggleDropdown ,price}) => {
   useEffect(() => {
     gettimes();
   }, [lang]);
-  const handleTimeSelection = (timeId) => {
-    navigate(`/${lang}/reservechalet/${id}`, {
-      state: {timeId,price} 
+  const handleTimeSelection = (timeId,fulldayState) => {
+    navigate(``, {
+      state: {timeId,fulldayState} 
     });
   };
-  const reserveTime = async (timeId) => {
+  const reserveTime = async (timeId,nameTime) => {
     if (!timeId) {
       alert("Please choose a time");
       return;
     }
 
     try {
-      const res = await axios.post(
+       await axios.post(
         `${API_URL}/ReservationDates/createreservationdate`,
         {
           chalet_id: id,
           right_time_id: timeId,
         }
       );
-      handleTimeSelection(timeId)
+      
+      setFulldayState(prevState => {
+        const newState = nameTime === 'Full day';
+        handleTimeSelection(timeId, newState);
+        return newState;
+      });
+      
     
     } catch (error) {
       console.error("Error making reservation:", error);
     }
     toggleDropdown(); // Close the dropdown after reservation
   };
+  SelectTime.propTypes = {
+    isOpen: PropTypes.string.isRequired, 
+    toggleDropdown: PropTypes.func.isRequired,
+    price: PropTypes.number.isRequired,
+  };
 
+  
   return (
-    <div className="dropdown_select_time">
+    <div className="dropdown_select_time d-flex justify-content-center align-items-center">
       <button
-        className="booknow_button_events w-100 mb-3 "
+        className="booknow_button_events  mb-3 "
         onClick={toggleDropdown}
       >
-        Book Now
+     Choose Time
       </button>
       {/* Show dropdown when isOpen is true */}
       {isOpen && (
@@ -68,7 +83,7 @@ const SelectTime = ({ isOpen, toggleDropdown ,price}) => {
                
                 className="d-flex align-items-center"
                 onClick={() => {
-                  reserveTime(timeReservation.id);
+                  reserveTime(timeReservation.id, timeReservation.name);
                 }}
               >
                 <img

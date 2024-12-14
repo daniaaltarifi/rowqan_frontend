@@ -55,6 +55,7 @@
   box-shadow: 4px 4px 4px 0px var(--beige-color);
   object-fit: cover;
 }
+
 .box_start_booking {
   border: 4px solid var(--beige-color);
   width: 387px;

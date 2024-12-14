@@ -58,7 +58,7 @@ function Footer() {
           ))}
 
           <h6 className="text_copyright">
-            Copyright 2024 • All rights reserved • Salman Faris
+            Copyright 2024 • All rights reserved • Rowqan
           </h6>
         </Col>
       </section>

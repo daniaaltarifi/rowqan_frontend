@@ -123,6 +123,7 @@ color: #fff;
 }
 ::-webkit-scrollbar{
   height: 8px;
+  width: 9px;
 }
 ::-webkit-scrollbar-thumb{
   background-color: #F2C79D;

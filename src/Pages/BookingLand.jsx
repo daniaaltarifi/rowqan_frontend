@@ -2,14 +2,14 @@ import { useState, useEffect, useCallback } from "react";
 import "../Css/Lands.css";
 import axios from "axios";
 import { API_URL } from "../App";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ModelAlert from "../Component/ModelAlert";
 import { useUser } from "../Component/UserContext";
 
 const BookingLand = () => {
   const { id } = useParams();
   const { userId } = useUser();
-
+  const navigate = useNavigate();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
   const [reservedTimes, setReservedTimes] = useState([]);
@@ -104,8 +104,10 @@ const BookingLand = () => {
     return { daysInMonth: lastDay.getDate(), startDay: firstDay.getDay() };
   })();
   const handleReserveTime = async () => {
-    if (!selectedDate || !lang || !id || !selectedTime) {
-      setError("Please select a date and time to reserve");
+    if (!selectedDate || !lang || !id || !selectedTime || !userId) {
+      setError(
+        "Please make sure you are logged in and have selected date and time"
+      );
       return;
     }
 
@@ -119,12 +121,15 @@ const BookingLand = () => {
         lang: lang,
         time: selectedTime,
         available_land_id: id,
-        user_id: userId
+        user_id: userId,
       });
       // On success, show the success modal
       setModalTitle("Success");
       setModalMessage("Reservation confirmed successfully!");
       handleShowModal();
+      setTimeout(() => {
+        navigate(`/${lang}`);
+      }, 2000);
     } catch (error) {
       // On failure, show the failure modal
       console.error("Error confirming reservation:", error);
@@ -186,7 +191,7 @@ const BookingLand = () => {
         <div className="reserved-times text-center mt-3">
           <h4>{lang === "ar" ? "الأوقات المحجوزة" : "Reserved Times"}</h4>
           {reservedTimes.length ? (
-            <ul >
+            <ul>
               {reservedTimes.map((time, index) => (
                 <p key={index}>- {time}</p>
               ))}
@@ -227,12 +232,12 @@ const BookingLand = () => {
           <b>Reserve Now</b>{" "}
         </button>
         {error && <p style={{ color: "red" }}>{error}</p>}
-        <ModelAlert 
-        show={showModal} 
-        handleClose={handleCloseModal} 
-        title={modalTitle} 
-        message={modalMessage} 
-      />
+        <ModelAlert
+          show={showModal}
+          handleClose={handleCloseModal}
+          title={modalTitle}
+          message={modalMessage}
+        />
       </div>
     </>
   );

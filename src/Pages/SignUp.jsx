@@ -33,7 +33,6 @@ function SignUp() {
       setError(lang === "ar" ? "جميع الحقول مطلوبة" : "All fields are required");
       return;
     }
-  
     // Check password and confirm password match
     if (formData.password !== formData.confirmPassword) {
       setError(lang === "ar" ? "كلمة المرور غير متطابقة" : "Passwords do not match");
@@ -57,9 +56,16 @@ function SignUp() {
           },
         }
       );
+    
       navigate(`/${lang}/login`);
     } catch (error) {
-      console.log(`Error fetching post data ${error}`);
+      // Handle database duplicate email error (ER_DUP_ENTRY)
+      if (error.response && error.response.data && error.response.data.code === 'ER_DUP_ENTRY') {
+        setError(lang === "ar" ? "البريد الالكتروني موجود" : "Email already exists");
+      } else {
+        console.log(`Error fetching post data ${error}`);
+        setError(lang === "ar" ? "حدث خطأ في النظام" : "An error occurred");
+      }
     }
     setValidated(true);
 

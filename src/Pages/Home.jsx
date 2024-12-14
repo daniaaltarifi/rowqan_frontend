@@ -29,6 +29,7 @@ function Home() {
     setServices(servRes.data);
   }, [lang]);
   useEffect(() => {
+    window.scrollTo(0, 0);
     getHero();
   }, [lang]);
 

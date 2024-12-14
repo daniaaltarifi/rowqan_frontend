@@ -14,7 +14,8 @@ function BestRated() {
       const res = await axios.get(
         `${API_URL}/services/getAllServicesByServiceStatus/Best Rated/${lang}`
       );
-      setBestRated(res.data);
+      const lastFourServices = res.data.slice(-4)
+      setBestRated(lastFourServices);
     } catch (error) {
       console.error("Error fetching best rated services:", error);
     }

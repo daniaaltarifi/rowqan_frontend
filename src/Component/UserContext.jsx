@@ -2,7 +2,8 @@
 import axios from 'axios';
 import React, { createContext, useState, useContext } from 'react';
 import { API_URL } from '../App';
-
+import { useNavigate } from 'react-router-dom';
+import PropTypes from 'prop-types';
 // Create Context
 const UserContext = createContext();
 
@@ -13,6 +14,8 @@ export const useUser = () => {
 
 export const UserProvider = ({ children }) => {
   const [userId, setUserId] = useState(null); // Initialize userId state
+const navigate=useNavigate()
+const lang = location.pathname.split("/")[1] || "en";
 
   // You can fetch the user ID when the app loads (e.g., from cookies or API)
   const fetchUserId = async () => {
@@ -29,7 +32,8 @@ export const UserProvider = ({ children }) => {
   const logout = async () => {
     try {
       await axios.post(`${API_URL}/users/logout`, {}, { withCredentials: true });
-      setUserId(null);  // Remove userId after logout
+      setUserId(null);
+      navigate(`/${lang}/login`)
     } catch (error) {
       console.error('Logout error', error);
     }
@@ -38,7 +42,9 @@ export const UserProvider = ({ children }) => {
   React.useEffect(() => {
     fetchUserId();
   }, [fetchUserId]);
-
+  UserProvider.propTypes = {
+    children: PropTypes.string.isRequired, 
+  };
   return (
     <UserContext.Provider value={{ userId, setUserId,logout }}>
       {children}

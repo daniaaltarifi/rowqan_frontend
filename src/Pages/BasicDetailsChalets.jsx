@@ -59,6 +59,7 @@ function BasicDetailsChalets() {
             ))}
           </Col>
         </Row>
+        
         <Row>
           <Col sm={12} md={12} lg={6} className="mt-5">
             <h4 style={{ color: "#152C5B", fontWeight: "600" }}>

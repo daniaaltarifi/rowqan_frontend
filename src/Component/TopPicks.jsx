@@ -14,7 +14,8 @@ function TopPicks() {
       const res = await axios.get(
         `${API_URL}/services/getAllServicesByServiceStatus/most picked/${lang}`
       );
-      settopPicks(res.data);
+      const lastFourServices= res.data.slice(-4)
+      settopPicks(lastFourServices);
     } catch (error) {
       console.error("Error fetching top rated services:", error);
     }

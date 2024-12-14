@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { API_URL } from "../App";
 import ModelAlert from "../Component/ModelAlert";
 import { useUser } from "../Component/UserContext";
@@ -9,6 +9,7 @@ const ReservationEvents = () => {
   const { id } = useParams();
   const { userId } = useUser();
   const lang = location.pathname.split("/")[1] || "en";
+  const navigate=useNavigate()
 
   const [reservations, setReservations] = useState([]);
   const [startTime, setStartTime] = useState("");
@@ -25,6 +26,7 @@ const ReservationEvents = () => {
 
   // Fetch reservations only once per language and ID
   useEffect(() => {
+    window.scrollTo(0, 0);
     const fetchReservations = async () => {
       try {
         const response = await axios.get(
@@ -91,9 +93,9 @@ const ReservationEvents = () => {
     e.preventDefault();
     setError(""); // Reset error state
 
-    if (!selectedDate) {
-      setError("Please select a date.");
-      return;
+    if (!selectedDate || !userId) {
+      setError("Please make sure you are logged in and have selected a date.")
+              return;
     }
 
     if (!startTime || !endTime) {
@@ -127,7 +129,10 @@ const ReservationEvents = () => {
         setModalTitle("Success");
         setModalMessage("Your reservation has been successfully booked!");
         setShowModal(true);
-      } catch (error) {
+        setTimeout(() => {
+          navigate(`/${lang}`);
+        }, 2000);
+            } catch (error) {
         // On failure, show the failure modal
         console.error("Error confirming reservation:", error);
         setModalTitle("Error");

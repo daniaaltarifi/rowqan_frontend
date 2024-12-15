@@ -74,7 +74,7 @@ function ChaletsDetails() {
       <Container className="mt-5">
         <h1>Details for this chalets</h1>
         <Row>
-          <Col sm={12} md={12} lg={6} className=" image-grid">
+          <Col sm={12} md={12} lg={7} className=" image-grid">
             {/* Big Image */}
             <div className="mb-3">
               <img
@@ -155,7 +155,7 @@ function ChaletsDetails() {
               </Col>
             </Row>
           </Col>
-          <Col sm={12} md={12} lg={6}>
+          <Col sm={12} md={12} lg={5}>
             <div className="chatbot_events">
               <h5 className="chat_title">Chat Now </h5>
 

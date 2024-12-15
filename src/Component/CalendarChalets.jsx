@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import ModelAlert from "./ModelAlert";
 import axios from "axios";
 import { API_URL } from "../App";
+import PropTypes from "prop-types";
 
 function CalendarChalets({ timeId, setSelectedDate, selectedDate }) {
   const { id } = useParams();
@@ -16,115 +17,70 @@ function CalendarChalets({ timeId, setSelectedDate, selectedDate }) {
   const [modalMessage, setModalMessage] = useState("");
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
-  console.log("first time", timeId);
-  const handleSelectDate = (day) => {
-    if (!timeId) {
-      setError("Please select a time slot before selecting a date.");
-      window.scrollTo(0, 250);
-      return;
+  // CalendarChalets.propTypes = {
+  //   timeId: PropTypes.string.isRequired, // Fix to bool type as per usage
+  //   setSelectedDate: PropTypes.string.isRequired, // Ensure selectedDate is a Date object
+  //   selectedDate: PropTypes.string.isRequired,
+  // };
+  // State for the selected date from either calendar
+  const [selectedMorningDate, setSelectedMorningDate] = useState(null);
+  const [selectedEveningDate, setSelectedEveningDate] = useState(null);
+
+  // Function to handle date selection for morning and evening calendars
+  const handleSelectDate = (day, isMorning) => {
+    const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+    const selectedFormattedDate = `${newDate.getFullYear()}-${(newDate.getMonth() + 1).toString().padStart(2, "0")}-${newDate.getDate().toString().padStart(2, "0")}`;
+
+    // Clear the other calendar's selected date if it's selected
+    if (isMorning) {
+      setSelectedMorningDate(newDate);
+      setSelectedEveningDate(null); // Clear evening selection if morning is selected
+      setSelectedDate(newDate); // Update the parent component's selected date
+
+    } else {
+      setSelectedEveningDate(newDate);
+      setSelectedMorningDate(null); // Clear morning selection if evening is selected
+      setSelectedDate(newDate); // Update the parent component's selected date
     }
-    setError("");
-    const newDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      day
-    );
-    // Format the selected date to compare with reserved dates
-    const selectedFormattedDate = `${newDate.getFullYear()}-${(
-      newDate.getMonth() + 1
-    )
-      .toString()
-      .padStart(2, "0")}-${newDate.getDate().toString().padStart(2, "0")}`;
-    setSelectedDate(newDate);
-    console.log("Selected Formatted Date: ", selectedFormattedDate);
-    console.log("Selected TimeId: ", timeId);
 
-    // Check if the selected date and timeId are reserved
-    const isDateReserved = reservedDatesMorning.some(
-      (reserved) =>
-        reserved.date === selectedFormattedDate && reserved.timeId === timeId
-    );
-
+    // Check if the selected date is reserved
+    const reservedDates = isMorning ? reservedDatesMorning : reservedDatesEvening;
+    const isDateReserved = reservedDates.some((reserved) => reserved.date === selectedFormattedDate);
+    
     if (isDateReserved) {
       setModalTitle("This Date is reserved");
-      setModalMessage(
-        "This date and time are already reserved. Please choose another date."
-      );
+      setModalMessage("This date is already reserved. Please choose another date.");
       handleShowModal();
-    } else {
-      // If the selected date and timeId are not reserved, set the selected date
-      setSelectedDate(newDate);
     }
   };
-  const getReservedDatesMorning = useCallback(async () => {
-    if (!timeId) {
-      console.log("time not defined");
-      return;
-    }
+
+  const formatDate = (date) => {
+    const localYear = date.getUTCFullYear();
+    const localMonth = date.getUTCMonth();
+    const localDay = date.getUTCDate();
+    return `${localYear}-${(localMonth + 1).toString().padStart(2, "0")}-${localDay.toString().padStart(2, "0")}`;
+  };
+
+  // Fetch reserved dates for morning and evening
+  const fetchReservedDates = useCallback(async (timeOfDay, setReservedDates) => {
     try {
-      const res = await axios.get(
-        `${API_URL}/ReservationsChalets/reservationsByright_time_name/Mornning/${lang}`
-      );
-
-      // Prepare an array of reserved dates with their timeId for comparison
+      const res = await axios.get(`${API_URL}/ReservationsChalets/reservationsByright_time_name/${id}/${timeOfDay}/${lang}`);
       const reservedDates = res.data.reservations.map((reservation) => {
-        const utcDate = new Date(reservation.date); // Parse the date in UTC
-        const localYear = utcDate.getUTCFullYear();
-        const localMonth = utcDate.getUTCMonth();
-        const localDay = utcDate.getUTCDate();
-        // const timeId = reservation.right_time_id;
-
-        // Format the local date in 'YYYY-MM-DD' for comparison
-        const localFormattedDate = `${localYear}-${(localMonth + 1)
-          .toString()
-          .padStart(2, "0")}-${localDay.toString().padStart(2, "0")}`;
-
-        return { date: localFormattedDate }; // Store both date and timeId
+        const utcDate = new Date(reservation.date);
+        const formattedDate = formatDate(utcDate);
+        return { date: formattedDate };
       });
 
-      setReservedDatesMorning(reservedDates);
-      console.log("first reservation", reservedDates);
+      setReservedDates(reservedDates);
     } catch (error) {
-      console.error("Error fetching reserved dates:", error);
+      console.error(`Error fetching reserved dates for ${timeOfDay}:`, error);
     }
-  }, [lang]);
-  const getReservedDatesEvening = useCallback(async () => {
-    if (!timeId) {
-      console.log("time not defined");
-      return;
-    }
-    try {
-      const res = await axios.get(
-        `${API_URL}/ReservationsChalets/reservationsByright_time_name/Evening/${lang}`
-      );
-
-      // Prepare an array of reserved dates with their timeId for comparison
-      const reservedDates = res.data.reservations.map((reservation) => {
-        const utcDate = new Date(reservation.date); // Parse the date in UTC
-        const localYear = utcDate.getUTCFullYear();
-        const localMonth = utcDate.getUTCMonth();
-        const localDay = utcDate.getUTCDate();
-        // const timeId = reservation.right_time_id;
-
-        // Format the local date in 'YYYY-MM-DD' for comparison
-        const localFormattedDate = `${localYear}-${(localMonth + 1)
-          .toString()
-          .padStart(2, "0")}-${localDay.toString().padStart(2, "0")}`;
-
-        return { date: localFormattedDate }; // Store both date and timeId
-      });
-
-      setReservedDatesEvening(reservedDates);
-      console.log("first reservation", reservedDates);
-    } catch (error) {
-      console.error("Error fetching reserved dates:", error);
-    }
-  }, [lang]);
+  }, [lang, id]);
 
   useEffect(() => {
-    getReservedDatesMorning();
-    getReservedDatesEvening();
-  }, [lang, currentDate]);
+    fetchReservedDates("Morning%20Full%20day", setReservedDatesMorning);
+    fetchReservedDates("Evening%20Full%20day", setReservedDatesEvening);
+  }, [lang, id, currentDate, fetchReservedDates]);
 
   const handlePrevMonth = () => {
     const prevMonth = new Date(currentDate);
@@ -137,6 +93,7 @@ function CalendarChalets({ timeId, setSelectedDate, selectedDate }) {
     nextMonth.setMonth(currentDate.getMonth() + 1);
     setCurrentDate(nextMonth);
   };
+
   const getDaysInMonth = (year, month) => {
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
@@ -145,30 +102,19 @@ function CalendarChalets({ timeId, setSelectedDate, selectedDate }) {
     return { daysInMonth, startDay };
   };
 
-  const { daysInMonth, startDay } = getDaysInMonth(
-    currentDate.getFullYear(),
-    currentDate.getMonth()
-  );
+  const { daysInMonth, startDay } = getDaysInMonth(currentDate.getFullYear(), currentDate.getMonth());
+ 
   return (
     <>
       <div className="date-picker-container">
         <div className="calendar">
           <h3 className="text-center" style={{ color: "#fff" }}>
-            Morning Reserved Date{" "}
+            Morning Reserved Date
           </h3>
           <div className="calendar-header">
-            <button className="prev-month" onClick={handlePrevMonth}>
-              Prev
-            </button>
-            <span className="month">
-              {currentDate.toLocaleString("default", {
-                month: "long",
-                year: "numeric",
-              })}
-            </span>
-            <button className="next-month" onClick={handleNextMonth}>
-              Next
-            </button>
+            <button className="prev-month" onClick={handlePrevMonth}>Prev</button>
+            <span className="month">{currentDate.toLocaleString("default", { month: "long", year: "numeric" })}</span>
+            <button className="next-month" onClick={handleNextMonth}>Next</button>
           </div>
           <div className="days-of-week">
             <span>Sun</span>
@@ -180,63 +126,32 @@ function CalendarChalets({ timeId, setSelectedDate, selectedDate }) {
             <span>Sat</span>
           </div>
           <div className="calendar-days">
-            {Array(startDay)
-              .fill(null)
-              .map((_, index) => (
-                <span key={index} className="empty-day"></span>
-              ))}
-            {Array.from({ length: daysInMonth }, (_, index) => index + 1).map(
-              (day) => {
-                const currentDay = new Date(
-                  currentDate.getFullYear(),
-                  currentDate.getMonth(),
-                  day
-                );
-                const currentFormattedDate = `${currentDay.getFullYear()}-${(
-                  currentDay.getMonth() + 1
-                )
-                  .toString()
-                  .padStart(2, "0")}-${currentDay
-                  .getDate()
-                  .toString()
-                  .padStart(2, "0")}`;
-                const isSelected = selectedDate?.getDate() === day;
-                const isReserved = reservedDatesMorning.some(
-                  (reservedDate) => reservedDate.date === currentFormattedDate
-                );
-                return (
-                  <span
-                    key={day}
-                    className={`calendar-day ${isSelected ? "selected" : ""} ${
-                      isReserved ? "reserved" : ""
-                    }`}
-                    onClick={() => handleSelectDate(day)} // Allow selection only if not reserved
-                  >
-                    {day}
-                  </span>
-                );
-              }
-            )}
+            {Array(startDay).fill(null).map((_, index) => <span key={index} className="empty-day"></span>)}
+            {Array.from({ length: daysInMonth }, (_, index) => index + 1).map((day) => {
+              const currentDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+              const currentFormattedDate = `${currentDay.getFullYear()}-${(currentDay.getMonth() + 1).toString().padStart(2, "0")}-${currentDay.getDate().toString().padStart(2, "0")}`;
+              const isSelected = selectedMorningDate?.getDate() === day;
+              const isReserved = reservedDatesMorning.some((reservedDate) => reservedDate.date === currentFormattedDate);
+              return (
+                <span
+                  key={day}
+                  className={`calendar-day ${isSelected ? "selected" : ""} ${isReserved ? "reserved" : ""}`}
+                  onClick={() => handleSelectDate(day, true)}
+                >
+                  {day}
+                </span>
+              );
+            })}
           </div>
         </div>
         <div className="calendar">
           <h3 className="text-center" style={{ color: "#fff" }}>
             Evening Reserved Date
           </h3>
-
           <div className="calendar-header">
-            <button className="prev-month" onClick={handlePrevMonth}>
-              Prev
-            </button>
-            <span className="month">
-              {currentDate.toLocaleString("default", {
-                month: "long",
-                year: "numeric",
-              })}
-            </span>
-            <button className="next-month" onClick={handleNextMonth}>
-              Next
-            </button>
+            <button className="prev-month" onClick={handlePrevMonth}>Prev</button>
+            <span className="month">{currentDate.toLocaleString("default", { month: "long", year: "numeric" })}</span>
+            <button className="next-month" onClick={handleNextMonth}>Next</button>
           </div>
           <div className="days-of-week">
             <span>Sun</span>
@@ -248,43 +163,22 @@ function CalendarChalets({ timeId, setSelectedDate, selectedDate }) {
             <span>Sat</span>
           </div>
           <div className="calendar-days">
-            {Array(startDay)
-              .fill(null)
-              .map((_, index) => (
-                <span key={index} className="empty-day"></span>
-              ))}
-            {Array.from({ length: daysInMonth }, (_, index) => index + 1).map(
-              (day) => {
-                const currentDay = new Date(
-                  currentDate.getFullYear(),
-                  currentDate.getMonth(),
-                  day
-                );
-                const currentFormattedDate = `${currentDay.getFullYear()}-${(
-                  currentDay.getMonth() + 1
-                )
-                  .toString()
-                  .padStart(2, "0")}-${currentDay
-                  .getDate()
-                  .toString()
-                  .padStart(2, "0")}`;
-                const isSelected = selectedDate?.getDate() === day;
-                const isReserved = reservedDatesEvening.some(
-                  (reservedDate) => reservedDate.date === currentFormattedDate
-                );
-                return (
-                  <span
-                    key={day}
-                    className={`calendar-day ${isSelected ? "selected" : ""}${
-                      isReserved ? "reserved" : ""
-                    }`}
-                    onClick={() => handleSelectDate(day)} // Allow selection only if not reserved
-                  >
-                    {day}
-                  </span>
-                );
-              }
-            )}
+            {Array(startDay).fill(null).map((_, index) => <span key={index} className="empty-day"></span>)}
+            {Array.from({ length: daysInMonth }, (_, index) => index + 1).map((day) => {
+              const currentDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+              const currentFormattedDate = `${currentDay.getFullYear()}-${(currentDay.getMonth() + 1).toString().padStart(2, "0")}-${currentDay.getDate().toString().padStart(2, "0")}`;
+              const isSelected = selectedEveningDate?.getDate() === day;
+              const isReserved = reservedDatesEvening.some((reservedDate) => reservedDate.date === currentFormattedDate);
+              return (
+                <span
+                  key={day}
+                  className={`calendar-day ${isSelected ? "selected" : ""} ${isReserved ? "reserved" : ""}`}
+                  onClick={() => handleSelectDate(day, false)}
+                >
+                  {day}
+                </span>
+              );
+            })}
           </div>
         </div>
       </div>

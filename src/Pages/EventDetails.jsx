@@ -75,7 +75,7 @@ function EventDetails() {
       <Container>
         <h1>Details for this event</h1>
         <Row>
-          <Col sm={12} md={12} lg={6} className=" image-grid">
+          <Col sm={12} md={12} lg={7} className=" image-grid">
             {/* Big Image */}
             <div className="big-image mb-3">
               <img
@@ -156,7 +156,7 @@ function EventDetails() {
               </Col>
             </Row>
           </Col>
-          <Col sm={12} md={12} lg={6}>
+          <Col sm={12} md={12} lg={5}>
             <div className="chatbot_events">
               <h5 className="chat_title">Chat Now </h5>
 
@@ -212,7 +212,7 @@ function EventDetails() {
             <>
         <Row>
               <Col sm={12} md={6} lg={6} className="mt-5">
-                <h3>{plans.plane_type} Plan:</h3>
+                <h3>{plans.plane_type}:</h3>
                 <ul>
                   <li>{plans.description_plan}</li>
                 </ul>

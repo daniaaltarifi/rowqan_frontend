@@ -93,8 +93,8 @@ const ReservationEvents = () => {
     e.preventDefault();
     setError(""); // Reset error state
 
-    if (!selectedDate || !userId) {
-      setError("Please make sure you are logged in and have selected a date.")
+    if (!selectedDate ) {
+      setError("Please make sure you are selected a date.")
               return;
     }
 

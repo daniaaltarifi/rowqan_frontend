@@ -48,7 +48,7 @@ try {
 } catch (error) {
   console.log("Error fetching data",error)
 }
-  },[lang],id)
+  },[lang,id])
   useEffect(()=>{
     window.scrollTo(0,0);
 fetchData()

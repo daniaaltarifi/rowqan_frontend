@@ -2,13 +2,7 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Image from "react-bootstrap/Image";
-import Button from "react-bootstrap/Button";
-import Dropdown from "react-bootstrap/Dropdown";
-
 import "../Css/Home.css";
-import calendar from "../assets/calendar.png";
-import user from "../assets/user.png";
-import locations from "../assets/location.png";
 import TopPicks from "../Component/TopPicks";
 import BestRated from "../Component/BestRated";
 import { useCallback, useEffect, useState } from "react";
@@ -46,14 +40,19 @@ function Home() {
               </Col>
               <Col md={6}>
                 <Image
-                  src={`https://res.cloudinary.com/durjqlivi/${hero.image}`}
-                  className="mainHome_img img-fluid"
+                srcSet={`
+                  https://res.cloudinary.com/durjqlivi/${hero.image}?w=400&f_auto&q_auto:eco 400w,
+                `}
+                sizes="(max-width: 768px) 100vw, 50vw"
+                alt="home img"
+                className="mainHome_img"
+                loading="eager"
                 />
               </Col>
             </>
           ))}
         </Row>
-        <section className=" margin_section">
+        {/* <section className=" margin_section">
           <div className="cont_search">
             <Col className="col_cont_search">
               <Button variant="light" className="filter_home">
@@ -83,7 +82,7 @@ function Home() {
               <button className="Login-button search_btn_home">{lang === 'ar' ? 'بحث':'Search'}</button>
             </Col>
           </div>
-        </section>
+        </section> */}
 
         <section className="margin_section ">
           <Container>
@@ -100,7 +99,7 @@ function Home() {
               {services.map((service) => (
                 <>
                   <Col
-                    xl={4}
+                    xl={3}
                     md={6}
                     sm={12}
                     className="cont_img_home_serv"

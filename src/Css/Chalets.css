@@ -1,7 +1,13 @@
 .cont_card_chalets {
   box-shadow: 12px 12px 4px 0px #6da6ba;
   margin-bottom: 5vh;
+  min-height: 550px;
+  overflow: hidden;
   /* height: 400px; */
+}
+.cont_card_chalets:hover{
+  box-shadow: 4px 4px 4px 0px var(--beige-color);
+  transition: all ease-in-out 350ms;
 }
 .title_chalets {
   text-align: center;
@@ -27,7 +33,7 @@
   width: 100%;
   height: 80vh;
   object-fit: cover;
-  filter: brightness(0.7);
+  filter: brightness(0.8);
 }
 .centered_big_img_chalets {
   position: absolute;
@@ -36,8 +42,8 @@
   transform: translate(-50%, -50%);
 }
 .chalets_btn {
-  width: 277px;
-  height: 78px;
+  width: 217px;
+  height: 55px;
   border-radius: 10px;
   background: linear-gradient(90deg, #6da6ba 0%, #afb7ab 50%, #f2c79d 100%);
   border: none;
@@ -49,8 +55,20 @@
   box-shadow: 8px 8px 4px 0px #6da6ba;
   transition: all ease-in-out 450ms;
 }
+.chat_now_link{
+  text-decoration: none;
+   color: #000
+}
+.chat_now_link:hover{
+  text-decoration: underline;
+}
+.column-title {
+  min-width: 100px; /* Adjust as necessary */
+  text-align: center;
+}
+
 /* BASIC CHALETS DETAILS */
-.img_chalets_basic_details {
+/* .img_chalets_basic_details {
   border-radius: 25px;
   box-shadow: 4px 4px 4px 0px var(--beige-color);
   object-fit: cover;
@@ -70,7 +88,7 @@
   background: linear-gradient(90deg, #f2c79d 0%, #6da6ba 100%);
   background-clip: text;
   color: transparent;
-}
+} */
 .box_price{
   background: #F3F3FA;
   width: 100%;
@@ -88,14 +106,18 @@
 }
 .box_Brief_characteristics{
   background: #F3F3FA;
-  width: 300px;
+  width: 100%;
+min-height: 65vh;
   border-radius: 14px ;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
  padding: 10px;
  box-shadow: 10px 10px 4px 0px var(--beige-color);
-
+}
+.chat_now_btn{
+  width: 30%;
 }
 /* BOOKING CHALETS PAGE */
 .box_overview_chalets{
@@ -141,11 +163,57 @@ padding-bottom: 5px;
   text-align: center;
 }
 
-/* .plus-minus-container button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 5px;
-} */
 
 /* Chalets.css */
+
+/* General styles for mobile layout */
+.imagegallery {
+  display: none; /* Hide by default */
+}
+
+.section_of_mobile_img {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mobile_img {
+  height: 100px; /* Fixed height for the small images */
+  width: 100px;
+  border: 1px solid lightgray;
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.mobile_img:hover {
+  opacity: 1;
+}
+
+.imgbig {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+/* Media Query for Mobile Devices */
+@media (max-width: 992px) {
+  .imagegallery {
+    width: 100%;
+    max-width: 500px;
+    height: 400px;
+    display: grid;
+    grid-template-columns: auto auto;
+    border-radius: 5px;
+    overflow: hidden;
+  
+  }
+  /* Hide the Bootstrap layout on mobile */
+  .desktop_chalets_img {
+    display: none;
+  }
+  .box_Brief_characteristics{
+    min-height: auto;
+  }
+
+}
+

@@ -12,7 +12,7 @@ function TopPicks() {
   const gettopPicks = useCallback(async () => {
     try {
       const res = await axios.get(
-        `${API_URL}/services/getAllServicesByServiceStatus/most picked/${lang}`
+        `${API_URL}/services/getAllServicesByServiceStatus/Most Picked/${lang}`
       );
       const lastFourServices= res.data.slice(-4)
       settopPicks(lastFourServices);

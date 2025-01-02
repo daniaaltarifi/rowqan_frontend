@@ -133,7 +133,7 @@ fetchData()
               </Card.Body>
               <Card.Body className="d-flex justify-content-center ">
               <Link to={`/${lang}/eventdetails/${"1"}`}>
-              <button className="booknow_button_events">Book Now</button>
+              <button className="booknow_button_events mx-3">Book Now</button>
                 </Link>
                 <Link style={{textDecoration:"none",color:"#000"}}>
                   <h6>

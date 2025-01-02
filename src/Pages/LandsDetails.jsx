@@ -74,7 +74,7 @@ function LandsDetails() {
         </h1>
         <Row>
           {/* Big Image */}
-          <Col sm={12} md={12} lg={7} className="image-grid">
+          <Col sm={12} md={12} lg={8} className="image-grid">
             <div className="mb-3">
               <img
                 src={`https://res.cloudinary.com/durjqlivi/${largeImage}`}
@@ -159,7 +159,7 @@ function LandsDetails() {
               </Col>
             </Row>
           </Col>
-          <Col sm={12} md={12} lg={5}>
+          <Col sm={12} md={12} lg={4}>
             <div className="chatbot_events">
               <h5 className="chat_title"> {lang==='ar'?"دردش الآن":"Chat Now"}
               </h5>

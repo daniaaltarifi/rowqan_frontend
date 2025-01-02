@@ -35,7 +35,7 @@ const Header = () => {
         axios.get(`${API_URL}/header/getAllHeaders/${lang}`),
         axios.get(`${API_URL}/logos/getalllogos`),
       ]);
-      setHeaders(headerRes.data.headers);
+      setHeaders(headerRes.data);
       setLogo(logoRes.data);
     } catch (error) {
       console.error("Error fetching header :", error);
@@ -56,13 +56,15 @@ const Header = () => {
   return (
     <nav>
       {logo.map((logos) => (
-        <div className="logo" key={logos.id}>
-          <img
-            src={`https://res.cloudinary.com/durjqlivi/${logos.image}`}
-            alt="Logo"
-          />
-        </div>
-      ))}
+  <div className={`logo ${lang === 'ar' ? 'ltr' : ''}`} key={logos.id} >
+    <Link to={`/${lang}`} >
+      <img
+        src={`https://res.cloudinary.com/durjqlivi/${logos.image}`}
+        alt="Logo"
+      />
+    </Link>
+  </div>
+))}
 
       <div
         className={`hamburger ${isOpen ? "toggle" : ""}`}
@@ -89,11 +91,11 @@ const Header = () => {
           </li>
         ) : null}
 
-        {/* <li><Link to= {`/${lang}`}>{lang ==='ar' ?"الرئيسية": "Home"}</Link></li>
-        <li><Link to={`/${lang}/chalets`}>{lang ==='ar' ?"الشاليهات": "Chalets"}</Link></li>
-        <li><Link to={`${lang}/events`}>{lang ==='ar' ?"الفعاليات": "Events"}</Link></li>
-        <li><Link to={`${lang}/lands`}>{lang ==='ar' ?"الاراضي": "Lands"}</Link></li> */}
-        {/* <li><Link to={`${lang}/`}>Contact</Link></li> */}
+        {/* <li><Link to= {`/${lang}`}>{lang ==='ar' ?"الرئيسية": "Home"}</Link></li> */}
+        {/* <li><Link to={`/${lang}/chalets`}>{lang ==='ar' ?"الشاليهات": "Chalets"}</Link></li> */}
+        <li><Link >{lang ==='ar' ?"الفعاليات": "Events"}</Link></li>
+        <li><Link >{lang ==='ar' ?"الاراضي": "Lands"}</Link></li> 
+        {/* <li><Link to={`${lang}/`}>Contact</Link></li>*/}
         <li>
           {/* <Link to={`${lang}/login`}> */}
           <button onClick={handleAuth} className="Login-button">

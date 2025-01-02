@@ -14,8 +14,8 @@ function Footer() {
         axios.get(`${API_URL}/footer/getAllFooters/${lang}`),
         axios.get(`${API_URL}/footericons/getAllFooterIcons`),
       ]);
-      setFooter(footerRes.data.footers);
-      setIconFooter(iconFooterRes.data.icons);
+      setFooter(footerRes.data);
+      setIconFooter(iconFooterRes.data);
     } catch (error) {
       console.error("Error fetching footer:", error);
     }

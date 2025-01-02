@@ -31,6 +31,7 @@ const SelectTime = ({ isOpen, toggleDropdown, selectedDate }) => {
     try {
       const res = await axios.get(`${API_URL}/ReservationsChalets/available-times/${id}/${formattedDate}/${lang}`);
       setTimes(res.data);
+      console.log("first",res.data);
     } catch (error) {
       console.error("Error fetching available times:", error);
       alert("There was an error fetching the available times. Please try again later.");

@@ -13,7 +13,7 @@
 
 .top_left {
   position: absolute;
-  left: 120px;
+  left: 100px;
   right: 120px;
   top: 55%;
   transform: translateY(-50%);
@@ -70,10 +70,10 @@
   object-fit: cover;
 }
 .booknow_button_events {
-  width: 129px;
   height: 44px;
   border-radius: 10px;
   border: none;
+  z-index: 1;
   background: linear-gradient(90deg, #f2c79d 24.5%, #afb7ab 50%, #6da6ba 82%);
 }
 .booknow_button_events:hover {
@@ -100,6 +100,8 @@
 .small-images-container img {
   cursor: pointer;
   transition: transform 0.3s ease;
+  height: 90px;
+  width: 130px;
 }
 
 .small-images-container img:hover {
@@ -136,29 +138,7 @@
   right: 10px;
 }
 
-.chatbot_events {
-  width: 100%;
-  height: 450px;
-  border-radius: 4px 0px 0px 0px;
-  box-shadow: 12px 12px 4px 0px #6da6ba;
-  background: #f3f3fa;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 35px;
-}
-.chat_title {
-  font-family: Merriweather;
-  font-size: 26.56px;
-  font-weight: 700;
-  line-height: 35.33px;
-}
-.input_chatbot{
-    width: 100%;
-height: 78.43px;
-border-radius: 4px 0px 0px 0px;
-border: 1px solid #6da6ba;
-}
+
 @media screen and (max-width: 768px) {
   /* .top_left {
     top: 50%;

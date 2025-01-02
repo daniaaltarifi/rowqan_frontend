@@ -9,9 +9,10 @@ import { useCallback, useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../App.jsx";
+import ChatNowHeader from "../Component/ChatNowHeader.jsx";
 function BookingChalets() {
   const location = useLocation();
-  const {id}=useParams()
+  const { id } = useParams();
   const lang = location.pathname.split("/")[1] || "en";
   const chaletsImages = location.state?.chaletsImages || [];
   const price = location.state?.price || null;
@@ -50,7 +51,7 @@ function BookingChalets() {
         `${API_URL}/ContactUs/getAllContactUs/${lang}`
       );
 
-      setContact(contactRes.data.contactUs);
+      setContact(contactRes.data);
     } catch (error) {
       console.error("Error fetching best rated services:", error);
     }
@@ -62,6 +63,8 @@ function BookingChalets() {
   }, [lang]);
   return (
     <div>
+      <ChatNowHeader properitesChalets={properitesChalets} chalet_id={id}/>
+
       <Container>
         <Carousel fade>
           {chaletsImages.map((image, index) => (
@@ -77,34 +80,11 @@ function BookingChalets() {
             </Carousel.Item>
           ))}
         </Carousel>
-        <Row>
-          <Col xl={6} md={12} sm={12}>
-          <Link to={`/${lang}/reservechalet/${id}`} state={{price:price}}>
-            <button className="booknow_button_events w-100 my-5">
-              Booking Chalets
-            </button>
-          </Link>
-          </Col>{" "}
-          <Col xl={6} md={12} sm={12}>
-            <div className="d-flex justify-content-center mt-5">
-              <h4>{price} JOD</h4>
-            </div>
-            {/* <div className="cont_rating">
-              {[...Array(5)].map((_, index) => (
-                <span
-                  key={index}
-                  style={{ display: "inline-block", marginRight: "5px" }}
-                >
-                  <StarIcon filled={rating > index} />
-                </span>
-              ))}
-            </div> */}
-          </Col>
-        </Row>
+       
         <Row>
           <Col xl={8} md={12} sm={12}>
-            <div className="box_overview_chalets">
-              <h5>Overview</h5>
+            <div className="box_overview_chalets mt-4">
+              <h5> {lang === "ar" ? "الملخص " : "Overview"} </h5>
               <div className="d-flex flex-wrap justify-content-evenly">
                 {properitesChalets.map((prop) => (
                   <div className="d-flex " key={prop.id}>
@@ -119,7 +99,10 @@ function BookingChalets() {
                   </div>
                 ))}
               </div>
-              <h5 className="mt-3">Description</h5>
+              <h5 className="mt-3">
+                {" "}
+                {lang === "ar" ? "الوصف " : "Description"}{" "}
+              </h5>
               {detailsChalets.map((details) => (
                 <div className="d-flex mt-3" key={details.id}>
                   <img
@@ -131,24 +114,68 @@ function BookingChalets() {
                   {details.Detail_Type}
                 </div>
               ))}
+              <div className=" mt-5 ">
+              <h4> {lang === 'ar' ?'السعر':'Price :'}{price} JD</h4>
             </div>
+            </div>
+            
           </Col>
           <Col xl={4} md={12} sm={12}>
-            <div className="box_overview_chalets text-center">
+            <div className="box_overview_chalets text-center my-4">
               <img src={whats} alt="whats" height={"100px"} width={"100px"} />
-              <h6 className="my-3">We are pleased to contact you </h6>
+              <h6 className="my-3">
+                {" "}
+                {lang === "ar"
+                  ? "يسعدنا التواصل معك "
+                  : "We are pleased to contact you"}{" "}
+              </h6>
               {contact.map((contactus) => (
-                <Link to={`${contactus.action}`} key={contactus.id}>
+                <Link
+                  to={`${contactus.action}`}
+                  target="blank"
+                  key={contactus.id}
+                >
                   <button className="booknow_button_events w-100 mb-3">
                     <b>{contactus.title}</b>{" "}
                   </button>
                 </Link>
               ))}
+              <Link>
+                <button className="booknow_button_events w-100 mb-3">
+                  <b> {lang === "ar"
+                              ? "دردش الأن"
+                              : "Chat Now"}</b>{" "}
+                </button>
+              </Link>
             </div>
           </Col>
         </Row>
+        <Row>
+          <Col xl={8} md={12} sm={12}>
+            <Link to={`/${lang}/reservechalet/${id}`} state={{ price: price }}>
+              <button className="booknow_button_events w-100 my-5">
+                {lang === "ar" ? "احجز الشاليه " : " Booking Chalet"}{" "}
+              </button>
+            </Link>
+          </Col>{" "}
+          {/* <Col xl={6} md={12} sm={12}>
+            <div className="d-flex justify-content-center mt-5">
+              <h4>{price} JOD</h4>
+            </div>
+            <div className="cont_rating">
+              {[...Array(5)].map((_, index) => (
+                <span
+                  key={index}
+                  style={{ display: "inline-block", marginRight: "5px" }}
+                >
+                  <StarIcon filled={rating > index} />
+                </span>
+              ))}
+            </div>
+          </Col> */}
+        </Row>
         <h4 style={{ color: "#152C5B", marginTop: "10vh" }}>
-          Treasure to Choose
+        {lang === "ar" ? "خيارات مفضلة " : " Treasure to Choose"}{" "}
         </h4>
       </Container>
       <TopPicks />

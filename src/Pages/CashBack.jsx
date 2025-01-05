@@ -29,19 +29,13 @@ function CashBack() {
       case "chalets":
         apiUrl = `${API_URL}/ReservationsChalets/reservationsByUserId/${userId}/${lang}`;
         break;
-      case "events":
-        apiUrl = `${API_URL}/reservationsEvents/getAllreservationeventsByUserId/${userId}/${lang}`;
-        break;
-      case "lands":
-        apiUrl = `${API_URL}/reservationLands/getreservationslandsbyuser_id/${userId}/${lang}`;
-        break;
       default:
         apiUrl = `${API_URL}/ReservationsChalets/reservationsByUserId/${userId}/${lang}`;
     }
 
     try {
       const res = await axios.get(apiUrl);
-      setReservations(res.data.reservations || []); // Dynamically set reservations based on the response
+      setReservations(res.data || []); // Dynamically set reservations based on the response
     } catch (error) {
       console.error("Error fetching reservations:", error);
     }
@@ -57,27 +51,19 @@ function CashBack() {
     "user_id",
     "chalet_id",
     "right_time_id",
-    "available_event_id",
-    "available_land_id",
     "chalet.id",
     "chalets.reserve_price",
     "user",
     "right_time.id",
-    "lang",
-    "Available_Event.id",
-    "Available_Event.image",
-    "Available_Event.description",
-    "CategoriesLand.id",
+    "lang",   
   ];
 
   // Filter out unwanted columns and their values, including nested fields
   const filterColumns = (reserve) => {
     const filteredReserve = { ...reserve };
-
     // Iterate over each key in the excludedColumns array
     excludedColumns.forEach((col) => {
       const keys = col.split("."); // Split by '.' to handle nested fields (e.g., "chalets.reserve_price")
-
       if (keys.length === 1) {
         // Handle flat fields (e.g., "id")
         delete filteredReserve[keys[0]];
@@ -106,10 +92,10 @@ function CashBack() {
               <h4>Total Balance:</h4>
               <h5 className="mt-1">{balance.total_balance} JOD</h5>
             </div>
-            <div className="d-flex">
+            {/* <div className="d-flex">
               <h4>Reserved Balance:</h4>
               <h5 className="mt-1">{balance.reserved_balance} JOD</h5>
-            </div>
+            </div> */}
             <div className="d-flex">
               <h4>Cashback Balance:</h4>
               <h5 className="mt-1">{balance.cashback_balance} JOD</h5>
@@ -122,12 +108,12 @@ function CashBack() {
         <button className="Login-button" onClick={() => setSystem("chalets")}>
           Chalets
         </button>
-        <button className="Login-button" onClick={() => setSystem("events")}>
+        {/* <button className="Login-button" onClick={() => setSystem("events")}>
           Events
         </button>
         <button className="Login-button" onClick={() => setSystem("lands")}>
           Lands
-        </button>
+        </button> */}
       </div>
       <div className="table_cont m-5">
         <Table responsive>

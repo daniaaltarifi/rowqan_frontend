@@ -3,7 +3,7 @@ import "../Css/ChatNowHeader.css";
 import { Col, Container, Row } from "react-bootstrap";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-function ChatNowHeader({ properitesChalets,chalet_id }) {
+function ChatNowHeader({ properitesChalets, chalet_id, price }) {
   // Reference to the header element
   const headerRef = useRef(null);
   const [isSticky, setIsSticky] = useState(false);
@@ -26,8 +26,9 @@ function ChatNowHeader({ properitesChalets,chalet_id }) {
     };
   }, []);
   ChatNowHeader.propTypes = {
-    properitesChalets: PropTypes.array.isRequired, 
-    chalet_id: PropTypes.string.isRequired, 
+    properitesChalets: PropTypes.array.isRequired,
+    chalet_id: PropTypes.string.isRequired,
+    price: PropTypes.string.isRequired
   };
   return (
     <div>
@@ -35,37 +36,45 @@ function ChatNowHeader({ properitesChalets,chalet_id }) {
         <Container>
           <Row>
             <Col sm={6} md={6} xl={6}>
-            {properitesChalets && properitesChalets.length > 0 && (
-              <>
-              <h2 className="title_chat_header">
-                🌟 {properitesChalets[0].Chalet.title} 🌟
-              </h2>
-              <div className="d-flex flex-wrap">
-                {properitesChalets.map((prop) => (
-                  <div className="d-flex" key={prop.id}>
-                    <img
-                      className="rounded-circle mx-2"
-                      height={"25px"}
-                      width={"25px"}
-                      alt="properites"
-                      srcSet={`
+              {properitesChalets && properitesChalets.length > 0 && (
+                <>
+                  <h2 className="title_chat_header">
+                    🌟 {properitesChalets[0].Chalet.title} 🌟
+                  </h2>
+                  <div className="d-flex flex-wrap">
+                    {properitesChalets.map((prop) => (
+                      <div className="d-flex" key={prop.id}>
+                        <img
+                          className="rounded-circle mx-2"
+                          height={"25px"}
+                          width={"25px"}
+                          alt="properites"
+                          srcSet={`
                        https://res.cloudinary.com/durjqlivi/${prop.image}?w=400&f_auto&q_auto:eco 400w,
                       `}
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                      decoding="async"
-                      loading="lazy"
-                    />{" "}
-                    {prop.title} ,
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                          decoding="async"
+                          loading="lazy"
+                        />{" "}
+                        {prop.title} ,
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-              </>
-            )}
+                </>
+              )}
             </Col>
             <Col sm={6} md={6} xl={6} className="d-flex justify-content-center">
-              <button className="chat_now_btn_header m-2">Chat Now</button>
-              <Link to={`/${lang}/reservechalet/${chalet_id}`}>
-              <button className="chat_now_btn_header">Book Now</button></Link>
+              <Link to={`/${lang}/chatbot/${chalet_id}`}>
+                <button className="chat_now_btn_header m-2">Chat Now</button>
+              </Link>
+              <Link
+                to={`/${lang}/reservechalet/${chalet_id}`}
+                state={{
+                  price
+                }}
+              >
+                <button className="chat_now_btn_header">Book Now</button>
+              </Link>
             </Col>
           </Row>
         </Container>

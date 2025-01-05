@@ -3,8 +3,8 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../App";
-import TopPicks from "../Component/TopPicks";
 import ChatNowHeader from "../Component/ChatNowHeader";
+import BestRated from "../Component/BestRated";
 function ChaletsDetails() {
   const location = useLocation();
   const { id } = useParams();
@@ -17,35 +17,6 @@ function ChaletsDetails() {
   const [detailsChalets, setDetailsChalets] = useState([]);
   const [briefChalets, setBriefChalets] = useState([]);
   const [properitesChalets, setProperiteChalets] = useState([]);
-
-  // const fetchData = useCallback(async () => {
-  //   try {
-  //     const [imgchaletRes, detailsChalets, briefRes, properitesRes] =
-  //       await Promise.all([
-  //         axios.get(`${API_URL}/chaletsimages/chaletgetChaletImage/${id}`),
-  //         axios.get(
-  //           `${API_URL}/chaletsdetails/getChaletDetailsByChaletId/${id}/${lang}`
-  //         ),
-  //         axios.get(
-  //           `${API_URL}/BreifDetailsChalets/getBreifsByChaletId/${id}/${lang}`
-  //         ),
-  //         axios.get(`${API_URL}/propschalets/getAllPropsChalet/${lang}`),
-  //       ]);
-  //     setChaletsImages(imgchaletRes.data.images);
-  //     setDetailsChalets(detailsChalets.data.chaletDetails);
-  //     setLargeImage(imgchaletRes.data.images[0]);
-  //     setActiveImage(imgchaletRes.data[0]);
-  //     setBriefChalets(briefRes.data.breifDetails);
-  //     setProperiteChalets(properitesRes.data.data);
-  //   } catch (error) {
-  //     console.error("Error fetching best rated services:", error);
-  //   }
-  // }, [lang]);
-
-  // useEffect(() => {
-  //   window.scrollTo(0, 0);
-  //   fetchData();
-  // }, [lang]);
 
   const fetchData = useCallback(async () => {
     try {
@@ -121,7 +92,7 @@ function ChaletsDetails() {
 
   return (
     <div>
-      <ChatNowHeader properitesChalets={properitesChalets} chalet_id={id} />
+      <ChatNowHeader properitesChalets={properitesChalets} chalet_id={id} price={price}/>
       <Container className="mt-5">
         <h1>
           {" "}
@@ -236,9 +207,11 @@ function ChaletsDetails() {
                   <li>No Brief characteristics</li>
                 )}
               </ul>
-              <Button variant="outline-warning chat_now_btn">
-                {lang === "ar" ? "دردش الأن" : "Chat Now"}
-              </Button>
+              <Link to={`/${lang}/chatbot/${id}`} >
+                <Button variant="outline-warning ">
+                  {lang === "ar" ? "دردش الأن" : "Chat Now"}
+                </Button>
+              </Link>
             </div>
           </Col>
         </Row>
@@ -250,7 +223,7 @@ function ChaletsDetails() {
             className="d-flex justify-content-around mt-5"
           >
             {properitesChalets.map((prop) => (
-              <div className="d-flex" key={prop.id}>
+              <div className="d-flex flex-wrap" key={prop.id}>
                 <img
                   srcSet={`
                  https://res.cloudinary.com/durjqlivi/${prop.image}?w=400&f_auto&q_auto:eco 400w,
@@ -302,7 +275,7 @@ function ChaletsDetails() {
         <h4 style={{ color: "#152C5B", marginTop: "10vh" }}>
           {lang === "ar" ? "خيارات مفضلة " : " Treasure to Choose"}{" "}
         </h4>
-        <TopPicks />
+        <BestRated />
       </Container>
     </div>
   );

@@ -1,33 +1,42 @@
 /* Nav.css */
 * {
   font-family: "Poppins", sans-serif;
-
 }
-
 
 body {
-    overflow-x: hidden;
+  overflow-x: hidden;
 }
 
-  
-nav {
-  direction: ltr !important;
+.nav {
   height: 8rem;
   width: 100vw;
-  display: flex;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  /* direction: var(--direction, ltr) !important; */
+
+  /* position: fixed; */
   z-index: 10;
 }
+/* .nav.rtl {
+  direction: rtl;
+  text-align: right;
+
+}
+
+.nav.ltr {
+  direction: ltr;
+} */
 
 .logo {
   padding: 1vh 5vw;
   text-align: center;
+  /* margin-left: 10vh; */
 }
 
 .logo img {
   height: 10rem;
   width: 13rem;
 }
-
 
 .nav-links {
   display: flex;
@@ -48,30 +57,29 @@ nav {
 }
 
 .nav-links li a:hover {
-  color: #F2C79D;
-  
+  color: #f2c79d;
 }
 
 .nav-links li {
   position: relative;
 }
 
-
-
-
 .Login-button {
   color: #fff;
-  background: linear-gradient(180deg, #F2C79D 0%, #6DA6BA 100%);
-  font-size: 14px;
+  background: linear-gradient(180deg, #f2c79d 0%, #6da6ba 100%);
+  font-size: 18px;
   font-weight: 600;
   cursor: pointer;
   width: 130px;
   height: 41px;
   border-radius: 7px;
   border: none;
+
 }
 
 .Login-button:hover {
+  /* color: #f2f5f7; */
+  /* background-color: transparent; */
   border: 1.5px solid #f2f5f7;
   transition: all ease-in-out 350ms;
 }
@@ -79,7 +87,7 @@ nav {
 .hamburger div {
   width: 30px;
   height: 3px;
-  background: #F2C79D;
+  background: #f2c79d;
   margin: 5px;
   transition: all 0.3s ease;
 }
@@ -99,10 +107,13 @@ nav {
     transition: all 0.7s ease;
     z-index: 2;
   }
+.nav{
+  direction: ltr !important;
 
+}
   .nav-links {
     position: fixed;
-    background: #6DA6BA;
+    background: #6da6ba;
     height: 100vh;
     width: 100%;
     flex-direction: column;
@@ -111,15 +122,9 @@ nav {
     transition: all 1s ease-out;
     pointer-events: none;
     z-index: 1;
-
   }
   .nav-links li a {
     color: #fff;
-
-  }
-  .logo img {
-    height: 9rem;
-    width: 10rem;
   }
   .nav-links.open {
     clip-path: circle(1000px at 90% -10%);

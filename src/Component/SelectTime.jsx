@@ -11,6 +11,7 @@ const SelectTime = ({ isOpen, toggleDropdown, selectedDate }) => {
   const { id } = useParams();
 
   const [times, setTimes] = useState([]);
+  // eslint-disable-next-line no-unused-vars
   const [fulldayState, setFulldayState] = useState(false);
 
   // Improved date formatting function
@@ -46,7 +47,7 @@ const SelectTime = ({ isOpen, toggleDropdown, selectedDate }) => {
     navigate("", {
       state: { timeId, fulldayState,priceTime },
     });
-    console.log("first time selected",priceTime)
+    // console.log("first time selected",priceTime)
   };
 
   const reserveTime = async (timeId, nameTime,priceTime) => {
@@ -63,6 +64,7 @@ const SelectTime = ({ isOpen, toggleDropdown, selectedDate }) => {
       });
 
       // Set full day state based on time reservation
+      // eslint-disable-next-line no-unused-vars
       setFulldayState((prevState) => {
         const newState = nameTime === "Full day";
         handleTimeSelection(timeId, newState,priceTime);

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../Css/Lands.css";
 import { Container } from "react-bootstrap";
 import info from "../assets/info.png";
@@ -23,8 +23,8 @@ const ReserveChalets = () => {
   const navigate = useNavigate();
   const lang = location.pathname.split("/")[1] || "en";
   const { price, timeId, fulldayState, priceTime } = location.state || {};
-  console.log("pricebertime", priceTime);
   // States
+  // eslint-disable-next-line no-unused-vars
   const [defaultPrice, setDefaultPrice] = useState(price);
   const [initial_amount, setInitialAmount] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -34,54 +34,63 @@ const ReserveChalets = () => {
   const [error, setError] = useState("");
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
-
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   // Helper functions
   const updateState = (stateSetter, currentValue, increment = true) => {
     stateSetter(increment ? currentValue + 1 : Math.max(0, currentValue - 1));
   };
 
+  // const calculatePrice = () => {
+  //   const additionalCost = number_of_daysValue * 20; // 20 JD per day
+  //   const visitorsCost = additional_visitorsValue * 10; // 10 JD per additional visitor
+  //   const priceBerTime = priceTime || 0;
+  //   return defaultPrice + additionalCost + visitorsCost + priceBerTime;
+  // };
   const calculatePrice = () => {
     const additionalCost = number_of_daysValue * 20; // 20 JD per day
     const visitorsCost = additional_visitorsValue * 10; // 10 JD per additional visitor
-    const priceBerTime = priceTime || 0;
-    return defaultPrice + additionalCost + visitorsCost + priceBerTime;
+    const priceBerTime = priceTime || 0; // additional time cost
+    
+    // Calculate the total amount based on initial_amount
+    const totalAmount = defaultPrice - initial_amount + additionalCost + visitorsCost + priceBerTime;
+    return totalAmount;
   };
-
   const handleConfirmReservation = async () => {
-    if (!selectedDate || !lang || !id || !timeId) {
-      setError("Please make sure you have selected a date.");
+    if (!selectedDate || !lang || !id || !timeId || !initial_amount) {
+      setError("Please make sure you have selected a Date and Time.");
       return;
     }
-
+  
     const formattedDate = new Date(selectedDate).toLocaleDateString("en-CA");
-
-    // Only send initial_amount if it has a valid value
+  
     const reservationData = {
-      date: formattedDate,
-      lang,
-      additional_visitors: additional_visitorsValue,
-      number_of_days: number_of_daysValue,
-      user_id: userId,
-      chalet_id: id,
-      right_time_id: timeId,
-      initial_amount: initial_amount,
-      status: "Pending",
+        initial_amount: initial_amount, // send initial_amount
+        date: formattedDate,
+        lang: lang,
+        additional_visitors: additional_visitorsValue,
+        number_of_days: number_of_daysValue,
+        user_id: userId,
+        chalet_id: id,
+        right_time_id: timeId,
     };
-
-    if (defaultPrice > 0) {
-      reservationData.initial_amount = defaultPrice;
-    }
-
+  
     try {
-      await axios.post(
+       const res=await axios.post(
         `${API_URL}/ReservationsChalets/createReservationChalet`,
         reservationData
       );
-
+  
       setModalTitle("Success");
       setModalMessage("Reservation confirmed successfully!");
       setShowModal(true);
-      setTimeout(() => navigate(`/${lang}`), 2000);
+      const reservation_id=res.data.reservation.id
+      const initial_amount=res.data.reservation.initial_amount
+      const total_amount=res.data.reservation.total_amount
+      console.log("first reservation", initial_amount);
+      setTimeout(() => navigate(`/${lang}/payment/${reservation_id}?initial_amount=${initial_amount}&total_amount=${total_amount}`), 2000);
+
     } catch (error) {
       console.error("Error confirming reservation:", error);
       setModalTitle("Error");
@@ -89,6 +98,46 @@ const ReserveChalets = () => {
       setShowModal(true);
     }
   };
+  
+  // const handleConfirmReservation = async () => {
+  //   if (!selectedDate || !lang || !id || !timeId) {
+  //     setError("Please make sure you have selected a Date and Time.");
+  //     return;
+  //   }
+
+  //   const formattedDate = new Date(selectedDate).toLocaleDateString("en-CA");
+
+  //   // Only send initial_amount if it has a valid value
+  //   const reservationData = {
+  //       initial_amount:initial_amount,
+  //       date:formattedDate,
+  //       lang:lang,
+  //       additional_visitors:additional_visitorsValue,
+  //       number_of_days:number_of_daysValue,
+  //       user_id:null,
+  //       chalet_id:id,
+  //       right_time_id:timeId
+    
+  //   };
+
+
+  //   try {
+  //     await axios.post(
+  //       `${API_URL}/ReservationsChalets/createReservationChalet`,
+  //       reservationData
+  //     );
+
+  //     setModalTitle("Success");
+  //     setModalMessage("Reservation confirmed successfully!");
+  //     setShowModal(true);
+  //     // setTimeout(() => navigate(`/${lang}`), 2000);
+  //   } catch (error) {
+  //     console.error("Error confirming reservation:", error);
+  //     setModalTitle("Error");
+  //     setModalMessage("Failed to confirm reservation. Please try again later.");
+  //     setShowModal(true);
+  //   }
+  // };
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -102,7 +151,6 @@ const ReserveChalets = () => {
     setIsOpen((prevIsOpen) => !prevIsOpen);
     setError(""); // Reset error on successful selection
   };
-  window.scrollTo(0, 0);
 
   return (
     <>
@@ -188,7 +236,12 @@ const ReserveChalets = () => {
         <div className="d-flex mb-3">
           <img src={money} alt="info" height={"30px"} width={"30px"} />
           <h6 className="ms-2 mt-2">Initial amount:</h6>
-          <input type="text" onChange={(e)=>{setInitialAmount(e.target.value)}}/>
+          <input
+            type="text"
+            onChange={(e) => {
+              setInitialAmount(e.target.value);
+            }}
+          />
         </div>
         <h6>
           <img src={dollar} alt="info" height={"30px"} width={"30px"} />
@@ -201,7 +254,7 @@ const ReserveChalets = () => {
           className="booknow_button_events w-100 my-5"
           onClick={handleConfirmReservation}
         >
-          Confirm reservation
+          Confirm Reservation
         </button>
 
         <ModelAlert

@@ -2,20 +2,42 @@ import { Container, Row, Col, Form } from "react-bootstrap";
 import forgetpassword from '../assets/forget.png';
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { API_URL } from "../App";
 function ForgetPassword() {
-  const [validated, setValidated] = useState(false);
   const lang = location.pathname.split("/")[1] || "en";
-const navigate = useNavigate()
-  const handleSubmit = (event) => {
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
+const [email, setEmail] = useState('');
+const [message, setMessage] = useState('');
+const [error, setError] = useState('');
 
-    setValidated(true);
-    navigate(`/${lang}/resetpassword`)
-  };
+const handleForgotPassword = async (e) => {
+  e.preventDefault();
+  try {
+    const res = await axios.post(`${API_URL}/users/forgot-password`, { email });
+
+    // Check if the response indicates that the email does not exist
+    if (res.data === 'The email does not exist. Please enter the correct email.') {
+      setError(lang=== 'ar' ?' البريد الإلكتروني غير موجود. الرجاء إدخال بريد إلكتروني صحيح':'Email does not exist. Please enter a valid email.');
+      setMessage(''); // Clear any previous messages
+    } else {
+      setMessage(lang=== 'ar' ? 'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني':'A password reset link has been sent to your email.');
+      setError(''); // Clear any previous errors
+    }
+  } catch (err) {
+    setError(lang=== 'ar' ? 'حدث خطأ أثناء محاولة إرسال الرابط. الرجاء المحاولة مرة أخرى': 'An error has occurred');
+    console.error('Forgot Password error:', err);
+  }
+};
+  // const handleSubmit = (event) => {
+  //   const form = event.currentTarget;
+  //   if (form.checkValidity() === false) {
+  //     event.preventDefault();
+  //     event.stopPropagation();
+  //   }
+
+  //   setValidated(true);
+  //   navigate(`/${lang}/resetpassword`)
+  // };
 
   return (
     <section>
@@ -29,8 +51,7 @@ const navigate = useNavigate()
           >
             <Form
               noValidate
-              validated={validated}
-              onSubmit={handleSubmit}
+              onSubmit={handleForgotPassword}
               className="w-75" // Apply width to form
             >
               <h1 className="title_forgetpass">Forgot your password?</h1>
@@ -45,10 +66,13 @@ const navigate = useNavigate()
                   type="email"
                   placeholder="name@gmail.com"
                   className="form_input_auth"
+                  onChange={(e) => setEmail(e.target.value)}
+
                 />
                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
               </Form.Group>
-              
+              {message && <p className="success_message">{message}</p>}
+              {error && <p className="error_message">{error}</p>}
               <button type="submit" className="Login-button w-100 mt-5">
                 Submit
               </button>

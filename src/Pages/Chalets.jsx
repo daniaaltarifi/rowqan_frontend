@@ -31,7 +31,6 @@ function Chalets() {
       }
 
       if (chaletRes.data !== chaletsData) {
-        console.log("first update", chaletRes.data);
         setChaletsData(chaletRes.data);
       }
     } catch (error) {

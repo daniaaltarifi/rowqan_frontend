@@ -54,7 +54,7 @@ const Header = () => {
   }, [userId, logout, navigate, lang]);
 
   return (
-    <nav>
+    <nav className={`nav`}>
       {logo.map((logos) => (
   <div className={`logo ${lang === 'ar' ? 'ltr' : ''}`} key={logos.id} >
     <Link to={`/${lang}`} >
@@ -93,8 +93,8 @@ const Header = () => {
 
         {/* <li><Link to= {`/${lang}`}>{lang ==='ar' ?"الرئيسية": "Home"}</Link></li> */}
         {/* <li><Link to={`/${lang}/chalets`}>{lang ==='ar' ?"الشاليهات": "Chalets"}</Link></li> */}
-        <li><Link >{lang ==='ar' ?"الفعاليات": "Events"}</Link></li>
-        <li><Link >{lang ==='ar' ?"الاراضي": "Lands"}</Link></li> 
+        {/* <li><Link >{lang ==='ar' ?"الفعاليات": "Events"}</Link></li>
+        <li><Link >{lang ==='ar' ?"الاراضي": "Lands"}</Link></li>  */}
         {/* <li><Link to={`${lang}/`}>Contact</Link></li>*/}
         <li>
           {/* <Link to={`${lang}/login`}> */}

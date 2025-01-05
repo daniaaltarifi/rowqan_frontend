@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Container, Row, Col, Form } from "react-bootstrap";
 import auth from "../assets/auth.jpg";
 import "../Css/Auth.css";
@@ -11,68 +11,124 @@ import Cookies from "cookies-js";
 import axios from "axios";
 import { API_URL } from "../App";
 import { useUser } from "../Component/UserContext";
+import ModelAlert from "../Component/ModelAlert";
 
 function Login() {
   const { setUserId } = useUser();
   const navigate = useNavigate();
   const lang = location.pathname.split("/")[1] || "en";
+  // eslint-disable-next-line no-unused-vars
   const [validated, setValidated] = useState(false);
   const [passwordvisible, setPasswordvisible] = useState(false);
   const [error, setError] = useState(null);
-
+  const [mfaCode, setMfaCode] = useState("");
+  const [smShow, setSmShow] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalMessage, setModalMessage] = useState("");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const handleSubmit = async (event) => {
-    const form = event.currentTarget;
-  
-    // Prevent form submission if it's invalid
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-  
-    // Set validated state to true (you can adjust as per your form's behavior)
-    setValidated(true);
-    event.preventDefault();
-  
+
+  const [ip, setIp] = useState("");
+
+  useEffect(() => {
+    // Fetch the IP address as plain text
+    fetch("https://api.ipify.org?format=text")
+      .then((response) => response.text())
+      .then((data) => {
+        setIp(data);
+        console.log("first response", data);
+      })
+      .catch((error) => console.error("Error fetching IP address:", error));
+  }, []);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const response = await axios.post(
-        `${API_URL}/users/login`,
-        {
+      if (!mfaCode) {
+        const response = await axios.post(`${API_URL}/users/login`, {
           email: formData.email,
           password: formData.password,
           lang: lang,
-        },
-        {
-          withCredentials: true, // Ensure cookies are handled
-        }
-      );
-  
-      // Check if login is successful (status 200)
-      if (response.status === 200) {
-        Cookies.set("token", response.data.token, { expires: 7, secure: true });
-        setUserId(response.data.userId);
-        navigate(`/${lang}`);
-      }
-  
-    } catch (error) {
-      // If the error response is from the backend, handle different error statuses
-      if (error.response) {  
-        if (error.response.status === 404) {
-          setError(lang === 'en' ? 'User not found' : 'المستخدم غير موجود');
-        } else if (error.response.status === 401) {
-          setError(lang === 'en' ? 'Invalid credentials' : 'بيانات الاعتماد غير صحيحة');
-        } else {
-          setError(lang === 'en' ? 'An error occurred. Please try again.' : 'حدث خطأ. يرجى المحاولة مرة أخرى.');
+          ip: ip,
+        });
+
+        if (
+          response.status === 200 &&
+          response.data ===
+            "MFA code has been sent to your email. Please enter the code to complete login."
+        ) {
+          setError("");
+          // alert(response.data);
+          setModalTitle("Success");
+          setModalMessage(response.data);
+          setShowModal(true);
+          setSmShow(true);
         }
       } else {
-        setError(lang === 'en' ? 'An error occurred. Please try again.' : 'حدث خطأ. يرجى المحاولة مرة أخرى.');
+        // Verify email, password, and MFA code
+        const res = await axios.post(`${API_URL}/users/login`, {
+          email: formData.email,
+          password: formData.password,
+          mfaCode,
+          ip,
+        });
+
+        if (res.data.token) {
+          Cookies.set("token", res.data.token, { expires: 7, secure: true });
+          setUserId(res.data.userId);
+          navigate(`/${lang}`);
+        }
       }
+    } catch (err) {
+      handleError(err);
+      // console.log(err)
     }
   };
-  
+  const handleError = (err) => {
+    if (!err.response || !err.response.status) {
+      setError(
+        "Unable to connect to the server. Check your internet connection."
+      );
+      return;
+    }
+
+    const { status, data } = err.response;
+
+    // Define a mapping for errors
+    const errorMessages = {
+      400: {
+        "User not found":
+          "The email you entered does not belong to any account.",
+        "Invalid password":
+          "The password you entered is incorrect. Please try again.",
+        "Email is not authorized for login process":
+          "Your email is not allowed to log in.",
+        "MFA code has expired":
+          "Your MFA code has expired. Please request a new one.",
+        "Invalid MFA code":
+          "The MFA code you entered is invalid. Please try again.",
+      },
+      403: {
+        "Access is restricted to Jordan IPs only.":
+          "You must be located in Jordan to access this system.",
+        "Your IP is blocked due to too many failed login attempts.":
+          "Your IP is temporarily blocked due to repeated failed attempts.",
+      },
+      500: {
+        default: "An internal server error occurred. Please try again later.",
+      },
+    };
+
+    // Match the error response to the correct message
+    const message =
+      errorMessages[status]?.[data] || // Match exact error message
+      errorMessages[status]?.default || // Use default for the status code
+      "An unexpected error occurred. Please try again later."; // Fallback for unknown errors
+
+    setError(message);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -90,7 +146,7 @@ function Login() {
         <Col xl={6} md={12} sm={12}>
           <div className="image-container">
             <div className="text-overlay text-overlay_img">
-              <h2>Rowqan</h2>
+              <h2>{lang === 'ar' ? 'روقان' : 'Rowqan'}</h2>
             </div>
             <img
               src={auth}
@@ -107,10 +163,10 @@ function Login() {
             onSubmit={handleSubmit}
             className="cont_form"
           >
-            <h1 className="create_acc_title">Sign In</h1>
+            <h1 className="create_acc_title">{lang === 'ar' ? 'تسجيل الدخول' : 'Sign In'}</h1>
 
             <Form.Group controlId="validationCustom02" className="w-75">
-              <Form.Label>Email</Form.Label>
+              <Form.Label>{lang === 'ar' ? 'البريد الالكتروني' : 'Email'}</Form.Label>
               <Form.Control
                 required
                 type="email"
@@ -121,7 +177,7 @@ function Login() {
               />
             </Form.Group>
             <Form.Group controlId="validationCustom04" className="w-75">
-              <Form.Label>Password</Form.Label>
+              <Form.Label>{lang === 'ar' ? 'كلمة السر' : 'Password'}</Form.Label>
               <div className="password-input-wrapper">
                 <Form.Control
                   type={passwordvisible ? "text" : "password"}
@@ -143,16 +199,49 @@ function Login() {
                 </button>
               </div>
               <Link to={`/${lang}/forgetpassword`} className="forget_password">
-                Forget Password
+                {lang === 'ar' ? 'نسيت كلمة السر' : 'Forget Password'}
               </Link>
             </Form.Group>
-            <button type="submit" className="Login-button w-50 mt-3">
+            {/* <button type="submit" className="Login-button w-50 mt-3">
               Login
-            </button>
-            {error && <p style={{color:"red"}}>{error}</p>}
+            </button> */}
+            {smShow && (
+              <Form.Group
+                controlId="validationCustom04"
+                className="w-75 d-flex flex-column align-items-center"
+              >
+                <Form.Label>{lang === 'ar' ? 'الكود' : 'Code'}</Form.Label>
+                <Form.Control
+                  required
+                  type="text"
+                  className={`form_input_auth ${error && "error_input"}`}
+                  value={mfaCode}
+                  onChange={(e) => setMfaCode(e.target.value)}
+                />
+                <button
+                  type="button"
+                  onClick={handleSubmit}
+                  className="Login-button w-50 my-3"
+                >
+                  {lang === 'ar' ? 'تسجيل دخول' : 'Login'}
+                </button>
+              </Form.Group>
+            )}
+
+            {!mfaCode && !smShow && (
+              <button
+                type="button"
+                onClick={handleSubmit}
+                className="Login-button w-50 mt-3"
+              >
+                 {lang === 'ar' ? 'ارسال الكود' : 'Send Code'}
+              </button>
+            )}
+
+            {error && <p style={{ color: "red" }}>{error}</p>}
 
             <Link to={`/${lang}/signup`} className="link_auth">
-              SignUp
+              {lang === 'ar' ? 'تسجيل حساب' : 'SignUp'}
             </Link>
             {/* <div>
               <img
@@ -179,6 +268,12 @@ function Login() {
           </Form>
         </Col>
       </Row>
+      <ModelAlert
+        show={showModal}
+        handleClose={() => setShowModal(false)}
+        title={modalTitle}
+        message={modalMessage}
+      />
     </Container>
   );
 }

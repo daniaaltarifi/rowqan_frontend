@@ -9,6 +9,7 @@ function CalendarChalets({ setSelectedDate }) {
   const { id } = useParams();
   const lang = location.pathname.split("/")[1] || "en";
   const [currentDate, setCurrentDate] = useState(new Date());
+  // eslint-disable-next-line no-unused-vars
   const [error, setError] = useState("");
   const [reservedDatesMorning, setReservedDatesMorning] = useState([]);
   const [reservedDatesEvening, setReservedDatesEvening] = useState([]);

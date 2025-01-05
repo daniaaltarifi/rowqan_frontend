@@ -48,7 +48,9 @@ function SignUp() {
           phone_number: formData.phone_number,
           country: formData.country,
           password: formData.password,
-          lang: lang
+          confirmPassword: formData.confirmPassword,
+          lang: lang,
+          user_type_id:2
         },
         {
           headers: {
@@ -59,13 +61,12 @@ function SignUp() {
     
       navigate(`/${lang}/login`);
     } catch (error) {
-      // Handle database duplicate email error (ER_DUP_ENTRY)
-      if (error.response && error.response.data && error.response.data.code === 'ER_DUP_ENTRY') {
-        setError(lang === "ar" ? "البريد الالكتروني موجود" : "Email already exists");
-      } else {
-        console.log(`Error fetching post data ${error}`);
-        setError(lang === "ar" ? "حدث خطأ في النظام" : "An error occurred");
-      }
+     if (error.response && error.response.status === 400 && error.response.data.message === 'Email already in use') {
+      setError(lang === "ar" ? "البريد الإلكتروني مستخدم. يرجى إدخال بريد إلكتروني آخر." : "Email already in use. Please enter another email.");
+    } else {
+      console.error(error);
+      setError(lang === "ar" ? "حدث خطأ ما. يرجى المحاولة مرة أخرى." : "An error occurred. Please try again.");
+    }
     }
     setValidated(true);
 

@@ -26,6 +26,11 @@ import Playgrounds from './Pages/Playgrounds';
 import { UserProvider } from './Component/UserContext.jsx';
 import CashBack from './Pages/CashBack.jsx';
 import ChatBot from './Component/ChatBot.jsx';
+import Payment from './Pages/Payment.jsx';
+import {Elements} from '@stripe/react-stripe-js';
+import {loadStripe} from '@stripe/stripe-js';
+const stripePromise = loadStripe('pk_test_51Qdn2mR2zHb3l1vghGZouJnU1trk9lGeHKIoJ5KErNtQcOKobcb7kSabsvsbwYpYUSxwNqI88B0AwCzmUkA49wTB00VrK98O0R');
+
 export const API_URL="http://localhost:5000";
 // export const API_URL="https://rowqanbackend.rowqan.com";
 const DirectionHandler = () => {
@@ -40,13 +45,23 @@ const DirectionHandler = () => {
   return null;
 };
 function App() {
-
+  const options = {
+    mode: 'payment',
+    amount: 1099,
+    currency: 'usd',
+    // Fully customizable with appearance API.
+    appearance: {
+      /*...*/
+    },
+  };
   return (
     <>
     <Router>
       <DirectionHandler/>
     <UserProvider>
     <Header/>
+    <Elements stripe={stripePromise} options={options}>
+
     <Routes>
 
       <Route path="/" element={ <Home/>} />
@@ -59,9 +74,11 @@ function App() {
       <Route path="/:lang/bookingchalet/:id" element={ <BookingChalets/>} />
       <Route path="/:lang/reservechalet/:id" element={ <ReserveChalets/>} />
       <Route path="/:lang/chatbot/:id" element={ <ChatBot/>} />
+      {/* <Elements stripe={stripePromise} options={options}> */}
+      <Route path="/:lang/payment/:reservation_id" element={ <Payment/>} />
 
       <Route path="/:lang/forgetpassword" element={ <ForgetPassword/>} />
-      <Route path="/:lang/resetpassword" element={ <ResetPassword/>} />
+      <Route path="/:lang/resetpassword/:token" element={ <ResetPassword/>} />
       {/* EVENTS ROUTES */}
       <Route path="/:lang/events" element={ <Events/>} />
       <Route path="/:lang/eventscategory/:id" element={ <EventsCategory/>} />
@@ -76,6 +93,8 @@ function App() {
       <Route path="/:lang/cashback" element={ <CashBack/>} />
 
     </Routes>
+    </Elements>
+
       </UserProvider>
     <Footer/>
     </Router>

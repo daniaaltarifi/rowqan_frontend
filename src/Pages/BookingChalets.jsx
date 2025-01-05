@@ -4,12 +4,12 @@ import Carousel from "react-bootstrap/Carousel";
 // import PropTypes from "prop-types";
 import check from "../assets/check.png";
 import whats from "../assets/whats.png";
-import TopPicks from "../Component/TopPicks";
 import { useCallback, useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../App.jsx";
 import ChatNowHeader from "../Component/ChatNowHeader.jsx";
+import BestRated from "../Component/BestRated.jsx";
 function BookingChalets() {
   const location = useLocation();
   const { id } = useParams();
@@ -63,7 +63,7 @@ function BookingChalets() {
   }, [lang]);
   return (
     <div>
-      <ChatNowHeader properitesChalets={properitesChalets} chalet_id={id}/>
+      <ChatNowHeader properitesChalets={properitesChalets} chalet_id={id} price={price}/>
 
       <Container>
         <Carousel fade>
@@ -140,7 +140,8 @@ function BookingChalets() {
                   </button>
                 </Link>
               ))}
-              <Link>
+              <Link to={`/${lang}/chatbot/${id}`} >
+
                 <button className="booknow_button_events w-100 mb-3">
                   <b> {lang === "ar"
                               ? "دردش الأن"
@@ -178,7 +179,7 @@ function BookingChalets() {
         {lang === "ar" ? "خيارات مفضلة " : " Treasure to Choose"}{" "}
         </h4>
       </Container>
-      <TopPicks />
+      <BestRated />
     </div>
   );
 }

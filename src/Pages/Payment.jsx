@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../Css/Payment.css";
 import { Row, Container, Col } from "react-bootstrap";
 import {
@@ -35,7 +35,9 @@ function Payment() {
   const elements = useElements();
   // eslint-disable-next-line no-unused-vars
   const [errorMessage, setErrorMessage] = useState(null);
-
+useEffect(()=>{
+window.scrollTo(0,0);
+},[])
   const handleSubmit = async (event) => {
     event.preventDefault();
 

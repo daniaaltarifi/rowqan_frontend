@@ -4,6 +4,7 @@ import { createContext, useState, useContext, useEffect } from 'react';
 import { API_URL } from '../App';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
+
 // Create Context
 const UserContext = createContext();
 

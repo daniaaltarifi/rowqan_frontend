@@ -1,21 +1,44 @@
 import { Container, Row, Col, Form } from "react-bootstrap";
 import forgetpassword from "../assets/forget.png";
 import { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; 
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+import { API_URL } from "../App";
 function ResetPassword() {
-  const [validated, setValidated] = useState(false);
+  const lang = location.pathname.split("/")[1] || "en";
   const [passwordvisible, setPasswordvisible] = useState(false);
-  const handleSubmit = (event) => {
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-
-    setValidated(true);
-  };
   const togglepasswordVisible = () => {
     setPasswordvisible(!passwordvisible);
+  };
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const { token } = useParams(); // Get the token from the URL
+  const navigate = useNavigate();
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    try {
+      const res = await axios.post(
+        `${API_URL}/users/reset-password/${token}`,
+        { password, confirmPassword },
+        { headers: { "Content-Type": "application/json" } }
+      );
+      setMessage(res.data.message);
+      setError("");
+      setTimeout(() => {
+        navigate(`/${lang}/login`);
+      }, 2500);
+    } catch (err) {
+      setError("حدث خطأ أثناء إعادة تعيين كلمة المرور. حاول مرة أخرى.");
+      console.error("Reset Password error:", err);
+      setMessage("");
+    }
   };
   return (
     <section>
@@ -29,8 +52,7 @@ function ResetPassword() {
           >
             <Form
               noValidate
-              validated={validated}
-              onSubmit={handleSubmit}
+              onSubmit={handleResetPassword}
               className="w-75" // Apply width to form
             >
               <h1 className="title_forgetpass">Set a password</h1>
@@ -47,6 +69,7 @@ function ResetPassword() {
                     type={passwordvisible ? "text" : "password"}
                     placeholder="7789BM6X@@H&$K_"
                     className="form_input_auth"
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                   <button
                     type="button"
@@ -66,6 +89,7 @@ function ResetPassword() {
                     type={passwordvisible ? "text" : "password"}
                     placeholder="7789BM6X@@H&$K_"
                     className="form_input_auth"
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                   />
                   <button
                     type="button"
@@ -80,6 +104,8 @@ function ResetPassword() {
               <button type="submit" className="Login-button w-100 mt-5">
                 Submit
               </button>
+              {message && <p className="message">{message}</p>}
+              {error && <p className="error_message">{error}</p>}
             </Form>
           </Col>
 

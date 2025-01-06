@@ -132,7 +132,11 @@ color: #fff;
 ::-webkit-scrollbar-track{
   background-color: #f1f1f1;
 }
-
+.error_message {
+  color: red;
+  font-size: 0.9em;
+  margin-top: 5px;
+}
 
 @media screen and (max-width: 768px) {
   .auth_img {

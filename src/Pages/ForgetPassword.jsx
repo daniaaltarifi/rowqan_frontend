@@ -1,7 +1,6 @@
 import { Container, Row, Col, Form } from "react-bootstrap";
 import forgetpassword from '../assets/forget.png';
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../App";
 function ForgetPassword() {

@@ -34,6 +34,8 @@ const ReserveChalets = () => {
   const [error, setError] = useState("");
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -42,17 +44,10 @@ const ReserveChalets = () => {
     stateSetter(increment ? currentValue + 1 : Math.max(0, currentValue - 1));
   };
 
-  // const calculatePrice = () => {
-  //   const additionalCost = number_of_daysValue * 20; // 20 JD per day
-  //   const visitorsCost = additional_visitorsValue * 10; // 10 JD per additional visitor
-  //   const priceBerTime = priceTime || 0;
-  //   return defaultPrice + additionalCost + visitorsCost + priceBerTime;
-  // };
   const calculatePrice = () => {
     const additionalCost = number_of_daysValue * 20; // 20 JD per day
     const visitorsCost = additional_visitorsValue * 10; // 10 JD per additional visitor
     const priceBerTime = priceTime || 0; // additional time cost
-    
     // Calculate the total amount based on initial_amount
     const totalAmount = defaultPrice - initial_amount + additionalCost + visitorsCost + priceBerTime;
     return totalAmount;
@@ -88,7 +83,6 @@ const ReserveChalets = () => {
       const reservation_id=res.data.reservation.id
       const initial_amount=res.data.reservation.initial_amount
       const total_amount=res.data.reservation.total_amount
-      console.log("first reservation", initial_amount);
       setTimeout(() => navigate(`/${lang}/payment/${reservation_id}?initial_amount=${initial_amount}&total_amount=${total_amount}`), 2000);
 
     } catch (error) {
@@ -98,48 +92,6 @@ const ReserveChalets = () => {
       setShowModal(true);
     }
   };
-  
-  // const handleConfirmReservation = async () => {
-  //   if (!selectedDate || !lang || !id || !timeId) {
-  //     setError("Please make sure you have selected a Date and Time.");
-  //     return;
-  //   }
-
-  //   const formattedDate = new Date(selectedDate).toLocaleDateString("en-CA");
-
-  //   // Only send initial_amount if it has a valid value
-  //   const reservationData = {
-  //       initial_amount:initial_amount,
-  //       date:formattedDate,
-  //       lang:lang,
-  //       additional_visitors:additional_visitorsValue,
-  //       number_of_days:number_of_daysValue,
-  //       user_id:null,
-  //       chalet_id:id,
-  //       right_time_id:timeId
-    
-  //   };
-
-
-  //   try {
-  //     await axios.post(
-  //       `${API_URL}/ReservationsChalets/createReservationChalet`,
-  //       reservationData
-  //     );
-
-  //     setModalTitle("Success");
-  //     setModalMessage("Reservation confirmed successfully!");
-  //     setShowModal(true);
-  //     // setTimeout(() => navigate(`/${lang}`), 2000);
-  //   } catch (error) {
-  //     console.error("Error confirming reservation:", error);
-  //     setModalTitle("Error");
-  //     setModalMessage("Failed to confirm reservation. Please try again later.");
-  //     setShowModal(true);
-  //   }
-  // };
-
-  const [isOpen, setIsOpen] = useState(false);
 
   // Handle dropdown toggle
   const toggleDropdown = () => {
@@ -163,10 +115,7 @@ const ReserveChalets = () => {
         isOpen={isOpen}
         toggleDropdown={toggleDropdown}
         selectedDate={selectedDate}
-
-        // price={price}
       />
-
       <Container className="mt-5">
         <h6 className="py-2">
           <img src={info} alt="info" height={"30px"} width={"30px"} />

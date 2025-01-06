@@ -34,6 +34,7 @@ function Login() {
   const [ip, setIp] = useState("");
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     // Fetch the IP address as plain text
     fetch("https://api.ipify.org?format=text")
       .then((response) => response.text())
@@ -73,9 +74,11 @@ function Login() {
           password: formData.password,
           mfaCode,
           ip,
+        },  {
+          withCredentials: true, // Ensure cookies are handled
         });
 
-        if (res.data.token) {
+        if (res.status === 200) {
           Cookies.set("token", res.data.token, { expires: 7, secure: true });
           setUserId(res.data.userId);
           navigate(`/${lang}`);

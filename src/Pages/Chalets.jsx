@@ -7,8 +7,10 @@ import { API_URL } from "../App";
 import axios from "axios";
 import chalets from "../assets/chale.jpg";
 import chat from "../assets/chat.png";
+import { useUser } from "../Component/UserContext";
 
 function Chalets() {
+  const {userId}=useUser()
   const lang = location.pathname.split("/")[1] || "en";
   const [chaletsData, setChaletsData] = useState([]);
   const [statusChalets, setStatusChalets] = useState([]);
@@ -138,8 +140,9 @@ function Chalets() {
                       <button className="booknow_button_events">
                         {lang === "ar" ? "شاهد المزيد" : "View More"}
                       </button>
+                     
                       <Link
-                        to={`/${lang}/chatbot/${chal.id}`}
+                        to={userId ? (`/${lang}/chatbot/${chal.id}`) : (`/${lang}/login`)}
                         state={{ chalet_title:chal.title
                       }}
                         className="chat_now_link"
@@ -154,6 +157,8 @@ function Chalets() {
                           {lang === "ar" ? "دردش الأن" : "Chat Now"}
                         </h6>
                       </Link>
+
+                     
                     </div>
                   </Card.Body>
                 </Card>

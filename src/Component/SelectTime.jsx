@@ -46,6 +46,7 @@ const SelectTime = ({ isOpen, toggleDropdown, selectedDate }) => {
     navigate("", {
       state: { timeId, fulldayState,priceTime },
     });
+    // localStorage.setItem("priceTime", priceTime);
   };
 
   const reserveTime = async (timeId, nameTime,priceTime) => {

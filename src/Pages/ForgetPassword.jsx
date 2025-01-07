@@ -27,17 +27,7 @@ const handleForgotPassword = async (e) => {
     console.error('Forgot Password error:', err);
   }
 };
-  // const handleSubmit = (event) => {
-  //   const form = event.currentTarget;
-  //   if (form.checkValidity() === false) {
-  //     event.preventDefault();
-  //     event.stopPropagation();
-  //   }
-
-  //   setValidated(true);
-  //   navigate(`/${lang}/resetpassword`)
-  // };
-
+ 
   return (
     <section>
       <Container>

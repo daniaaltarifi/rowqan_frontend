@@ -3,12 +3,13 @@ import "../Css/ChatNowHeader.css";
 import { Col, Container, Row } from "react-bootstrap";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import { useUser } from "./UserContext";
 function ChatNowHeader({ properitesChalets, chalet_id, price }) {
   // Reference to the header element
+    const {userId}=useUser()
   const headerRef = useRef(null);
   const [isSticky, setIsSticky] = useState(false);
   const lang = location.pathname.split("/")[1] || "en";
-  // console.log("first",properitesChalets)
   useEffect(() => {
     // const header = headerRef.current;
 
@@ -64,7 +65,7 @@ function ChatNowHeader({ properitesChalets, chalet_id, price }) {
               )}
             </Col>
             <Col sm={6} md={6} xl={6} className="d-flex justify-content-center">
-              <Link to={`/${lang}/chatbot/${chalet_id}`}>
+              <Link to={userId ? (`/${lang}/chatbot/${chalet_id}`) : (`/${lang}/login`)}>
                 <button className="chat_now_btn_header m-2">Chat Now</button>
               </Link>
               <Link

@@ -10,9 +10,13 @@ import axios from "axios";
 import { API_URL } from "../App.jsx";
 import ChatNowHeader from "../Component/ChatNowHeader.jsx";
 import BestRated from "../Component/BestRated.jsx";
+import { useUser } from "../Component/UserContext";
+
 function BookingChalets() {
   const location = useLocation();
   const { id } = useParams();
+  const { userId } = useUser();
+
   const lang = location.pathname.split("/")[1] || "en";
   const chaletsImages = location.state?.chaletsImages || [];
   const price = location.state?.price || null;
@@ -63,7 +67,11 @@ function BookingChalets() {
   }, [lang]);
   return (
     <div>
-      <ChatNowHeader properitesChalets={properitesChalets} chalet_id={id} price={price}/>
+      <ChatNowHeader
+        properitesChalets={properitesChalets}
+        chalet_id={id}
+        price={price}
+      />
 
       <Container>
         <Carousel fade>
@@ -80,7 +88,7 @@ function BookingChalets() {
             </Carousel.Item>
           ))}
         </Carousel>
-       
+
         <Row>
           <Col xl={8} md={12} sm={12}>
             <div className="box_overview_chalets mt-4">
@@ -115,10 +123,13 @@ function BookingChalets() {
                 </div>
               ))}
               <div className=" mt-5 ">
-              <h4> {lang === 'ar' ?'السعر':'Price :'}{price} JD</h4>
+                <h4>
+                  {" "}
+                  {lang === "ar" ? "السعر" : "Price :"}
+                  {price} JD
+                </h4>
+              </div>
             </div>
-            </div>
-            
           </Col>
           <Col xl={4} md={12} sm={12}>
             <div className="box_overview_chalets text-center my-4">
@@ -140,12 +151,9 @@ function BookingChalets() {
                   </button>
                 </Link>
               ))}
-              <Link to={`/${lang}/chatbot/${id}`} >
-
+              <Link to={userId ? `/${lang}/chatbot/${id}` : `/${lang}/login`}>
                 <button className="booknow_button_events w-100 mb-3">
-                  <b> {lang === "ar"
-                              ? "دردش الأن"
-                              : "Chat Now"}</b>{" "}
+                  <b> {lang === "ar" ? "دردش الأن" : "Chat Now"}</b>{" "}
                 </button>
               </Link>
             </div>
@@ -176,7 +184,7 @@ function BookingChalets() {
           </Col> */}
         </Row>
         <h4 style={{ color: "#152C5B", marginTop: "10vh" }}>
-        {lang === "ar" ? "خيارات مفضلة " : " Treasure to Choose"}{" "}
+          {lang === "ar" ? "خيارات مفضلة " : " Treasure to Choose"}{" "}
         </h4>
       </Container>
       <BestRated />

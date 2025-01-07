@@ -182,61 +182,6 @@ window.scrollTo(0,0);
               {/* Credit Card Info */}
               {selectedPayment === "credit_card" && (
                 <div className="col-12 col-md-6">
-                  {/* <div className="title_of_credit">
-                    <div className="num">2</div>
-                    <h4>Credit Card Info</h4>
-                  </div>
-                  <div className="field">
-                    <label className="label_of_payment">Cardholder Name</label>
-                    <input
-                      className="input_payment"
-                      id="name"
-                      type="text"
-                      placeholder="Full Name"
-                    />
-                  </div>
-                  <div className="field">
-                    <label className="label_of_payment">Card Number</label>
-                    <input
-                      className="input_payment"
-                      id="address"
-                      type="text"
-                      placeholder="1234-5678-9012-3456"
-                    />
-                  </div>
-                  <div className="row">
-                    <div className="col-6">
-                      <div className="field">
-                        <label className="label_of_payment">Exp. Month</label>
-                        <input
-                          className="input_payment"
-                          id="city"
-                          type="text"
-                          placeholder="12"
-                        />
-                      </div>
-                    </div>
-                    <div className="col-6">
-                      <div className="field">
-                        <label className="label_of_payment">Exp. Year</label>
-                        <input
-                          className="input_payment"
-                          id="state"
-                          type="text"
-                          placeholder="19"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="field">
-                    <label className="label_of_payment">CVC Number</label>
-                    <input
-                      className="input_payment"
-                      id="zip"
-                      type="text"
-                      placeholder="468"
-                    />
-                  </div> */}
                   <form onSubmit={handleSubmit}>
                     <label className="label_of_payment">Phone Number</label>
 
@@ -306,21 +251,6 @@ window.scrollTo(0,0);
                     </button>
                   </div>                </div>
               )}
-            </div>
-          </div>
-          <div className="card-actions row justify-content-center">
-            {/* <div className="col-auto">
-              <button className="button button-secondary btn_payment">
-                Return to Store
-              </button>
-            </div> */}
-            <div className="col-auto">
-              {/* <button className="button button-link btn_payment">
-                Back to Shipping
-              </button> */}
-              {/* <button className="button button-primary btn_payment">
-                Proceed
-              </button> */}
             </div>
           </div>
         </div>

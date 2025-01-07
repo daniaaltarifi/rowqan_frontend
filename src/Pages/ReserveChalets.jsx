@@ -22,7 +22,18 @@ const ReserveChalets = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const lang = location.pathname.split("/")[1] || "en";
-  const { price, timeId, fulldayState, priceTime } = location.state || {};
+  const {priceTime, timeId, fulldayState } = location.state || {};
+  const price = location.state?.price || null;
+console.log("price",price)
+useEffect(() => {
+  if (price) {
+    localStorage.setItem('price', price);
+  }
+}, [price]);
+
+const storedPrice = localStorage.getItem('price') || null;
+
+  // const priceTime=localStorage.getItem("priceTime")
   // States
   // eslint-disable-next-line no-unused-vars
   const [defaultPrice, setDefaultPrice] = useState(price);
@@ -49,7 +60,7 @@ const ReserveChalets = () => {
     const visitorsCost = additional_visitorsValue * 10; // 10 JD per additional visitor
     const priceBerTime = priceTime || 0; // additional time cost
     // Calculate the total amount based on initial_amount
-    const totalAmount = defaultPrice - initial_amount + additionalCost + visitorsCost + priceBerTime;
+    const totalAmount = storedPrice - initial_amount + additionalCost + visitorsCost + priceBerTime;
     return totalAmount;
   };
   const handleConfirmReservation = async () => {

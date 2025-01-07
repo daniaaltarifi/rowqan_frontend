@@ -5,9 +5,12 @@ import axios from "axios";
 import { API_URL } from "../App";
 import ChatNowHeader from "../Component/ChatNowHeader";
 import BestRated from "../Component/BestRated";
+import { useUser } from "../Component/UserContext";
+
 function ChaletsDetails() {
   const location = useLocation();
   const { id } = useParams();
+  const {userId}=useUser()
   const lang = location.pathname.split("/")[1] || "en";
   const price = location.state?.price || null;
   const [largeImage, setLargeImage] = useState(null);
@@ -207,7 +210,8 @@ function ChaletsDetails() {
                   <li>No Brief characteristics</li>
                 )}
               </ul>
-              <Link to={`/${lang}/chatbot/${id}`} >
+              <Link to={userId ? (`/${lang}/chatbot/${id}`) : (`/${lang}/login`)}
+ >
                 <Button variant="outline-warning ">
                   {lang === "ar" ? "دردش الأن" : "Chat Now"}
                 </Button>

@@ -40,7 +40,6 @@ function Login() {
       .then((response) => response.text())
       .then((data) => {
         setIp(data);
-        console.log("first response", data);
       })
       .catch((error) => console.error("Error fetching IP address:", error));
   }, []);

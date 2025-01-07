@@ -52,38 +52,6 @@ function Home() {
             </>
           ))}
         </Row>
-        {/* <section className=" margin_section">
-          <div className="cont_search">
-            <Col className="col_cont_search">
-              <Button variant="light" className="filter_home">
-                <img src={calendar} alt="calendar icon" />
-                <span className="btn_text_filter">{lang === 'ar' ? 'هل متاح':'Check Available'}</span>
-              </Button>
-              <Dropdown>
-                <Dropdown.Toggle variant="light" className="filter_home">
-                  <img src={user} alt="user icon" />
-                  <span className="btn_text_filter"> {lang === 'ar' ? 'الاشخاص':'Person'}</span>
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                  <Dropdown.Item href="#/action-2">
-                    Another action
-                  </Dropdown.Item>
-                  <Dropdown.Item href="#/action-3">
-                    Something else
-                  </Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-              <Button variant="light" className="filter_home">
-                <img src={locations} alt="location icon" />
-                <span className="btn_text_filter"> {lang === 'ar' ? 'الموقع':'Select Location'}</span>
-              </Button>
-
-              <button className="Login-button search_btn_home">{lang === 'ar' ? 'بحث':'Search'}</button>
-            </Col>
-          </div>
-        </section> */}
-
         <section className="margin_section ">
           <Container>
             <Row>

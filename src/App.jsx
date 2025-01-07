@@ -29,6 +29,8 @@ import ChatBot from './Component/ChatBot.jsx';
 import Payment from './Pages/Payment.jsx';
 import {Elements} from '@stripe/react-stripe-js';
 import {loadStripe} from '@stripe/stripe-js';
+import About from './Pages/About.jsx';
+import Blogs from './Pages/Blogs.jsx';
 const stripePromise = loadStripe('pk_test_51Qdn2mR2zHb3l1vghGZouJnU1trk9lGeHKIoJ5KErNtQcOKobcb7kSabsvsbwYpYUSxwNqI88B0AwCzmUkA49wTB00VrK98O0R');
 
 export const API_URL="http://localhost:5000";
@@ -68,6 +70,8 @@ function App() {
       <Route path="/:lang" element={ <Home/>} />
       <Route path="/:lang/signup" element={ <SignUp/>} />
       <Route path="/:lang/login" element={ <Login/>} />
+      <Route path="/:lang/about" element={ <About/>} />
+      <Route path="/:lang/blogs" element={ <Blogs/>} />
       {/* CHALETS ROUTES */}
       <Route path="/:lang/chalets" element={ <Chalets/>} />
       <Route path="/:lang/chaletdetails/:id" element={ <ChaletsDetails/>} />

@@ -165,6 +165,17 @@ font-weight: 300;
 line-height: 15.5px;
 color: #B0B0B0;
 }
+.cont_card_blogs {
+  box-shadow: 12px 12px 4px 0px #6da6ba;
+  margin-bottom: 5vh;
+  min-height: 450px;
+  overflow: hidden;
+  /* height: 400px; */
+}
+.cont_card_blogs:hover{
+  box-shadow: 4px 4px 4px 0px var(--beige-color);
+  transition: all ease-in-out 350ms;
+}
 @media screen and (max-width: 768px) {
   .home-container {
     margin-top: 8vh;

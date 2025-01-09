@@ -206,4 +206,7 @@ color: #B0B0B0;
   .service_home_overlay {
     margin-left: 0;
   }
+  .services_btn_home {
+    font-size: 14px;
+  }
 }

@@ -164,6 +164,9 @@ body {
   li.fade {
     opacity: 1;
   }
+  .Login-button {
+  font-size: 14px;
+  }
 }
 
 .toggle .line1 {

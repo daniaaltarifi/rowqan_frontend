@@ -226,8 +226,10 @@ function ChaletsDetails() {
             lg={6}
             className="d-flex justify-content-around mt-5"
           >
-            {properitesChalets.map((prop) => (
-              <div className="d-flex flex-wrap" key={prop.id}>
+  {/* For large screens (desktop and above) */}
+  <div className="d-flex flex-wrap d-none d-md-flex">
+  {properitesChalets.map((prop) => (
+              <div className="d-flex flex-wrap mt-2" key={prop.id}>
                 <img
                   srcSet={`
                  https://res.cloudinary.com/durjqlivi/${prop.image}?w=400&f_auto&q_auto:eco 400w,
@@ -243,6 +245,29 @@ function ChaletsDetails() {
                 {prop.title}
               </div>
             ))}
+  </div>
+
+  {/* For small screens (mobile and tablet) */}
+  <div className="row d-md-none">
+    {properitesChalets.map((prop) => (
+      <div className="col-6 mb-3" key={prop.id}>
+        <div className="d-flex flex-column align-items-center">
+          <img
+            srcSet={`https://res.cloudinary.com/durjqlivi/${prop.image}?w=400&f_auto&q_auto:eco 400w`}
+            sizes="(max-width: 768px) 100vw, 50vw"
+            decoding="async"
+            loading="lazy"
+            className="rounded-circle mb-2"
+            height="25px"
+            width="25px"
+            alt="properties"
+          />
+          <span>{prop.title}</span>
+        </div>
+      </div>
+    ))}
+  </div>
+
           </Col>
         </Row>
         <Row>

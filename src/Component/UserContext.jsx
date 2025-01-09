@@ -28,7 +28,9 @@ const lang = location.pathname.split("/")[1] || "en";
       console.log("Error fetching user ID:", error.message);
     }
   };
+
   const logout = async () => {
+  
     try {
       await axios.post(`${API_URL}/users/logout`, {}, { withCredentials: true });
       setUserId(null);

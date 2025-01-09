@@ -3,7 +3,7 @@ import "../Css/Lands.css";
 import { Container } from "react-bootstrap";
 import info from "../assets/info.png";
 import days from "../assets/days.png";
-import dollar from "../assets/dollar.png";
+import dollar from "../assets/dollars.png";
 import money from "../assets/save-money.png";
 import people from "../assets/people.jpg";
 import { GoPlus } from "react-icons/go";
@@ -198,6 +198,7 @@ const storedPrice = localStorage.getItem('price') || null;
           <h6 className="ms-2 mt-2">Initial amount:</h6>
           <input
             type="text"
+            placeholder="purchase deposit"
             onChange={(e) => {
               setInitialAmount(e.target.value);
             }}

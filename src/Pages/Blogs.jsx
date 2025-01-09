@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { API_URL } from "../App";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import '../Css/Home.css'
 import { Container, Card, Row, Col } from "react-bootstrap";
 
 function Blogs() {
@@ -43,14 +43,14 @@ const [blogs,setBlogs]=useState([])
                     loading="lazy"
                   />
                   <Card.Body className="d-flex flex-column">
-                    <Card.Title className="title_chalets">
+                    <Card.Title className="title_chalets mt-3">
                       {chal.title}
                     </Card.Title>
 
                     <Row className="">
-                      <div className="d-flex justify-content-evenly mt-5">
+                      <div className="d-flex justify-content-evenly mt-3">
                         <Card.Text className="column-title ">
-                          {chal.description} JD
+                          {chal.description} 
                         </Card.Text>
                       </div>
                     </Row>

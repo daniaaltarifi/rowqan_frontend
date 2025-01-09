@@ -168,10 +168,18 @@ color: #B0B0B0;
 .cont_card_blogs {
   box-shadow: 12px 12px 4px 0px #6da6ba;
   margin-bottom: 5vh;
-  min-height: 450px;
+  height: 550px !important;
   overflow: hidden;
-  /* height: 400px; */
+  }
+.cont_card_blogs .column-title, .cont_card_blogs .title_chalets {
+  display: -webkit-box;            
+  -webkit-line-clamp: 9;           
+  -webkit-box-orient: vertical;   
+  overflow: hidden;              
+  text-overflow: ellipsis;         
+  height: auto;   
 }
+
 .cont_card_blogs:hover{
   box-shadow: 4px 4px 4px 0px var(--beige-color);
   transition: all ease-in-out 350ms;

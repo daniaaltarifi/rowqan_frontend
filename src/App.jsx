@@ -33,8 +33,8 @@ import About from './Pages/About.jsx';
 import Blogs from './Pages/Blogs.jsx';
 const stripePromise = loadStripe('pk_test_51Qdn2mR2zHb3l1vghGZouJnU1trk9lGeHKIoJ5KErNtQcOKobcb7kSabsvsbwYpYUSxwNqI88B0AwCzmUkA49wTB00VrK98O0R');
 
-export const API_URL="http://localhost:5000";
-// export const API_URL="https://rowqanbackend.rowqan.com";
+// export const API_URL="http://localhost:5000";
+export const API_URL="https://rowqanbackend.rowqan.com";
 const DirectionHandler = () => {
   const location = useLocation();
   const lang = location.pathname.split("/")[1] || "en";

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {useState } from "react";
 import { Container, Row, Col, Form } from "react-bootstrap";
 import auth from "../assets/auth.jpg";
 import "../Css/Auth.css";
@@ -30,19 +30,6 @@ function Login() {
     email: "",
     password: "",
   });
-
-  const [ip, setIp] = useState("");
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    // Fetch the IP address as plain text
-    fetch("https://api.ipify.org?format=text")
-      .then((response) => response.text())
-      .then((data) => {
-        setIp(data);
-      })
-      .catch((error) => console.error("Error fetching IP address:", error));
-  }, []);
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -51,16 +38,13 @@ function Login() {
           email: formData.email,
           password: formData.password,
           lang: lang,
-          ip: ip,
         });
-
+  
         if (
           response.status === 200 &&
-          response.data ===
-            "MFA code has been sent to your email. Please enter the code to complete login."
+          response.data === "MFA code has been sent to your email. Please enter the code to complete login."
         ) {
           setError("");
-          // alert(response.data);
           setModalTitle("Success");
           setModalMessage(response.data);
           setShowModal(true);
@@ -72,11 +56,10 @@ function Login() {
           email: formData.email,
           password: formData.password,
           mfaCode,
-          ip,
         },  {
           withCredentials: true, // Ensure cookies are handled
         });
-
+  
         if (res.status === 200) {
           Cookies.set("token", res.data.token, { expires: 7, secure: true });
           setUserId(res.data.userId);
@@ -84,53 +67,127 @@ function Login() {
         }
       }
     } catch (err) {
-      handleError(err);
-      // console.log(err)
+      handleError(err);  // Call handleError to display error message
     }
   };
+  
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     if (!mfaCode) {
+  //       const response = await axios.post(`${API_URL}/users/login`, {
+  //         email: formData.email,
+  //         password: formData.password,
+  //         lang: lang,
+  //       });
+
+  //       if (
+  //         response.status === 200 &&
+  //         response.data ===
+  //           "MFA code has been sent to your email. Please enter the code to complete login."
+  //       ) {
+  //         setError("");
+  //         // alert(response.data);
+  //         setModalTitle("Success");
+  //         setModalMessage(response.data);
+  //         setShowModal(true);
+  //         setSmShow(true);
+  //       }
+  //     } else {
+  //       // Verify email, password, and MFA code
+  //       const res = await axios.post(`${API_URL}/users/login`, {
+  //         email: formData.email,
+  //         password: formData.password,
+  //         mfaCode,
+  //       },  {
+  //         withCredentials: true, // Ensure cookies are handled
+  //       });
+
+  //       if (res.status === 200) {
+  //         Cookies.set("token", res.data.token, { expires: 7, secure: true });
+  //         setUserId(res.data.userId);
+  //         navigate(`/${lang}`);
+  //       }
+  //     }
+  //   } catch (err) {
+  //     handleError(err);
+  //     // console.log(err)
+  //   }
+  // };
+
   const handleError = (err) => {
     if (!err.response || !err.response.status) {
-      setError(
-        "Unable to connect to the server. Check your internet connection."
-      );
+      setError("Unable to connect to the server. Check your internet connection.");
       return;
     }
-
+  
     const { status, data } = err.response;
-
-    // Define a mapping for errors
+  
+    // Define a mapping for errors based on status code and message
     const errorMessages = {
       400: {
-        "User not found":
-          "The email you entered does not belong to any account.",
-        "Invalid password":
-          "The password you entered is incorrect. Please try again.",
-        "Email is not authorized for login process":
-          "Your email is not allowed to log in.",
-        "MFA code has expired":
-          "Your MFA code has expired. Please request a new one.",
-        "Invalid MFA code":
-          "The MFA code you entered is invalid. Please try again.",
+        "User not found": "The email you entered does not belong to any account.",
+        "Invalid password": "The password you entered is incorrect. Please try again.",
+        "Email is not authorized for login process": "Your email is not allowed to log in.",
+        "MFA code has expired": "Your MFA code has expired. Please request a new one.",
+        "Invalid MFA code": "The MFA code you entered is invalid. Please try again.",
       },
       403: {
-        "Access is restricted to Jordan IPs only.":
-          "You must be located in Jordan to access this system.",
-        "Your IP is blocked due to too many failed login attempts.":
-          "Your IP is temporarily blocked due to repeated failed attempts.",
+        "Access is restricted to Jordan IPs only.": "You can only log in from Jordan IPs.",
+        "Login not allowed from this device": "Login not allowed from this device.",
       },
       500: {
         default: "An internal server error occurred. Please try again later.",
       },
     };
-
+  
     // Match the error response to the correct message
     const message =
-      errorMessages[status]?.[data] || // Match exact error message
-      errorMessages[status]?.default || // Use default for the status code
-      "An unexpected error occurred. Please try again later."; // Fallback for unknown errors
-
+      errorMessages[status]?.[data] ||  // Match exact error message
+      errorMessages[status]?.default ||  // Default for the status code
+      "An unexpected error occurred. Please try again later.";  // Fallback for unknown errors
+  
     setError(message);
   };
+  
+  // const handleError = (err) => {
+  //   if (!err.response || !err.response.status) {
+  //     setError(
+  //       "Unable to connect to the server. Check your internet connection."
+  //     );
+  //     return;
+  //   }
+
+  //   const { status, data } = err.response;
+
+  //   // Define a mapping for errors
+  //   const errorMessages = {
+  //     400: {
+  //       "User not found":
+  //         "The email you entered does not belong to any account.",
+  //       "Invalid password":
+  //         "The password you entered is incorrect. Please try again.",
+  //       "Email is not authorized for login process":
+  //         "Your email is not allowed to log in.",
+  //       "MFA code has expired":
+  //         "Your MFA code has expired. Please request a new one.",
+  //       "Invalid MFA code":
+  //         "The MFA code you entered is invalid. Please try again.",
+  //     },
+    
+  //     500: {
+  //       default: "An internal server error occurred. Please try again later.",
+  //     },
+  //   };
+
+  //   // Match the error response to the correct message
+  //   const message =
+  //     errorMessages[status]?.[data] || // Match exact error message
+  //     errorMessages[status]?.default || // Use default for the status code
+  //     "An unexpected error occurred. Please try again later."; // Fallback for unknown errors
+
+  //   setError(message);
+  // };
 
   const handleChange = (e) => {
     const { name, value } = e.target;

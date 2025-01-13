@@ -31,7 +31,7 @@ function SecondLands() {
           {landsimage.length > 0 && landsimage[0]?.image ? (
             <Col xl={6} md={6} sm={12} className="d-flex align-items-stretch">
               <img
-                src={`https://res.cloudinary.com/durjqlivi/${landsimage[0].image}`}
+                src={`https://res.cloudinary.com/dqimsdiht/${landsimage[0].image}`}
                 alt="lands img"
                 className="rounded img-fluid"
                 loading="lazy"
@@ -43,7 +43,7 @@ function SecondLands() {
           {landsimage.length > 1 && landsimage[1]?.image ? (
             <Col xl={6} md={6} sm={12} className="d-flex flex-column">
               <img
-                src={`https://res.cloudinary.com/durjqlivi/${landsimage[1].image}`}
+                src={`https://res.cloudinary.com/dqimsdiht/${landsimage[1].image}`}
                 alt="lands img"
                 className="rounded img-fluid"
                 style={{ height: "65%" }}
@@ -53,7 +53,7 @@ function SecondLands() {
                 {landsimage[2]?.image && (
                   <Col xl={6} md={6} sm={12} className="d-flex align-items-stretch">
                     <img
-                      src={`https://res.cloudinary.com/durjqlivi/${landsimage[2].image}`}
+                      src={`https://res.cloudinary.com/dqimsdiht/${landsimage[2].image}`}
                       alt="lands img"
                       className="rounded img-fluid"
                       loading="lazy"
@@ -63,7 +63,7 @@ function SecondLands() {
                 {landsimage[3]?.image && (
                   <Col xl={6} md={6} sm={12} className="d-flex align-items-stretch">
                     <img
-                      src={`https://res.cloudinary.com/durjqlivi/${landsimage[3].image}`}
+                      src={`https://res.cloudinary.com/dqimsdiht/${landsimage[3].image}`}
                       alt="lands img"
                       className="rounded img-fluid"
                       loading="lazy"

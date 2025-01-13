@@ -4,8 +4,8 @@ import ModelAlert from "./ModelAlert";
 import axios from "axios";
 import { API_URL } from "../App";
 import PropTypes from "prop-types";
-
-function CalendarChalets({ setSelectedDate }) {
+import clock from '../assets/clock.png'
+function CalendarChalets({setSelectedDate,toggleDropdown }) {
   const { id } = useParams();
   const lang = location.pathname.split("/")[1] || "en";
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -25,6 +25,8 @@ function CalendarChalets({ setSelectedDate }) {
 
   // Function to handle date selection for morning and evening calendars
   const handleSelectDate = (day, isMorning) => {
+    console.log(`Date selected: ${day}, isMorning: ${isMorning}`);
+  
     const newDate = new Date(
       currentDate.getFullYear(),
       currentDate.getMonth(),
@@ -35,26 +37,21 @@ function CalendarChalets({ setSelectedDate }) {
     )
       .toString()
       .padStart(2, "0")}-${newDate.getDate().toString().padStart(2, "0")}`;
-
-    // Check if the selected date is reserved
+  
     const reservedDates = isMorning
       ? reservedDatesMorning
       : reservedDatesEvening;
     const isDateReserved = reservedDates.some(
       (reserved) => reserved.date === selectedFormattedDate
     );
-
+  
     if (isDateReserved) {
-      // Show modal alert for reserved date
       setModalTitle("This Date is reserved");
-      setModalMessage(
-        "This date is already reserved. Please choose another date."
-      );
+      setModalMessage("This date is already reserved. Please choose another date.");
       handleShowModal();
       return;
     }
-
-    // Proceed with updating selected date if the date is not reserved
+  
     if (isMorning) {
       setSelectedMorningDate(newDate);
       setSelectedEveningDate(null); // Clear evening selection if morning is selected
@@ -64,7 +61,10 @@ function CalendarChalets({ setSelectedDate }) {
       setSelectedMorningDate(null); // Clear morning selection if evening is selected
       setSelectedDate(newDate); // Update the parent component's selected date
     }
+  
+    toggleDropdown(); // Call toggleDropdown only after handling date selection
   };
+  
 
   const formatDate = (date) => {
     const localYear = date.getUTCFullYear();
@@ -127,13 +127,14 @@ function CalendarChalets({ setSelectedDate }) {
   );
   CalendarChalets.propTypes = {
     setSelectedDate: PropTypes.string.isRequired, // Ensure selectedDate is a Date object
+    toggleDropdown: PropTypes.func.isRequired, // Function to toggle dropdown
   };
   return (
     <>
       <div className="date-picker-container">
         <div className="calendar">
           <h3 className="text-center" style={{ color: "#fff" }}>
-            Morning Reserved Date
+           <img src={clock} alt="clock" /> Morning Date
           </h3>
           <div className="calendar-header">
             <button className="prev-month" onClick={handlePrevMonth}>
@@ -200,7 +201,7 @@ function CalendarChalets({ setSelectedDate }) {
         </div>
         <div className="calendar">
           <h3 className="text-center" style={{ color: "#fff" }}>
-            Evening Reserved Date
+          <img src={clock} alt="clock" />  Evening Date
           </h3>
           <div className="calendar-header">
             <button className="prev-month" onClick={handlePrevMonth}>

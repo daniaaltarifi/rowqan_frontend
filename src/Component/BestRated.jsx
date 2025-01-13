@@ -34,7 +34,7 @@ function BestRated() {
               <Col xl={3} md={6} sm={12} key={best.id}>
               <Link to={`/${lang}/${best.url}`} style={{textDecoration:"none"}}>
                 <img
-                  src={`https://res.cloudinary.com/durjqlivi/${best.image}`}
+                  src={`https://res.cloudinary.com/dqimsdiht/${best.image}`}
                   alt="top picks"
                   height={"200px"}
                   width={"100%"}

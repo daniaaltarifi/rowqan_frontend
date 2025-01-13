@@ -52,7 +52,7 @@ function BookingChalets() {
   const getContact = useCallback(async () => {
     try {
       const contactRes = await axios.get(
-        `${API_URL}/ContactUs/getAllContactUs/${lang}`
+        `${API_URL}/Contacts/getAllContacts/${lang}`
       );
 
       setContact(contactRes.data);
@@ -65,6 +65,14 @@ function BookingChalets() {
     window.scrollTo(0, 0);
     getContact();
   }, [lang]);
+  const isImage = (fileName) => {
+    return /\.(jpg|jpeg|png|gif|webp)$/i.test(fileName); // Checks if the file is an image
+  };
+
+  const isVideo = (fileName) => {
+    return /\.(mp4|mov|avi|mkv)$/i.test(fileName); // Checks if the file is a video
+  };
+
   return (
     <div>
       <ChatNowHeader
@@ -77,11 +85,22 @@ function BookingChalets() {
         <Carousel fade>
           {chaletsImages.map((image, index) => (
             <Carousel.Item key={index}>
-              <img
-                src={`https://res.cloudinary.com/durjqlivi/${image}`} // Make sure `image` contains the correct path
-                alt={`slider-${index}`}
-                className="slider_img rounded"
-              />
+              {isImage(image) ? (
+                <img
+                  alt="image"
+                  className="slider_img rounded"
+                  src={`${image}`}
+                />
+              ) : isVideo(image) ? (
+                <video
+                  controls
+                  autoPlay
+                  width="100%"
+                  height="550px"
+                  src={`${image}`}
+                  type="video/mp4"
+                ></video>
+              ) : null}
               <div className="top_left custom-breadcrumbs">
                 <BreadCrumbs page_to="/ Booking Chalet" />
               </div>
@@ -97,7 +116,7 @@ function BookingChalets() {
                 {properitesChalets.map((prop) => (
                   <div className="d-flex " key={prop.id}>
                     <img
-                      src={`https://res.cloudinary.com/durjqlivi/${prop.image}`}
+                      src={`https://res.cloudinary.com/dqimsdiht/${prop.image}`}
                       className="rounded-circle mx-2"
                       height={"25px"}
                       width={"25px"}
@@ -161,27 +180,15 @@ function BookingChalets() {
         </Row>
         <Row>
           <Col xl={8} md={12} sm={12}>
-            <Link to={`/${lang}/reservechalet/${id}`} state={{ price: price }}>
+            <Link
+              to={`/${lang}/reservechalet/${id}`}
+              state={{ price: price}}
+            >
               <button className="booknow_button_events w-100 my-5">
-                {lang === "ar" ? "احجز الشاليه " : " Booking Chalet"}{" "}
+                {lang === "ar" ? "احجز الشاليه " : " Reserve Now"}{" "}
               </button>
             </Link>
           </Col>{" "}
-          {/* <Col xl={6} md={12} sm={12}>
-            <div className="d-flex justify-content-center mt-5">
-              <h4>{price} JOD</h4>
-            </div>
-            <div className="cont_rating">
-              {[...Array(5)].map((_, index) => (
-                <span
-                  key={index}
-                  style={{ display: "inline-block", marginRight: "5px" }}
-                >
-                  <StarIcon filled={rating > index} />
-                </span>
-              ))}
-            </div>
-          </Col> */}
         </Row>
         <h4 style={{ color: "#152C5B", marginTop: "10vh" }}>
           {lang === "ar" ? "خيارات مفضلة " : " Treasure to Choose"}{" "}

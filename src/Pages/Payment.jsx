@@ -24,6 +24,7 @@ function Payment() {
   const total_amount = queryParams.get("total_amount");
   const [selectedPayment, setSelectedPayment] = useState("credit_card");
   const [phoneNumber, setPhoneNumber] = useState(null);
+  const [name, setName] = useState("");
   const [final_price_pay, setFinal_price_pay] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
@@ -88,7 +89,8 @@ window.scrollTo(0,0);
       // site first to authorize the payment, then redirected to the `return_url`.
     }
   };
-  const handleConfirmPayment = async () => {
+  const handleConfirmPayment = async (e) => {
+    e.preventDefault();
     let status;
     if (selectedPayment === "cliq") {
       status = "Pending";
@@ -101,6 +103,8 @@ window.scrollTo(0,0);
         reservation_id: reservation_id,
         status,
         paymentMethod: selectedPayment,
+        "Phone_Number":phoneNumber,
+        "UserName":name,
       });
       setModalTitle("Success");
       setModalMessage("Payment Added successfully!");
@@ -116,7 +120,8 @@ window.scrollTo(0,0);
         <div className="container main_cont_payment">
           <div className="card-title mb-5">
             <h2>Payment</h2>
-            {/* <h2>Total Amount:{remaining_amount}</h2> */}
+            <h5>Initial Amount:{initial_amount}</h5>
+            <h5>Total Amount:{total_amount}</h5>
           </div>
           <div className="card-body">
             <div className="payment-type">
@@ -188,6 +193,7 @@ window.scrollTo(0,0);
                     <input
                       className="input_payment"
                       type="number"
+                      required
                       onChange={(e) => {
                         setPhoneNumber(e.target.value);
                       }}
@@ -224,14 +230,33 @@ window.scrollTo(0,0);
                     Afterward, share the payment details via WhatsApp to
                     finalize and confirm your reservation then click submit.
                   </p>
-                  <div className="col-auto text-center mt-2">
+                  <form  onSubmit={handleConfirmPayment}                  >
+                    <label className="label_of_payment">Name</label>
+                    <input
+                      className="input_payment"
+                      type="text"
+                      required
+                      onChange={(e) => {
+                        setName(e.target.value);
+                      }}
+                    />
+                    <label className="label_of_payment">Phone Number</label>
+                    <input
+                      className="input_payment"
+                      type="number"
+                      required
+                      onChange={(e) => {
+                        setPhoneNumber(e.target.value);
+                      }}
+                    />
+                    <div className="col-auto text-center mt-2">
                     <button
-                      onClick={handleConfirmPayment}
                       className="button button-primary btn_payment "
                     >
                       Submit
                     </button>
-                  </div>
+                    </div>
+                  </form>
                 </div>
               )}
 
@@ -242,14 +267,34 @@ window.scrollTo(0,0);
                   <p>
                   Please click on Submit to complete and confirm your reservation.
                   </p>
-                  <div className="col-auto text-center mt-2">
+                  <form  onSubmit={handleConfirmPayment}                  >
+                    <label className="label_of_payment">Name</label>
+                    <input
+                      className="input_payment"
+                      type="text"
+                      required
+                      onChange={(e) => {
+                        setName(e.target.value);
+                      }}
+                    />
+                    <label className="label_of_payment">Phone Number</label>
+                    <input
+                      className="input_payment"
+                      type="number"
+                      required
+                      onChange={(e) => {
+                        setPhoneNumber(e.target.value);
+                      }}
+                    />
+                    <div className="col-auto text-center mt-2">
                     <button
-                      onClick={handleConfirmPayment}
                       className="button button-primary btn_payment "
                     >
                       Submit
                     </button>
-                  </div>                </div>
+                    </div>
+                  </form>
+                           </div>
               )}
             </div>
           </div>

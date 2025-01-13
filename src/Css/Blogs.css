@@ -1,0 +1,62 @@
+.background_blogs {
+    position: relative;
+    background-color: #f6ede5;
+    padding-bottom: 150px;
+    overflow: hidden; /* To make sure the pseudo-elements stay within bounds */
+    height: 80vh;
+   display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+}
+  
+  .wave {
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+  }
+  
+  .title_blogs{
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    font-size: 50px;
+  }
+  .subtitle_blog{
+    margin-top: 15px;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+  }
+ 
+.cont_card_blogs {
+    box-shadow: 12px 12px 4px 0px #6da6ba;
+    margin-bottom: 5vh;
+    height: 550px !important;
+    overflow: hidden;
+    }
+  .cont_card_blogs .column-title, .cont_card_blogs .title_chalets {
+    display: -webkit-box;            
+    -webkit-line-clamp: 6;           
+    -webkit-box-orient: vertical;   
+    overflow: hidden;              
+    text-overflow: ellipsis;         
+    height: auto;   
+  }
+  
+  .cont_card_blogs:hover{
+    box-shadow: 4px 4px 4px 0px var(--beige-color);
+    transition: all ease-in-out 350ms;
+  }
+  
+  @media screen and (max-width:768px) {
+    .background_blogs {
+    height: auto;
+    padding-top: 100px;
+    }
+    .title_blogs{
+        font-size: 35px;
+    }
+    .subtitle_blog{
+        font-size: 20px;
+    }
+  }

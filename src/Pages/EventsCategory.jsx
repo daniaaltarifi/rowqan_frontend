@@ -64,7 +64,7 @@ fetchData()
             <Card className="cont_card_chalets">
               <Card.Img
                 variant="top"
-                src={`https://res.cloudinary.com/durjqlivi/${event.image}`}
+                src={`https://res.cloudinary.com/dqimsdiht/${event.image}`}
                 height={"250px"}
                 className="object-fit-cover"
               />

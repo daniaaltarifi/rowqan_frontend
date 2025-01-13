@@ -59,7 +59,7 @@ const Header = () => {
   <div className={`logo ${lang === 'ar' ? 'ltr' : ''}`} key={logos.id} >
     <Link to={`/${lang}`} >
       <img
-        src={`https://res.cloudinary.com/durjqlivi/${logos.image}`}
+        src={`https://res.cloudinary.com/dqimsdiht/${logos.image}`}
         alt="Logo"
       />
     </Link>
@@ -90,23 +90,13 @@ const Header = () => {
             <Link to={`/${lang}/cashback`}>{lang === "ar" ? "الرصيد" : "Cashback"}</Link>
           </li>
         ) : null}
-
-        {/* <li><Link to= {`/${lang}`}>{lang ==='ar' ?"الرئيسية": "Home"}</Link></li> */}
-        {/* <li><Link to={`/${lang}/chalets`}>{lang ==='ar' ?"الشاليهات": "Chalets"}</Link></li> */}
-        {/* <li><Link >{lang ==='ar' ?"الفعاليات": "Events"}</Link></li>
-        <li><Link >{lang ==='ar' ?"الاراضي": "Lands"}</Link></li>  */}
-        {/* <li><Link to={`${lang}/`}>Contact</Link></li>*/}
         <li>
-          {/* <Link to={`${lang}/login`}> */}
           <button onClick={handleAuth} className="Login-button">
             {userId
               ? `${lang === "ar" ? "تسجيل خروج" : "Logout"}`
               : `${lang === "ar" ? "تسجيل دخول" : "Login"}`}
           </button>
-          {/* </Link> */}
         </li>
-
-        {/* <li><Link to={`${lang}/login`}><button className="Login-button">{lang ==='ar' ?"تسجيل دخول": "Login"}</button></Link></li> */}
         <li>
           {" "}
           <div

@@ -24,20 +24,24 @@ const ReserveChalets = () => {
   const lang = location.pathname.split("/")[1] || "en";
   const {priceTime, timeId, fulldayState } = location.state || {};
   const price = location.state?.price || null;
+
 console.log("price",price)
 useEffect(() => {
   if (price) {
     localStorage.setItem('price', price);
+    localStorage.setItem('intial_Amount', intial_Amount);
   }
 }, [price]);
 
-const storedPrice = localStorage.getItem('price') || null;
+// Convert the stored value to a number, or use 0 if it's null or not a valid number
+const storedPrice = Number(localStorage.getItem('price')) || 0;
+const intial_Amount = Number(localStorage.getItem('intial_Amount')) || 0;
+
 
   // const priceTime=localStorage.getItem("priceTime")
   // States
   // eslint-disable-next-line no-unused-vars
   const [defaultPrice, setDefaultPrice] = useState(price);
-  const [initial_amount, setInitialAmount] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const [number_of_daysValue, setNumberOfDaysValue] = useState(0);
   const [additional_visitorsValue, setAdditionalVisitorsValue] = useState(0);
@@ -60,11 +64,11 @@ const storedPrice = localStorage.getItem('price') || null;
     const visitorsCost = additional_visitorsValue * 10; // 10 JD per additional visitor
     const priceBerTime = priceTime || 0; // additional time cost
     // Calculate the total amount based on initial_amount
-    const totalAmount = storedPrice - initial_amount + additionalCost + visitorsCost + priceBerTime;
+    const totalAmount = storedPrice + additionalCost + visitorsCost + priceBerTime;
     return totalAmount;
   };
   const handleConfirmReservation = async () => {
-    if (!selectedDate || !lang || !id || !timeId || !initial_amount) {
+    if (!selectedDate || !lang || !id || !timeId) {
       setError("Please make sure you have selected a Date and Time.");
       return;
     }
@@ -72,7 +76,6 @@ const storedPrice = localStorage.getItem('price') || null;
     const formattedDate = new Date(selectedDate).toLocaleDateString("en-CA");
   
     const reservationData = {
-        initial_amount: initial_amount, // send initial_amount
         date: formattedDate,
         lang: lang,
         additional_visitors: additional_visitorsValue,
@@ -92,9 +95,8 @@ const storedPrice = localStorage.getItem('price') || null;
       setModalMessage("Reservation confirmed successfully!");
       setShowModal(true);
       const reservation_id=res.data.reservation.id
-      const initial_amount=res.data.reservation.initial_amount
       const total_amount=res.data.reservation.total_amount
-      setTimeout(() => navigate(`/${lang}/payment/${reservation_id}?initial_amount=${initial_amount}&total_amount=${total_amount}`), 2000);
+      setTimeout(() => navigate(`/${lang}/payment/${reservation_id}?initial_amount=${intial_Amount}&total_amount=${total_amount}`), 2000);
 
     } catch (error) {
       console.error("Error confirming reservation:", error);
@@ -105,25 +107,38 @@ const storedPrice = localStorage.getItem('price') || null;
   };
 
   // Handle dropdown toggle
-  const toggleDropdown = () => {
-    if (!selectedDate) {
-      setError("Please select a date first.");
-      window.scrollTo(0, 250);
-      return;
-    }
-    setIsOpen((prevIsOpen) => !prevIsOpen);
+  // const toggleDropdown = () => {
+  //   // if (!selectedDate) {
+  //   //   setError("Please select a date first.");
+  //   //   window.scrollTo(0, 250);
+  //   //   return;
+  //   // }
+  //   console.log('Toggling dropdown...');
+
+  //   setIsOpen((prevIsOpen) => !prevIsOpen);
+  //   setError(""); // Reset error on successful selection
+  // };
+  const toggleDropdown = () => {    
+    setIsOpen(() => {
+      const newIsOpen = true;
+      console.log('Dropdown state:', newIsOpen ? 'Opened' : 'Closed'); // Log the state to debug
+      return newIsOpen;
+    });
     setError(""); // Reset error on successful selection
   };
-
+  
   return (
     <>
       <CalendarChalets
         timeId={timeId}
         setSelectedDate={setSelectedDate}
         selectedDate={selectedDate}
+        toggleDropdown={toggleDropdown}
+
       />
       <SelectTime
         isOpen={isOpen}
+        setIsOpen={setIsOpen}
         toggleDropdown={toggleDropdown}
         selectedDate={selectedDate}
       />
@@ -195,14 +210,7 @@ const storedPrice = localStorage.getItem('price') || null;
         </h6>
         <div className="d-flex mb-3">
           <img src={money} alt="info" height={"30px"} width={"30px"} />
-          <h6 className="ms-2 mt-2">Initial amount:</h6>
-          <input
-            type="text"
-            placeholder="purchase deposit"
-            onChange={(e) => {
-              setInitialAmount(e.target.value);
-            }}
-          />
+          <h6 className="ms-2 mt-2">Initial amount: {intial_Amount} JD</h6>
         </div>
         <h6>
           <img src={dollar} alt="info" height={"30px"} width={"30px"} />

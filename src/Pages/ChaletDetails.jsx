@@ -20,7 +20,14 @@ function ChaletsDetails() {
   const [detailsChalets, setDetailsChalets] = useState([]);
   const [briefChalets, setBriefChalets] = useState([]);
   const [properitesChalets, setProperiteChalets] = useState([]);
-
+  const isImage = (fileName) => {
+    return /\.(jpg|jpeg|png|gif|webp)$/i.test(fileName); // Checks if the file is an image
+  };
+  
+  const isVideo = (fileName) => {
+    return /\.(mp4|mov|avi|mkv)$/i.test(fileName); // Checks if the file is a video
+  };
+  
   const fetchData = useCallback(async () => {
     try {
       const [imgchaletRes, detailsChalets, briefRes, properitesRes] =
@@ -95,103 +102,122 @@ function ChaletsDetails() {
 
   return (
     <div>
-      <ChatNowHeader properitesChalets={properitesChalets} chalet_id={id} price={price}/>
+      <ChatNowHeader properitesChalets={properitesChalets} chalet_id={id} price={price} />
       <Container className="mt-5">
         <h1>
           {" "}
           {lang === "ar" ? "تفاصيل هذا الشاليه" : "Details for this chalets"}
         </h1>
         <Row>
-          <Col sm={12} md={12} lg={7} className=" image-grid">
-            {/* Big Image */}
-            <div className="mb-3">
+        <Col sm={12} md={12} lg={7} className="image-grid">
+  {/* Big Image or Video */}
+  <div className="mb-3">
+    {isImage(largeImage) ? (
+      <img
+        alt="image"
+        height={"350px"}
+        width={"100%"}
+        src={`${largeImage}`}
+        decoding="async"
+        loading="eager"
+      />
+    ) : isVideo(largeImage) ? (
+      <video
+        controls
+        autoPlay
+        width="100%"
+        height="350px"
+        src={`${largeImage}`}
+        type="video/mp4"
+      >
+      </video>
+    ) : null}
+  </div>
+
+  {/* Small Images and Videos with Arrows */}
+  <Row className="d-flex justify-content-center position-relative">
+    {/* Left Arrow Column */}
+    <Col
+      xs={1}
+      sm={1}
+      md={1}
+      lg={1}
+      xl={1}
+      className="d-flex justify-content-center align-items-center"
+    >
+      <button className="arrow arrow-left" onClick={handlePrevImages}>
+        &#8249; {/* Left Arrow */}
+      </button>
+    </Col>
+
+    {/* Small Media Column */}
+    <Col
+      xs={10}
+      sm={10}
+      md={10}
+      lg={10}
+      xl={10}
+      className="d-flex justify-content-center"
+    >
+      <div
+        className="small-images-container"
+        ref={smallImagesContainerRef}
+      >
+        {chaletsImages.map((media, index) => (
+          <Col
+            xs={3}
+            sm={3}
+            md={3}
+            lg={3}
+            key={index}
+            className="d-flex justify-content-center"
+          >
+            {isImage(media) ? (
               <img
-                alt="image"
-                height={"350px"}
-                width={"100%"}
-                srcSet={`
-                  https://res.cloudinary.com/durjqlivi/${largeImage}?w=400&f_auto&q_auto:eco 400w,
-                `}
-                sizes="(max-width: 768px) 100vw, 50vw"
-                decoding="async"
-                loading="eager"
+                src={`${media}`}
+                alt={`Small Media ${index + 1}`}
+                className={`img-fluid small-image ${
+                  activeImage ===
+                  `${media}`
+                    ? "active"
+                    : ""
+                }`}
+                onClick={() => handleImageClick(media)}
+                loading="lazy"
               />
-            </div>
-            {/* Small Images with Arrows */}
-            <Row className="d-flex justify-content-center position-relative">
-              {/* Left Arrow Column */}
-              <Col
-                xs={1}
-                sm={1}
-                md={1}
-                lg={1}
-                xl={1}
-                className="d-flex justify-content-center align-items-center"
+            ) : isVideo(media) ? (
+              <video
+                className="video_chalets"
+                onClick={() => handleImageClick(media)}
               >
-                <button className="arrow arrow-left" onClick={handlePrevImages}>
-                  &#8249; {/* Left Arrow */}
-                </button>
-              </Col>
-              {/* Small Images Column */}
-              <Col
-                xs={10}
-                sm={10}
-                md={10}
-                lg={10}
-                xl={10}
-                className="d-flex justify-content-center"
-              >
-                <div
-                  className="small-images-container"
-                  ref={smallImagesContainerRef}
-                >
-                  {chaletsImages.map((image, index) => (
-                    <Col
-                      xs={3}
-                      sm={3}
-                      md={3}
-                      lg={3}
-                      key={index}
-                      className="d-flex justify-content-center"
-                    >
-                      <img
-                        srcSet={`
-                        https://res.cloudinary.com/durjqlivi/${image}?w=400&f_auto&q_auto:eco 400w,
-                      `}
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                        decoding="async"
-                        className={`img-fluid small-image ${
-                          activeImage ===
-                          `https://res.cloudinary.com/durjqlivi/${image}`
-                            ? "active"
-                            : ""
-                        }`}
-                        alt={`Small Product ${index + 1}`}
-                        onClick={() => handleImageClick(image)}
-                        loading="lazy"
-                      />
-                    </Col>
-                  ))}
-                </div>
-              </Col>
-              {/* Right Arrow Column */}
-              <Col
-                xs={1}
-                sm={1}
-                md={1}
-                lg={1}
-                xl={1}
-                className="d-flex justify-content-center align-items-center"
-              >
-                <button
-                  className="arrow arrow-right"
-                  onClick={handleNextImages}
-                >
-                  &#8250; {/* Right Arrow */}
-                </button>
-              </Col>
-            </Row>
+                <source
+                  src={`${media}`}
+                  type="video/mp4"
+                />
+                Your browser does not support the video tag.
+              </video>
+            ) : null}
           </Col>
+        ))}
+      </div>
+    </Col>
+
+    {/* Right Arrow Column */}
+    <Col
+      xs={1}
+      sm={1}
+      md={1}
+      lg={1}
+      xl={1}
+      className="d-flex justify-content-center align-items-center"
+    >
+      <button className="arrow arrow-right" onClick={handleNextImages}>
+        &#8250; {/* Right Arrow */}
+      </button>
+    </Col>
+  </Row>
+</Col>
+
           <Col sm={12} md={12} lg={5}>
             <div className="box_Brief_characteristics">
               <ul>
@@ -232,7 +258,7 @@ function ChaletsDetails() {
               <div className="d-flex flex-wrap mt-2" key={prop.id}>
                 <img
                   srcSet={`
-                 https://res.cloudinary.com/durjqlivi/${prop.image}?w=400&f_auto&q_auto:eco 400w,
+                 https://res.cloudinary.com/dqimsdiht/${prop.image}?w=400&f_auto&q_auto:eco 400w,
                 `}
                   sizes="(max-width: 768px) 100vw, 50vw"
                   decoding="async"
@@ -253,7 +279,7 @@ function ChaletsDetails() {
       <div className="col-6 mb-3" key={prop.id}>
         <div className="d-flex flex-column align-items-center">
           <img
-            srcSet={`https://res.cloudinary.com/durjqlivi/${prop.image}?w=400&f_auto&q_auto:eco 400w`}
+            srcSet={`https://res.cloudinary.com/dqimsdiht/${prop.image}?w=400&f_auto&q_auto:eco 400w`}
             sizes="(max-width: 768px) 100vw, 50vw"
             decoding="async"
             loading="lazy"

@@ -5,7 +5,7 @@ import axios from "axios";
 import { API_URL } from "../App";
 import PropTypes from "prop-types";
 
-const SelectTime = ({ isOpen, toggleDropdown, selectedDate }) => {
+const SelectTime = ({ isOpen,setIsOpen, toggleDropdown, selectedDate }) => {
   const lang = location.pathname.split("/")[1] || "en";
   const navigate = useNavigate();
   const { id } = useParams();
@@ -46,6 +46,7 @@ const SelectTime = ({ isOpen, toggleDropdown, selectedDate }) => {
     navigate("", {
       state: { timeId, fulldayState,priceTime },
     });
+    setIsOpen(false);
     // localStorage.setItem("priceTime", priceTime);
   };
 
@@ -81,16 +82,13 @@ const SelectTime = ({ isOpen, toggleDropdown, selectedDate }) => {
   // PropTypes definition to ensure the correct data types
   SelectTime.propTypes = {
     isOpen: PropTypes.bool.isRequired, // Fix to bool type as per usage
+    setIsOpen: PropTypes.bool.isRequired, // Fix to bool type as per usage
     toggleDropdown: PropTypes.func.isRequired,
     selectedDate: PropTypes.instanceOf(Date), // Ensure selectedDate is a Date object
   };
 
   return (
     <div className="dropdown_select_time d-flex justify-content-center align-items-center">
-      <button className="booknow_button_events mb-3" onClick={toggleDropdown}>
-        Choose Time
-      </button>
-
       {/* Show dropdown when isOpen is true */}
       {isOpen && (
         <ul>
@@ -107,7 +105,7 @@ const SelectTime = ({ isOpen, toggleDropdown, selectedDate }) => {
                   }}
                 >
                   <img
-                    src={`https://res.cloudinary.com/durjqlivi/${timeReservation.image}`}
+                    src={`https://res.cloudinary.com/dqimsdiht/${timeReservation.image}`}
                     alt="time"
                     className="rounded-circle"
                     height={"50px"}

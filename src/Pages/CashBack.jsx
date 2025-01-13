@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
 import { API_URL } from "../App";
 import { useUser } from "../Component/UserContext";
-import '../Css/Auth.css'
+import "../Css/Auth.css";
 function CashBack() {
   const lang = location.pathname.split("/")[1] || "en";
   const { userId } = useUser();
@@ -27,10 +27,10 @@ function CashBack() {
     let apiUrl;
     switch (system) {
       case "chalets":
-        apiUrl = `${API_URL}/ReservationsChalets/reservationsByUserId/${userId}/${lang}`;
+        apiUrl = `${API_URL}/payments/getPayments/${userId}`;
         break;
       default:
-        apiUrl = `${API_URL}/ReservationsChalets/reservationsByUserId/${userId}/${lang}`;
+        apiUrl = `${API_URL}/payments/getPayments/${userId}`;
     }
 
     try {
@@ -49,13 +49,14 @@ function CashBack() {
   const excludedColumns = [
     "id",
     "user_id",
-    "chalet_id",
-    "right_time_id",
-    "chalet.id",
-    "chalets.reserve_price",
-    "user",
-    "right_time.id",
-    "lang",   
+    "createdAt",
+    "reservation_id",
+    "User",
+    "Reservations_Chalet.id",
+    "Reservations_Chalet.date",
+    "Reservations_Chalet.status",
+    "Reservations_Chalet.remaining_amount",
+    "Reservations_Chalet.cashback",
   ];
 
   // Filter out unwanted columns and their values, including nested fields
@@ -86,22 +87,24 @@ function CashBack() {
   return (
     <>
       <div className="main_cont_cashback">
-        {wallet.map((balance) => (
-          <div className="cont_balance" key={balance.id}>
-            <div className="d-flex">
-              <h4>Total Balance:</h4>
-              <h5 className="mt-1">{balance.total_balance} JOD</h5>
+        {wallet.length > 0 ? (
+          wallet.map((balance) => (
+            <div className="cont_balance" key={balance.id}>
+              <div className="d-flex">
+                <h4>Total Balance:</h4>
+                <h5 className="mt-1">{balance.total_balance} JOD</h5>
+              </div>
+              <div className="d-flex">
+                <h4>Cashback Balance:</h4>
+                <h5 className="mt-1">{balance.cashback_balance} JOD</h5>
+              </div>
             </div>
-            {/* <div className="d-flex">
-              <h4>Reserved Balance:</h4>
-              <h5 className="mt-1">{balance.reserved_balance} JOD</h5>
-            </div> */}
-            <div className="d-flex">
-              <h4>Cashback Balance:</h4>
-              <h5 className="mt-1">{balance.cashback_balance} JOD</h5>
-            </div>
+          ))
+        ) : (
+          <div className="cont_balance">
+            <h5>No cashback balance found.</h5>
           </div>
-        ))}
+        )}
       </div>
 
       <div className="d-flex justify-content-evenly align-items-center mt-5">
@@ -131,21 +134,45 @@ function CashBack() {
             </tr>
           </thead>
           <tbody>
-            {reservations.map((reserve, index) => {
-              const filteredReserve = filterColumns(reserve); // Filter out unwanted columns and values
-              return (
-                <tr key={reserve.id}>
-                  <td>{index + 1}</td>
-                  {Object.values(filteredReserve).map((value, index) => (
-                    <td key={index}>
-                      {typeof value === "object"
-                        ? JSON.stringify(value)
-                        : value}
-                    </td>
-                  ))}
-                </tr>
-              );
-            })}
+            {reservations.length > 0 ? (
+              reservations.map((reserve, index) => {
+                const filteredReserve = filterColumns(reserve); // Filter out unwanted columns and values
+                return (
+                  <tr key={reserve.id}>
+                    <td>{index + 1}</td>
+                    {Object.entries(filteredReserve).map(
+                      ([key, value], index) => {
+                        // Check if the column is the 'date' column and format it
+                        if (
+                          key === "updatedAt" &&
+                          value &&
+                          !isNaN(new Date(value).getTime())
+                        ) {
+                          const formattedDate = new Date(
+                            value
+                          ).toLocaleDateString("en-GB"); // Format the date
+                          return <td key={index}>{formattedDate}</td>;
+                        }
+                        // For all other values, display them as is
+                        return (
+                          <td key={index}>
+                            {typeof value === "object"
+                              ? JSON.stringify(value)
+                              : value}
+                          </td>
+                        );
+                      }
+                    )}
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
+                <td className="text-center" colSpan="5">
+                  No reservations found.
+                </td>
+              </tr>
+            )}
           </tbody>
         </Table>
       </div>

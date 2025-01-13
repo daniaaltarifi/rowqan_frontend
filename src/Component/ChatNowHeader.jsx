@@ -29,7 +29,7 @@ function ChatNowHeader({ properitesChalets, chalet_id, price }) {
   ChatNowHeader.propTypes = {
     properitesChalets: PropTypes.array.isRequired,
     chalet_id: PropTypes.string.isRequired,
-    price: PropTypes.string.isRequired
+    price: PropTypes.string.isRequired,
   };
   return (
     <div>
@@ -43,7 +43,7 @@ function ChatNowHeader({ properitesChalets, chalet_id, price }) {
                     🌟 {properitesChalets[0].Chalet.title} 🌟
                   </h2>
                   <div className="d-flex flex-wrap">
-                    {properitesChalets.map((prop) => (
+                    {properitesChalets.slice(-4).map((prop) => (
                       <div className="d-flex" key={prop.id}>
                         <img
                           className="rounded-circle mx-2"
@@ -51,7 +51,7 @@ function ChatNowHeader({ properitesChalets, chalet_id, price }) {
                           width={"25px"}
                           alt="properites"
                           srcSet={`
-                       https://res.cloudinary.com/durjqlivi/${prop.image}?w=400&f_auto&q_auto:eco 400w,
+                       https://res.cloudinary.com/dqimsdiht/${prop.image}?w=400&f_auto&q_auto:eco 400w,
                       `}
                           sizes="(max-width: 768px) 100vw, 50vw"
                           decoding="async"
@@ -71,7 +71,7 @@ function ChatNowHeader({ properitesChalets, chalet_id, price }) {
               <Link
                 to={`/${lang}/reservechalet/${chalet_id}`}
                 state={{
-                  price
+                  price,
                 }}
               >
                 <button className="chat_now_btn_header">Book Now</button>

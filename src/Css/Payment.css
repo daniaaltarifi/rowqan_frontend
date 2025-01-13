@@ -1,25 +1,4 @@
-/* Global Styles */
-/* body {
-    background: #f2f4f7;
-    color: #28333b;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 1em;
-    padding: 0px 25px;
-  } */
-  
-  /* a {
-    color: #28333b;
-    text-decoration: none;
-    border-bottom: 2px solid rgba(64, 179, 255, 0.5);
-    opacity: 0.75;
-    transition: all 0.5s ease;
-  }
-  
-  a:hover {
-    border-bottom: 2px solid rgba(64, 179, 255, 1);
-    opacity: 1;
-  } */
-  
+
   /* Input Fields */
   .field {
     margin-bottom: 25px;
@@ -81,19 +60,6 @@
     max-width: 700px;
     margin: 0 auto;
   }
-  
-  /* .card-title {
-    margin-bottom: 50px;
-  } */
-  
-  /* .card-title h2 {
-    margin: 0;
-  } */
-  
-  /* Card Body */
-  /* .card-body {
-    margin-bottom: 25px;
-  } */
   
   .payment-type, .payment-info {
     margin-bottom: 25px;

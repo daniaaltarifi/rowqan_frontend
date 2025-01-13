@@ -56,7 +56,7 @@ function Lands() {
                   <Card className="cont_card_lands">
                     <Card.Img
                       variant="top"
-                      src={`https://res.cloudinary.com/durjqlivi/${land.image}`}                      height={"200px"}
+                      src={`https://res.cloudinary.com/dqimsdiht/${land.image}`}                      height={"200px"}
                       className="object-fit-cover"
                     />
                     <Card.Body className="d-flex justify-content-evenly">
@@ -75,7 +75,7 @@ function Lands() {
                       land.PropertiesLands.map((prop) => (
                             <span key={prop.id}>
                               <img
-                                src={`https://res.cloudinary.com/durjqlivi/${prop.image}`}
+                                src={`https://res.cloudinary.com/dqimsdiht/${prop.image}`}
                                 alt="wide"
                                 height={"35px"}
                                 width={"35px"}

@@ -45,7 +45,7 @@ function Events() {
         {sliderRes.map((slide) => (
           <Carousel.Item key={slide.id}>
             <img
-              src={`https://res.cloudinary.com/durjqlivi/${slide.image}`}
+              src={`https://res.cloudinary.com/dqimsdiht/${slide.image}`}
               alt="slider"
               className="slider_img"
             />
@@ -89,7 +89,7 @@ function Events() {
               >
                 <Link to={`/${lang}/eventscategory/${event.id}`}>
                   <img
-                    src={`https://res.cloudinary.com/durjqlivi/${event.image}`}
+                    src={`https://res.cloudinary.com/dqimsdiht/${event.image}`}
                     alt="service img"
                     className="img_services_home img_events"
                   />

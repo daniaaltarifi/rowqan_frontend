@@ -35,7 +35,7 @@ function TopPicks() {
               <Link to={`/${lang}/${top.url}`} style={{textDecoration:"none"}}>
 
                 <img
-                  src={`https://res.cloudinary.com/durjqlivi/${top.image}`}
+                  src={`https://res.cloudinary.com/dqimsdiht/${top.image}`}
                   alt="top picks"
                   height={"200px"}
                   width={"100%"}

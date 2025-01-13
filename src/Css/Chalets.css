@@ -3,7 +3,6 @@
   margin-bottom: 5vh;
   min-height: 550px;
   overflow: hidden;
-  /* height: 400px; */
 }
 .cont_card_chalets:hover{
   box-shadow: 4px 4px 4px 0px var(--beige-color);
@@ -68,27 +67,6 @@
 }
 
 /* BASIC CHALETS DETAILS */
-/* .img_chalets_basic_details {
-  border-radius: 25px;
-  box-shadow: 4px 4px 4px 0px var(--beige-color);
-  object-fit: cover;
-}
-
-.box_start_booking {
-  border: 4px solid var(--beige-color);
-  width: 387px;
-  height: 180px;
-  border-radius: 15px;
-  display: grid;
-  place-items: center;
-}
-.price_chalets {
-  font-size: 25px;
-  font-weight: 700;
-  background: linear-gradient(90deg, #f2c79d 0%, #6da6ba 100%);
-  background-clip: text;
-  color: transparent;
-} */
 .box_price{
   background: #F3F3FA;
   width: 100%;
@@ -146,14 +124,6 @@ padding-bottom: 5px;
   cursor: pointer;
 }
 
-/* .plus-minus-button:hover {
-  background-color: #0056b3;
-}
-
-.plus-minus-button:focus {
-  outline: none;
-} */
-
 .value {
   font-size: 20px;
   margin: 0 10px;
@@ -192,7 +162,40 @@ padding-bottom: 5px;
   width: 100%;
   object-fit: cover;
 }
+/* SEARCH BAR */
+.navbar__search {
+  position: relative;
+  color: #aaa;
+  font-size: 16px;
+  width: 100%;
+}
 
+.navbar__search {
+  display: inline-block;
+}
+
+.search_course {
+  width: 100%;
+  height: 38px;
+  background: #fcfcfc;
+  border: 1px solid #aaa;
+  text-indent: 32px;
+  border-radius:10px;
+}
+
+.navbar__search span {
+  position: absolute;
+  top: 10px;
+  font-size: 20px;
+  right: 10px;
+}
+
+.video_chalets{
+  height: 80px;
+  width: 100%;
+  object-fit: cover;
+ 
+}
 /* Media Query for Mobile Devices */
 @media (max-width: 992px) {
   .imagegallery {

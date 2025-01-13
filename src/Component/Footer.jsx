@@ -48,7 +48,7 @@ function Footer() {
           {iconfooter.map((icons) => (
             <Link target="blank" to={icons.link_to} key={icons.id}>
               <img
-                src={`https://res.cloudinary.com/durjqlivi/${icons.icon}`}
+                src={`https://res.cloudinary.com/dqimsdiht/${icons.icon}`}
                 alt="icon"
                 className="rounded-circle mx-3"
                 height={"25px"}

@@ -31,6 +31,8 @@ import {Elements} from '@stripe/react-stripe-js';
 import {loadStripe} from '@stripe/stripe-js';
 import About from './Pages/About.jsx';
 import Blogs from './Pages/Blogs.jsx';
+import BlogDetails from './Pages/BlogDetails.jsx';
+import Contact from './Pages/Contact.jsx';
 const stripePromise = loadStripe('pk_test_51Qdn2mR2zHb3l1vghGZouJnU1trk9lGeHKIoJ5KErNtQcOKobcb7kSabsvsbwYpYUSxwNqI88B0AwCzmUkA49wTB00VrK98O0R');
 
 // export const API_URL="http://localhost:5000";
@@ -72,13 +74,14 @@ function App() {
       <Route path="/:lang/login" element={ <Login/>} />
       <Route path="/:lang/about" element={ <About/>} />
       <Route path="/:lang/blogs" element={ <Blogs/>} />
+      <Route path="/:lang/blogdetails/:id" element={ <BlogDetails/>} />
+      <Route path="/:lang/contact" element={ <Contact/>} />
       {/* CHALETS ROUTES */}
       <Route path="/:lang/chalets" element={ <Chalets/>} />
       <Route path="/:lang/chaletdetails/:id" element={ <ChaletsDetails/>} />
       <Route path="/:lang/bookingchalet/:id" element={ <BookingChalets/>} />
       <Route path="/:lang/reservechalet/:id" element={ <ReserveChalets/>} />
-      <Route path="/:lang/chatbot/:id" element={ <ChatBot/>} />
-      {/* <Elements stripe={stripePromise} options={options}> */}
+      <Route path="/:lang/chatbot" element={ <ChatBot/>} />
       <Route path="/:lang/payment/:reservation_id" element={ <Payment/>} />
 
       <Route path="/:lang/forgetpassword" element={ <ForgetPassword/>} />

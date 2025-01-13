@@ -41,7 +41,7 @@ function Home() {
               <Col md={6}>
                 <Image
                 srcSet={`
-                  https://res.cloudinary.com/durjqlivi/${hero.image}?w=400&f_auto&q_auto:eco 400w,
+                  https://res.cloudinary.com/dqimsdiht/${hero.image}?w=400&f_auto&q_auto:eco 400w,
                 `}
                 sizes="(max-width: 768px) 100vw, 50vw"
                 alt="home img"
@@ -75,7 +75,7 @@ function Home() {
                   >
                 <Link to={`/${lang}/${service.url}`}>
                     <img
-                      src={`https://res.cloudinary.com/durjqlivi/${service.image}`}
+                      src={`https://res.cloudinary.com/dqimsdiht/${service.image}`}
                       alt="service"
                       height={"250px"}
                       width={"420px"}

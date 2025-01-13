@@ -8,7 +8,6 @@
   font-family: Merriweather;
   font-size: 26px;
   font-weight: 600;
-  /* line-height: 69px; */
   margin-top: 9px;
 }
 .sticky {
@@ -39,7 +38,6 @@
 @media screen and (max-width: 768px) {
   .title_chat_header {
     font-size: 17px;
-    /* text-align: center; */
   }
   .chat_now_btn_header {
     height: 40px;

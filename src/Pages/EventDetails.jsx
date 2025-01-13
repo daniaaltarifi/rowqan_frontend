@@ -79,7 +79,7 @@ function EventDetails() {
             {/* Big Image */}
             <div className="big-image mb-3">
               <img
-                src={`https://res.cloudinary.com/durjqlivi/${largeImage}`}
+                src={`https://res.cloudinary.com/dqimsdiht/${largeImage}`}
                 alt="image"
                 height={"350px"}
                 width={"100%"}
@@ -123,10 +123,10 @@ function EventDetails() {
                       className="d-flex justify-content-center"
                     >
                       <img
-                        src={`https://res.cloudinary.com/durjqlivi/${images.image}`}
+                        src={`https://res.cloudinary.com/dqimsdiht/${images.image}`}
                         className={`img-fluid small-image ${
                           activeImage ===
-                          `https://res.cloudinary.com/durjqlivi/${images.image}`
+                          `https://res.cloudinary.com/dqimsdiht/${images.image}`
                             ? "active"
                             : ""
                         }`}

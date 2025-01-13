@@ -13,12 +13,11 @@ function ChatBot() {
   const location = useLocation();
   const {userId}=useUser()
   const lang = location.pathname.split("/")[1] || "en";
-  const chalet_title = location.state?.chalet_title || null;
 
   const [messages, setMessages] = useState([
-    { text: "Hello bro", type: "received", timestamp: "2:37 pm" },
-    { text: "Whats up", type: "received", timestamp: "2:37 pm" },
-    { text: "Mm okay", type: "sent", timestamp: "2:47 pm" },
+    // { text: "Hello bro", type: "received", timestamp: "2:37 pm" },
+    // { text: "Whats up", type: "received", timestamp: "2:37 pm" },
+    // { text: "Mm okay", type: "sent", timestamp: "2:47 pm" },
   ]);
 
   const [socket, setSocket] = useState(null);
@@ -26,20 +25,22 @@ function ChatBot() {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const res = await axios.get(`${API_URL}/messages/betweenMessage/${userId}/5`);
-        // Check if the response contains data and it's an array
+        const res = await axios.get(`${API_URL}/messages/betweenMessage/${userId}`);
         if (res.data && Array.isArray(res.data)) {
-          // Format and add received messages to the state
-          const newMessages = res.data.map((messageObj) => ({
-            text: messageObj.message,  // Extract message text
-            type: messageObj.senderId === userId ? "sent" : "received",  // Determine sent/received type
-            timestamp: new Date().toLocaleTimeString([], {
+          const newMessages = res.data.map((messageObj) => {
+            // Format the timestamp for each message
+            const formattedTime = new Intl.DateTimeFormat("en-US", {
               hour: "2-digit",
               minute: "2-digit",
-            }), // Set timestamp
-          }));
-
-          setMessages((prevMessages) => [...prevMessages, ...newMessages]);
+            }).format(new Date(messageObj.updatedAt));
+    
+            return {
+              text: messageObj.message,
+              type: messageObj.status === "sent" ? "sent" : "received",
+              timestamp: formattedTime,  // Add the formatted time here
+            };
+          });
+          setMessages(newMessages);
         } else {
           console.error("Unexpected data format", res.data);
         }
@@ -47,72 +48,71 @@ function ChatBot() {
         console.error("Error fetching data", error);
       }
     };
-
+    
     fetchMessages();
+  
     // Initialize Socket.IO client
     const socketInstance = socketIOClient(API_URL);
     setSocket(socketInstance);
-
+  
     // Listen for incoming messages from the server
     socketInstance.on("receive_message", (messageData) => {
-      // Update the messages when a new message is received
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          text: messageData.message,
-          type: "received",
-          timestamp: new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-        },
-      ]);
+      // Only add received messages to state
+      if (messageData.senderId !== userId) {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            text: messageData.message,
+            type: "received",
+            timestamp: new Date().toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+          },
+        ]);
+      }
     });
-
+  
     // Cleanup socket connection on component unmount
     return () => {
       socketInstance.disconnect();
     };
-  }, [userId])
+  }, [userId]);
+  
   // Function to send a user message and notify the server
   const sendMessage = async () => {
     const messageInput = document.getElementById("messageInput");
     const message = messageInput.value.trim();
-
+  
     if (message && socket) {
       const timestamp = new Date().toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
       });
-
-      // Add user message to the chat
+  
+      // Add user message to the chat (sent message)
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { text: message, type: "sent", timestamp },
+      ]);
+  
       try {
         const res = await axios.post(`${API_URL}/messages/SendMessage`, {
-          senderId: userId, // Replace with actual sender ID
-          receiverId: 5, // Replace with actual receiver ID
+          senderId: userId,
           message,
+          status:"sent",
           lang,
         });
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { text: message, type: "sent", timestamp },
-        ]);
         console.log("first message sent", res.data);
       } catch (error) {
         console.error("Error sending message:", error);
       }
-      // Clear the input field
+      
+      // Clear the input field after sending
       messageInput.value = "";
-
-      // Emit the message to the server via Socket.IO
-      socket.emit("send_message", {
-        senderId: userId, // Replace with actual sender ID
-        receiverId:5, // Replace with actual receiver ID
-        message,
-        lang,
-      });
     }
   };
+  
 
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
@@ -128,7 +128,6 @@ function ChatBot() {
           <img src={logo} alt="Profile" />
           <div className="header-info">
             <h4>Chalets Owner</h4>
-            <p>{chalet_title}</p>
           </div>
           <i className="fas fa-ellipsis-v"></i>
         </div>

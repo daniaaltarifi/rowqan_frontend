@@ -24,12 +24,11 @@ function About() {
               <Col md={6} key={hero.id}>
                 <h1 className="maintext_home">{hero.title} </h1>
                 <p className="text_home">{hero.description}</p>
-                {/* <Link to={`/${lang}/chalets`}><button className="Login-button">{hero.title_btn}</button></Link> */}
               </Col>
               <Col md={6}>
                 <Image
                 srcSet={`
-                  https://res.cloudinary.com/durjqlivi/${hero.image}?w=400&f_auto&q_auto:eco 400w,
+                  https://res.cloudinary.com/dqimsdiht/${hero.image}?w=400&f_auto&q_auto:eco 400w,
                 `}
                 sizes="(max-width: 768px) 100vw, 50vw"
                 alt="home img"

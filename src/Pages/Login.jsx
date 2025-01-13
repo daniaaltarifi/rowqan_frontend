@@ -1,4 +1,4 @@
-import {useState } from "react";
+import {useEffect, useState } from "react";
 import { Container, Row, Col, Form } from "react-bootstrap";
 import auth from "../assets/auth.jpg";
 import "../Css/Auth.css";
@@ -30,6 +30,9 @@ function Login() {
     email: "",
     password: "",
   });
+  useEffect(()=>{
+window.scrollTo(0, 0);
+  },[])
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -71,50 +74,6 @@ function Login() {
     }
   };
   
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     if (!mfaCode) {
-  //       const response = await axios.post(`${API_URL}/users/login`, {
-  //         email: formData.email,
-  //         password: formData.password,
-  //         lang: lang,
-  //       });
-
-  //       if (
-  //         response.status === 200 &&
-  //         response.data ===
-  //           "MFA code has been sent to your email. Please enter the code to complete login."
-  //       ) {
-  //         setError("");
-  //         // alert(response.data);
-  //         setModalTitle("Success");
-  //         setModalMessage(response.data);
-  //         setShowModal(true);
-  //         setSmShow(true);
-  //       }
-  //     } else {
-  //       // Verify email, password, and MFA code
-  //       const res = await axios.post(`${API_URL}/users/login`, {
-  //         email: formData.email,
-  //         password: formData.password,
-  //         mfaCode,
-  //       },  {
-  //         withCredentials: true, // Ensure cookies are handled
-  //       });
-
-  //       if (res.status === 200) {
-  //         Cookies.set("token", res.data.token, { expires: 7, secure: true });
-  //         setUserId(res.data.userId);
-  //         navigate(`/${lang}`);
-  //       }
-  //     }
-  //   } catch (err) {
-  //     handleError(err);
-  //     // console.log(err)
-  //   }
-  // };
-
   const handleError = (err) => {
     if (!err.response || !err.response.status) {
       setError("Unable to connect to the server. Check your internet connection.");
@@ -150,44 +109,6 @@ function Login() {
     setError(message);
   };
   
-  // const handleError = (err) => {
-  //   if (!err.response || !err.response.status) {
-  //     setError(
-  //       "Unable to connect to the server. Check your internet connection."
-  //     );
-  //     return;
-  //   }
-
-  //   const { status, data } = err.response;
-
-  //   // Define a mapping for errors
-  //   const errorMessages = {
-  //     400: {
-  //       "User not found":
-  //         "The email you entered does not belong to any account.",
-  //       "Invalid password":
-  //         "The password you entered is incorrect. Please try again.",
-  //       "Email is not authorized for login process":
-  //         "Your email is not allowed to log in.",
-  //       "MFA code has expired":
-  //         "Your MFA code has expired. Please request a new one.",
-  //       "Invalid MFA code":
-  //         "The MFA code you entered is invalid. Please try again.",
-  //     },
-    
-  //     500: {
-  //       default: "An internal server error occurred. Please try again later.",
-  //     },
-  //   };
-
-  //   // Match the error response to the correct message
-  //   const message =
-  //     errorMessages[status]?.[data] || // Match exact error message
-  //     errorMessages[status]?.default || // Use default for the status code
-  //     "An unexpected error occurred. Please try again later."; // Fallback for unknown errors
-
-  //   setError(message);
-  // };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -261,9 +182,6 @@ function Login() {
                 {lang === 'ar' ? 'نسيت كلمة السر' : 'Forget Password'}
               </Link>
             </Form.Group>
-            {/* <button type="submit" className="Login-button w-50 mt-3">
-              Login
-            </button> */}
             {smShow && (
               <Form.Group
                 controlId="validationCustom04"
@@ -302,28 +220,6 @@ function Login() {
             <Link to={`/${lang}/signup`} className="link_auth">
               {lang === 'ar' ? 'تسجيل حساب' : 'SignUp'}
             </Link>
-            {/* <div>
-              <img
-                src={gmail}
-                alt="social icon"
-                height={"30px"}
-                width={"30px"}
-              />
-              <img
-                src={facebook}
-                alt="social icon"
-                height={"30px"}
-                width={"30px"}
-                className="ms-2"
-              />
-              <img
-                src={instagram}
-                alt="social icon"
-                height={"30px"}
-                width={"30px"}
-                className="ms-2"
-              />
-            </div> */}
           </Form>
         </Col>
       </Row>

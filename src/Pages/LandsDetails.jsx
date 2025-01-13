@@ -77,7 +77,7 @@ function LandsDetails() {
           <Col sm={12} md={12} lg={8} className="image-grid">
             <div className="mb-3">
               <img
-                src={`https://res.cloudinary.com/durjqlivi/${largeImage}`}
+                src={`https://res.cloudinary.com/dqimsdiht/${largeImage}`}
                 alt="Large Image"
                 height={"350px"}
                 width={"100%"}
@@ -124,10 +124,10 @@ function LandsDetails() {
                       className="d-flex justify-content-center"
                     >
                       <img
-                        src={`https://res.cloudinary.com/durjqlivi/${land.image}`}
+                        src={`https://res.cloudinary.com/dqimsdiht/${land.image}`}
                         className={`img-fluid small-image ${
                           activeImage ===
-                          `https://res.cloudinary.com/durjqlivi/${land.image}`
+                          `https://res.cloudinary.com/dqimsdiht/${land.image}`
                             ? "active"
                             : ""
                         }`}

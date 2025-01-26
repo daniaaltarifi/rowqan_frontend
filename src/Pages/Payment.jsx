@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import "../Css/Payment.css";
 import { Row, Container, Col } from "react-bootstrap";
-import {
-  useStripe,
-  useElements,
-  PaymentElement,
-} from "@stripe/react-stripe-js";
 import { API_URL } from "../App";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import axios from "axios";
 import { useUser } from "../Component/UserContext";
-import ModelAlert from "../Component/ModelAlert";
+import checked from "../assets/checked.png";
+import failed from "../assets/cross.png";
+import {
+  PayPalButtons,
+} from "@paypal/react-paypal-js";
+const style = { layout: "vertical" };
 
 function Payment() {
   const { userId } = useUser();
@@ -26,71 +26,21 @@ function Payment() {
   const [phoneNumber, setPhoneNumber] = useState(null);
   const [name, setName] = useState("");
   const [final_price_pay, setFinal_price_pay] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [modalTitle, setModalTitle] = useState("");
-  const [modalMessage, setModalMessage] = useState("");
+  const [conversionRate, setConversionRate] = useState(0); // Store the conversion rate
+  const [response, setResponse] = useState(null);
+  const [error, setError] = useState(null);
   const handlePaymentTypeChange = (paymentType) => {
     setSelectedPayment(paymentType);
   };
-  const stripe = useStripe();
-  const elements = useElements();
-  // eslint-disable-next-line no-unused-vars
-  const [errorMessage, setErrorMessage] = useState(null);
-useEffect(()=>{
-window.scrollTo(0,0);
-},[])
-  const handleSubmit = async (event) => {
-    event.preventDefault();
 
-    if (elements == null) {
-      return;
-    }
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
-    // Trigger form validation and wallet collection
-    const { error: submitError } = await elements.submit();
-    if (submitError) {
-      // Show error to your customer
-      setErrorMessage(submitError.message);
-      return;
-    }
-    let amount;
-    if (final_price_pay === "initial_amount") {
-      amount = initial_amount; 
-    } else {
-      amount = total_amount; 
-    }
-    // Create the PaymentIntent and obtain clientSecret from your server endpoint
-    const res = await fetch(`${API_URL}/payments/createPaymentIntent`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json", 
-      },
-      body: JSON.stringify({ amount, phoneNumber }), 
-    });
-
-    const { clientSecret } = await res.json(); 
-    const { error } = await stripe.confirmPayment({
-      //`Elements` instance that was used to create the Payment Element
-      elements,
-      clientSecret,
-      confirmParams: {
-        return_url: `https://rowqan.com`,
-      },
-    });
-
-    if (error) {
-      // This point will only be reached if there is an immediate error when
-      // confirming the payment. Show error to your customer (for example, payment
-      // details incomplete)
-      setErrorMessage(error.message);
-    } else {
-      // Your customer will be redirected to your `return_url`. For some payment
-      // methods like iDEAL, your customer will be redirected to an intermediate
-      // site first to authorize the payment, then redirected to the `return_url`.
-    }
-  };
   const handleConfirmPayment = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
     let status;
     if (selectedPayment === "cliq") {
       status = "Pending";
@@ -98,21 +48,78 @@ window.scrollTo(0,0);
       status = "Confirmed";
     }
     try {
-      await axios.post(`${API_URL}/payments/createPayment`, {
+      const res = await axios.post(`${API_URL}/payments/createPayment`, {
         user_id: userId || null,
         reservation_id: reservation_id,
         status,
         paymentMethod: selectedPayment,
-        "Phone_Number":phoneNumber,
-        "UserName":name,
+        Phone_Number: phoneNumber,
+        UserName: name,
       });
-      setModalTitle("Success");
-      setModalMessage("Payment Added successfully!");
-      setShowModal(true);
-      setTimeout(() => navigate(`/${lang}`), 2500);
+      setResponse(res.data);
+      // setModalTitle("Success");
+      // setModalMessage("Payment Added successfully!");
+      // setShowModal(true);
+      window.scrollTo(0, 500);
+      setTimeout(() => navigate(`/${lang}`), 5500);
     } catch (error) {
       console.error("Error confirming Payment:", error);
+      setError(error.response?.data?.error || "An error occurred.");
     }
+  };
+  useEffect(() => {
+    const fetchConversionRate = async () => {
+      try {
+        const response = await fetch(
+          `https://v6.exchangerate-api.com/v6/48fb1b6e8b9bab92bb9abe37/latest/USD`
+        );
+        const data = await response.json();
+        if (data.result === "success") {
+          const rate = data.conversion_rates.JOD; // Get the JOD to USD rate
+          setConversionRate(rate); // Store the rate
+        } else {
+          console.error("Failed to fetch conversion rate");
+        }
+      } catch (error) {
+        console.error("Error fetching exchange rate:", error);
+      }
+    };
+
+    fetchConversionRate();
+  }, []);
+  const createOrder = (data, actions) => {
+    const total_amount_usd = (final_price_pay / conversionRate).toFixed(2); // Convert JOD to USD
+    return actions.order
+      .create({
+        intent: "CAPTURE",
+        purchase_units: [
+          {
+            description: "Cool looking table",
+            amount: {
+              currency_code: "USD", // Use USD as the currency
+              value: total_amount_usd, // Use the converted value
+              name: name,
+              phoneNumber: phoneNumber,
+            },
+          },
+        ],
+      })
+      .then((orderId) => {
+        return orderId; // Return the order ID
+      });
+  };
+
+  const onApprove = async (data, actions) => {
+    const order = await actions.order.capture();
+    console.log("Order captured:", order);
+    if (order) {
+      handleConfirmPayment();
+    }
+  };
+
+  const onError = (err) => {
+    console.error("PayPal error:", err);
+    setError(err);
   };
   return (
     <div>
@@ -187,7 +194,17 @@ window.scrollTo(0,0);
               {/* Credit Card Info */}
               {selectedPayment === "credit_card" && (
                 <div className="col-12 col-md-6">
-                  <form onSubmit={handleSubmit}>
+                  <form>
+                    <label className="label_of_payment">Name</label>
+
+                    <input
+                      className="input_payment"
+                      type="text"
+                      required
+                      onChange={(e) => {
+                        setName(e.target.value);
+                      }}
+                    />
                     <label className="label_of_payment">Phone Number</label>
 
                     <input
@@ -202,25 +219,26 @@ window.scrollTo(0,0);
                       aria-label="Default select example"
                       className="my-2"
                       onChange={(e) => setFinal_price_pay(e.target.value)}
+                      required
                     >
                       <option>Choose Total Payment</option>
-                      <option value="initial_amount">Initial amount</option>
-                      <option value="total_amount">Total amount</option>
+                      <option value={initial_amount}>Initial amount</option>
+                      <option value={total_amount}>Total amount</option>
                     </Form.Select>
-                    <PaymentElement />
-                    <div className="col-auto text-center mt-2">
-                      <button
-                        disabled={!stripe}
-                        className="button button-primary btn_payment "
-                      >
-                        Submit
-                      </button>
-                    </div>
+
+                    <PayPalButtons
+                      style={style}
+                      disabled={!name || !phoneNumber || !final_price_pay}
+                      createOrder={createOrder}
+                      onApprove={onApprove}
+                      onError={onError}
+                      fundingSource="paypal"
+                    />
                   </form>
                 </div>
               )}
 
-              {/* PayPal Info */}
+              {/* cliq Info */}
               {selectedPayment === "cliq" && (
                 <div className="col-12 col-md-6">
                   <h4>Pay with Cliq</h4>
@@ -230,7 +248,7 @@ window.scrollTo(0,0);
                     Afterward, share the payment details via WhatsApp to
                     finalize and confirm your reservation then click submit.
                   </p>
-                  <form  onSubmit={handleConfirmPayment}                  >
+                  <form onSubmit={handleConfirmPayment}>
                     <label className="label_of_payment">Name</label>
                     <input
                       className="input_payment"
@@ -250,24 +268,23 @@ window.scrollTo(0,0);
                       }}
                     />
                     <div className="col-auto text-center mt-2">
-                    <button
-                      className="button button-primary btn_payment "
-                    >
-                      Submit
-                    </button>
+                      <button className="button button-primary btn_payment ">
+                        Submit
+                      </button>
                     </div>
                   </form>
                 </div>
               )}
 
-              {/* Amazon Info */}
+              {/* cash Info */}
               {selectedPayment === "cash" && (
                 <div className="col-12 col-md-6">
                   <h4>Pay with Cash</h4>
                   <p>
-                  Please click on Submit to complete and confirm your reservation.
+                    Please click on Submit to complete and confirm your
+                    reservation.
                   </p>
-                  <form  onSubmit={handleConfirmPayment}                  >
+                  <form onSubmit={handleConfirmPayment}>
                     <label className="label_of_payment">Name</label>
                     <input
                       className="input_payment"
@@ -287,25 +304,52 @@ window.scrollTo(0,0);
                       }}
                     />
                     <div className="col-auto text-center mt-2">
-                    <button
-                      className="button button-primary btn_payment "
-                    >
-                      Submit
-                    </button>
+                      <button className="button button-primary btn_payment ">
+                        Submit
+                      </button>
                     </div>
                   </form>
-                           </div>
+                </div>
               )}
             </div>
           </div>
         </div>
+        {response && (
+          <div className="container">
+            <div className="row justify-content-center">
+              <div className="col-lg-6 col-md-12 col-sm-12">
+                <div className="message-box _success">
+                  <img src={checked} alt="success" className="mb-3" />{" "}
+                  <h4> Your payment was successful </h4>
+                  <p> Thank you for your payment.</p>
+                  {/* <p>Status: {response.status}</p>
+                  <p>Order ID: {response.id}</p> */}
+                  {/* <p>Name: {response.payer.name.given_name} {response.payer.name.surname}</p>
+                  <p>Payer Id: {response.payer.name.payer_id}</p> */}
+                  <p>Name: {response.payment.UserName}</p>
+                  <p>Phone Number {response.payment.Phone_Number}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {error && (
+          <div className="container">
+            <div className="row justify-content-center">
+              <div className="col-lg-6 col-md-12 col-sm-12">
+                <div className="message-box _success _failed">
+                  <img src={failed} alt="failed" className="mb-3" />{" "}
+                  <h4> Your payment failed </h4>
+                  <p style={{ color: "red", textAlign: "center" }}>
+                    {" "}
+                    {error} Try again later{" "}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </article>
-      <ModelAlert
-        show={showModal}
-        handleClose={() => setShowModal(false)}
-        title={modalTitle}
-        message={modalMessage}
-      />
     </div>
   );
 }

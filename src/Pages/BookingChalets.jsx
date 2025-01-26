@@ -1,8 +1,7 @@
 import { Row, Container, Col } from "react-bootstrap";
 import BreadCrumbs from "../Component/BreadCrumbs";
 import Carousel from "react-bootstrap/Carousel";
-// import PropTypes from "prop-types";
-import check from "../assets/check.png";
+import PropTypes from "prop-types";
 import whats from "../assets/whats.png";
 import { useCallback, useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
@@ -19,35 +18,34 @@ function BookingChalets() {
 
   const lang = location.pathname.split("/")[1] || "en";
   const chaletsImages = location.state?.chaletsImages || [];
-  const price = location.state?.price || null;
-  const detailsChalets = location.state?.detailsChalets || [];
-  const properitesChalets = location.state?.properitesChalets || [];
+  const price = localStorage.getItem("price") || 0;
+  const dataChalets = location.state?.dataChalets || [];
   const [contact, setContact] = useState([]);
-  // const rating = 5;
+  const rating = dataChalets.Rating;
 
-  // const colors = {
-  //   orange: "#F2C265",
-  //   grey: "#a9a9a9",
-  // };
+  const colors = {
+    orange: "#F2C265",
+    grey: "#a9a9a9",
+  };
 
-  // // Star icon SVG component
-  // const StarIcon = ({ filled }) => (
-  //   <svg
-  //     xmlns="http://www.w3.org/2000/svg"
-  //     viewBox="0 0 24 24"
-  //     width="24"
-  //     height="24"
-  //   >
-  //     <path
-  //       d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
-  //       fill={filled ? colors.orange : colors.grey} // Use colors.orange for filled and colors.grey for empty
-  //     />
-  //   </svg>
-  // );
-  // // Prop types validation for StarIcon
-  // StarIcon.propTypes = {
-  //   filled: PropTypes.bool.isRequired, // Validate that 'filled' is a required boolean
-  // };
+  // Star icon SVG component
+  const StarIcon = ({ filled }) => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width="24"
+      height="24"
+    >
+      <path
+        d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+        fill={filled ? colors.orange : colors.grey} // Use colors.orange for filled and colors.grey for empty
+      />
+    </svg>
+  );
+  // Prop types validation for StarIcon
+  StarIcon.propTypes = {
+    filled: PropTypes.bool.isRequired, // Validate that 'filled' is a required boolean
+  };
 
   const getContact = useCallback(async () => {
     try {
@@ -72,14 +70,11 @@ function BookingChalets() {
   const isVideo = (fileName) => {
     return /\.(mp4|mov|avi|mkv)$/i.test(fileName); // Checks if the file is a video
   };
+  const descriptionList = dataChalets.description.split("\n");
 
   return (
     <div>
-      <ChatNowHeader
-        properitesChalets={properitesChalets}
-        chalet_id={id}
-        price={price}
-      />
+      <ChatNowHeader dataChalets={dataChalets} chalet_id={id} price={price} />
 
       <Container>
         <Carousel fade>
@@ -113,34 +108,29 @@ function BookingChalets() {
             <div className="box_overview_chalets mt-4">
               <h5> {lang === "ar" ? "الملخص " : "Overview"} </h5>
               <div className="d-flex flex-wrap justify-content-evenly">
-                {properitesChalets.map((prop) => (
-                  <div className="d-flex " key={prop.id}>
-                    <img
-                      src={`https://res.cloudinary.com/dqimsdiht/${prop.image}`}
-                      className="rounded-circle mx-2"
-                      height={"25px"}
-                      width={"25px"}
-                      alt="properites"
-                    />{" "}
-                    {prop.title}
-                  </div>
-                ))}
+                <b>{dataChalets.Additional_features}</b>
               </div>
               <h5 className="mt-3">
                 {" "}
                 {lang === "ar" ? "الوصف " : "Description"}{" "}
               </h5>
-              {detailsChalets.map((details) => (
-                <div className="d-flex mt-3" key={details.id}>
-                  <img
-                    src={check}
-                    height={"25px"}
-                    width={"25px"}
-                    alt="people"
-                  />
-                  {details.Detail_Type}
-                </div>
-              ))}
+              <div>
+                {descriptionList.map((item, index) => (
+                  <p key={index}>
+                    {item} 
+                  </p>
+                ))}
+              </div>{" "}
+              <div className="cont_rating">
+                {[...Array(5)].map((_, index) => (
+                  <span
+                    key={index}
+                    style={{ display: "inline-block", marginRight: "5px" }}
+                  >
+                    <StarIcon filled={rating > index} />
+                  </span>
+                ))}
+              </div>
               <div className=" mt-5 ">
                 <h4>
                   {" "}
@@ -182,7 +172,7 @@ function BookingChalets() {
           <Col xl={8} md={12} sm={12}>
             <Link
               to={`/${lang}/reservechalet/${id}`}
-              state={{ price: price}}
+              state={{ type: dataChalets.type }}
             >
               <button className="booknow_button_events w-100 my-5">
                 {lang === "ar" ? "احجز الشاليه " : " Reserve Now"}{" "}

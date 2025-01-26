@@ -1,7 +1,7 @@
 .cont_card_chalets {
   box-shadow: 12px 12px 4px 0px #6da6ba;
   margin-bottom: 5vh;
-  min-height: 550px;
+  min-height:480px;
   overflow: hidden;
 }
 .cont_card_chalets:hover{
@@ -196,6 +196,65 @@ padding-bottom: 5px;
   object-fit: cover;
  
 }
+.type_chalets{
+  font-size: 14px;
+  font-weight: bold;
+}
+.filter_button_chalets{
+  background: linear-gradient(90deg, #f2c79d 24.5%, #afb7ab 50%, #6da6ba 82%);
+  border-radius: 10px;
+  border: none;
+  height: 40px;
+  width: 100%;
+  font-weight: bold;
+}
+
+.filter_button_chalets:hover{
+  background: linear-gradient(90deg, #f2c79d 24.5%, #f2c79d 50%, #6da6ba 82%);
+  box-shadow: 4px 4px 4px 0px var(--beige-color);
+
+}
+/* Initially hide the filter container */
+.filter-popup {
+  position: fixed;
+  top: 0;
+  right: -350px; 
+  width: 350px; 
+  height: 100%;
+  background-color: white;
+  border-left: 2px solid #ccc;
+  box-shadow: -2px 0px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  z-index: 1000;
+  overflow-y: auto;
+  transition: right 0.3s ease-in-out;
+}
+
+/* Animation when opened */
+@keyframes slideIn {
+  from {
+    right: -350px;
+  }
+  to {
+    right: 0;
+  }
+}
+
+.filter-popup.open {
+  animation: slideIn 0.4s ease-in-out forwards;
+}
+
+.close-popup-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+
 /* Media Query for Mobile Devices */
 @media (max-width: 992px) {
   .imagegallery {

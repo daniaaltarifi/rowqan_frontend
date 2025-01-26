@@ -27,13 +27,12 @@ import { UserProvider } from './Component/UserContext.jsx';
 import CashBack from './Pages/CashBack.jsx';
 import ChatBot from './Component/ChatBot.jsx';
 import Payment from './Pages/Payment.jsx';
-import {Elements} from '@stripe/react-stripe-js';
-import {loadStripe} from '@stripe/stripe-js';
 import About from './Pages/About.jsx';
 import Blogs from './Pages/Blogs.jsx';
 import BlogDetails from './Pages/BlogDetails.jsx';
 import Contact from './Pages/Contact.jsx';
-const stripePromise = loadStripe('pk_test_51Qdn2mR2zHb3l1vghGZouJnU1trk9lGeHKIoJ5KErNtQcOKobcb7kSabsvsbwYpYUSxwNqI88B0AwCzmUkA49wTB00VrK98O0R');
+import Offers from './Pages/Offers.jsx';
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 
 // export const API_URL="http://localhost:5000";
 export const API_URL="https://rowqanbackend.rowqan.com";
@@ -49,14 +48,10 @@ const DirectionHandler = () => {
   return null;
 };
 function App() {
-  const options = {
-    mode: 'payment',
-    amount: 1099,
-    currency: 'usd',
-    // Fully customizable with appearance API.
-    appearance: {
-      /*...*/
-    },
+  const initialOptions = {
+    "client-id": "ARspiEadSuarPJ25VpOsCA_fz6_GbGjX-zFG6Jcpa6YZozEF5AmPAej0DNP_Q1vWsnwXsDp92KG8e7Vz",
+    currency: "USD",
+    intent: "capture",
   };
   return (
     <>
@@ -64,7 +59,7 @@ function App() {
       <DirectionHandler/>
     <UserProvider>
     <Header/>
-    <Elements stripe={stripePromise} options={options}>
+    <PayPalScriptProvider options={initialOptions}>
 
     <Routes>
 
@@ -81,8 +76,9 @@ function App() {
       <Route path="/:lang/chaletdetails/:id" element={ <ChaletsDetails/>} />
       <Route path="/:lang/bookingchalet/:id" element={ <BookingChalets/>} />
       <Route path="/:lang/reservechalet/:id" element={ <ReserveChalets/>} />
-      <Route path="/:lang/chatbot" element={ <ChatBot/>} />
+      <Route path="/:lang/chatbot/:chalet_id" element={ <ChatBot/>} />
       <Route path="/:lang/payment/:reservation_id" element={ <Payment/>} />
+      <Route path="/:lang/offers" element={ <Offers/>} />
 
       <Route path="/:lang/forgetpassword" element={ <ForgetPassword/>} />
       <Route path="/:lang/resetpassword/:token" element={ <ResetPassword/>} />
@@ -100,7 +96,7 @@ function App() {
       <Route path="/:lang/cashback" element={ <CashBack/>} />
 
     </Routes>
-    </Elements>
+    </PayPalScriptProvider>
 
       </UserProvider>
     <Footer/>

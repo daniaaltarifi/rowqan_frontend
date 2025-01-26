@@ -17,10 +17,11 @@ function Home() {
   const getHero = useCallback(async () => {
     const [heroRes, servRes] = await Promise.all([
       axios.get(`${API_URL}/heroes/getAllHeroes/${lang}`),
-      axios.get(`${API_URL}/services/getAllServices/${lang}`),
+      axios.get(`${API_URL}/chalets/getallchalets/${lang}`),
     ]);
     setHeroes(heroRes.data);
-    setServices(servRes.data);
+    const chalets=servRes.data.slice(-4)
+    setServices(chalets);
   }, [lang]);
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -57,7 +58,7 @@ function Home() {
             <Row>
               <Col xl={4}>
                 <button className="service_home_overlay services_btn_home">
-                  {lang === "ar" ? "الخدمات" : "Services"}
+                  {lang === "ar" ? "الشاليهات" : "Chalets"}
                 </button>
               </Col>
             </Row>
@@ -73,9 +74,9 @@ function Home() {
                     className="cont_img_home_serv"
                     key={service.id}
                   >
-                <Link to={`/${lang}/${service.url}`}>
+                <Link to={`/${lang}/chalets`}>
                     <img
-                      src={`https://res.cloudinary.com/dqimsdiht/${service.image}`}
+                      src={service.image}
                       alt="service"
                       height={"250px"}
                       width={"420px"}
@@ -102,18 +103,6 @@ function Home() {
             </Row>
           </Container>
           <BestRated />
-        </section>
-        <section className="margin_section">
-          <Container>
-            <Row>
-              <Col xl={4}>
-                <button className="service_home_overlay services_btn_home">
-                  {lang === "ar" ? "الأكثر اختيارا" : " Most Picked "}
-                </button>
-              </Col>
-            </Row>
-          </Container>
-          <TopPicks />
         </section>
       </Container>
     </div>

@@ -12,10 +12,9 @@ function BestRated() {
   const getBestRated = useCallback(async () => {
     try {
       const res = await axios.get(
-        `${API_URL}/services/getAllServicesByServiceStatus/Best Rated/${lang}`
+        `${API_URL}/NOstars/getNumberOfstarsGreaterThanFour/${lang}`
       );
-      const lastFourServices = res.data.slice(-4)
-      setBestRated(lastFourServices);
+      setBestRated(res.data);
     } catch (error) {
       console.error("Error fetching best rated services:", error);
     }
@@ -33,15 +32,15 @@ function BestRated() {
             <>
               <Col xl={3} md={6} sm={12} key={best.id}>
               <Link to={`/${lang}/${best.url}`} style={{textDecoration:"none"}}>
-                <img
+                {/* <img
                   src={`https://res.cloudinary.com/dqimsdiht/${best.image}`}
                   alt="top picks"
                   height={"200px"}
                   width={"100%"}
                   className="toppicks_home_img"
-                />
+                /> */}
                 <div>
-                  <h5 className="title_of_toppick">{best.title}</h5>
+                  {/* <h5 className="title_of_toppick">{best.title}</h5> */}
                 </div>
               </Link>
 

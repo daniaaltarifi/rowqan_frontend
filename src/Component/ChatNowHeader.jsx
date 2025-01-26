@@ -4,9 +4,9 @@ import { Col, Container, Row } from "react-bootstrap";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { useUser } from "./UserContext";
-function ChatNowHeader({ properitesChalets, chalet_id, price }) {
+function ChatNowHeader({ dataChalets, chalet_id, price }) {
   // Reference to the header element
-    const {userId}=useUser()
+  const { userId } = useUser();
   const headerRef = useRef(null);
   const [isSticky, setIsSticky] = useState(false);
   const lang = location.pathname.split("/")[1] || "en";
@@ -27,7 +27,7 @@ function ChatNowHeader({ properitesChalets, chalet_id, price }) {
     };
   }, []);
   ChatNowHeader.propTypes = {
-    properitesChalets: PropTypes.array.isRequired,
+    dataChalets: PropTypes.array.isRequired,
     chalet_id: PropTypes.string.isRequired,
     price: PropTypes.string.isRequired,
   };
@@ -37,41 +37,26 @@ function ChatNowHeader({ properitesChalets, chalet_id, price }) {
         <Container>
           <Row>
             <Col sm={6} md={6} xl={6}>
-              {properitesChalets && properitesChalets.length > 0 && (
+              {dataChalets && (
                 <>
                   <h2 className="title_chat_header">
-                    🌟 {properitesChalets[0].Chalet.title} 🌟
+                    🌟 {dataChalets.title} 🌟
                   </h2>
-                  <div className="d-flex flex-wrap">
-                    {properitesChalets.slice(-4).map((prop) => (
-                      <div className="d-flex" key={prop.id}>
-                        <img
-                          className="rounded-circle mx-2"
-                          height={"25px"}
-                          width={"25px"}
-                          alt="properites"
-                          srcSet={`
-                       https://res.cloudinary.com/dqimsdiht/${prop.image}?w=400&f_auto&q_auto:eco 400w,
-                      `}
-                          sizes="(max-width: 768px) 100vw, 50vw"
-                          decoding="async"
-                          loading="lazy"
-                        />{" "}
-                        {prop.title} ,
-                      </div>
-                    ))}
-                  </div>
+                  <div className="d-flex flex-wrap">{dataChalets.features}</div>
                 </>
               )}
             </Col>
             <Col sm={6} md={6} xl={6} className="d-flex justify-content-center">
-              <Link to={userId ? (`/${lang}/chatbot/${chalet_id}`) : (`/${lang}/login`)}>
+              <Link
+                to={userId ? `/${lang}/chatbot/${chalet_id}` : `/${lang}/login`}
+              >
                 <button className="chat_now_btn_header m-2">Chat Now</button>
               </Link>
               <Link
                 to={`/${lang}/reservechalet/${chalet_id}`}
                 state={{
                   price,
+                  type: dataChalets.type
                 }}
               >
                 <button className="chat_now_btn_header">Book Now</button>

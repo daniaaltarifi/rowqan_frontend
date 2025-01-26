@@ -17,8 +17,10 @@ function About() {
   }, [lang]);
   return (
     <div>
+    <div className="home-container">
          <Container>
         <Row className="align-items-center justify-content-center">
+
           {heroes.map((hero) => (
             <>
               <Col md={6} key={hero.id}>
@@ -40,6 +42,7 @@ function About() {
           ))}
         </Row>
         </Container>
+          </div>
     </div>
   )
 }

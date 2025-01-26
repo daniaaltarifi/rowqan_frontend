@@ -87,7 +87,7 @@ const Header = () => {
         ))}
         {userId ? (
           <li>
-            <Link to={`/${lang}/cashback`}>{lang === "ar" ? "الرصيد" : "Cashback"}</Link>
+            <Link to={`/${lang}/cashback`}>{lang === "ar" ? "الرصيد" : "Profile"}</Link>
           </li>
         ) : null}
         <li>

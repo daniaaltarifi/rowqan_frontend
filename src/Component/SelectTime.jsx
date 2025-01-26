@@ -4,8 +4,9 @@ import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { API_URL } from "../App";
 import PropTypes from "prop-types";
+import clock from "../assets/clock.png";
 
-const SelectTime = ({ isOpen,setIsOpen, toggleDropdown, selectedDate }) => {
+const SelectTime = ({ isOpen, setIsOpen, toggleDropdown, selectedDate }) => {
   const lang = location.pathname.split("/")[1] || "en";
   const navigate = useNavigate();
   const { id } = useParams();
@@ -21,7 +22,7 @@ const SelectTime = ({ isOpen,setIsOpen, toggleDropdown, selectedDate }) => {
     const year = d.getFullYear();
     const month = (d.getMonth() + 1).toString().padStart(2, "0"); // Month is 0-indexed
     const day = d.getDate().toString().padStart(2, "0");
-    return `${year}-${month}-${day}`;  // Format as YYYY-MM-DD
+    return `${year}-${month}-${day}`; // Format as YYYY-MM-DD
   };
 
   // Get available times for the selected date
@@ -30,11 +31,13 @@ const SelectTime = ({ isOpen,setIsOpen, toggleDropdown, selectedDate }) => {
     if (!formattedDate) return; // Avoid making API call if selectedDate is invalid
 
     try {
-      const res = await axios.get(`${API_URL}/ReservationsChalets/available-times/${id}/${formattedDate}/${lang}`);
+      const res = await axios.get(
+        `${API_URL}/RightTimes/getallrighttimesbyChaletId/${id}/${lang}`
+      );
       setTimes(res.data);
     } catch (error) {
       console.error("Error fetching available times:", error);
-      alert("There was an error fetching the available times. Please try again later.");
+      // alert("There was an error fetching the available times. Please try again later.");
     }
   }, [lang, selectedDate, id]);
 
@@ -42,33 +45,25 @@ const SelectTime = ({ isOpen,setIsOpen, toggleDropdown, selectedDate }) => {
     getTimes();
   }, [getTimes]);
 
-  const handleTimeSelection = (timeId, fulldayState,priceTime) => {
+  const handleTimeSelection = (timeId, fulldayState, priceTime) => {
     navigate("", {
-      state: { timeId, fulldayState,priceTime },
+      state: { timeId, fulldayState, priceTime },
     });
     setIsOpen(false);
     // localStorage.setItem("priceTime", priceTime);
   };
 
-  const reserveTime = async (timeId, nameTime,priceTime) => {
+  const reserveTime = async (timeId, nameTime, priceTime) => {
     if (!timeId) {
       alert("Please choose a time");
       return;
     }
 
     try {
-      // Create reservation
-      await axios.post(`${API_URL}/ReservationDates/createreservationdate`, {
-        chalet_id: id,
-        right_time_id: timeId,
-      });
-
-      // Set full day state based on time reservation
       // eslint-disable-next-line no-unused-vars
       setFulldayState((prevState) => {
-        const newState = nameTime === "Full day";
-        handleTimeSelection(timeId, newState,priceTime);
-        
+        const newState = nameTime === "FullDay";
+        handleTimeSelection(timeId, newState, priceTime);
         return newState;
       });
 
@@ -101,18 +96,27 @@ const SelectTime = ({ isOpen,setIsOpen, toggleDropdown, selectedDate }) => {
                 <Link
                   className="d-flex align-items-center"
                   onClick={() => {
-                    reserveTime(timeReservation.id, timeReservation.name,timeReservation.price);
+                    reserveTime(
+                      timeReservation.id,
+                      timeReservation.type_of_time,
+                      timeReservation.After_Offer > 0
+                        ? timeReservation.After_Offer
+                        : timeReservation.price
+                    );
                   }}
                 >
                   <img
-                    src={`https://res.cloudinary.com/dqimsdiht/${timeReservation.image}`}
+                    src={clock}
                     alt="time"
                     className="rounded-circle"
-                    height={"50px"}
-                    width={"50px"}
+                    height={"40px"}
+                    width={"40px"}
                   />
-                  <h6 className="px-3">{timeReservation.name}</h6>
-                  <h6>{timeReservation.time}</h6>
+                  <h6 className="px-3">{timeReservation.type_of_time}</h6>
+                  <h6>
+                    {" "}
+                    {timeReservation.from_time} - {timeReservation.to_time}
+                  </h6>
                 </Link>
               </li>
             ))

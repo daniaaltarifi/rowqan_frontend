@@ -47,7 +47,7 @@ function BlogDetails() {
               sm={12}
               className="d-flex flex-column justify-content-center align-items-center"
             >
-              <div style={{ width: "120vh" }}>
+              <div className="cont_blog_details">
                 <h1 className="mt-4" style={{ textAlign: "center" }}>
                   {blog.title}
                 </h1>

@@ -55,14 +55,21 @@ function ResetPassword() {
               onSubmit={handleResetPassword}
               className="w-75" // Apply width to form
             >
-              <h1 className="title_forgetpass">Set a password</h1>
+              <h1 className="title_forgetpass">
+                {" "}
+                {lang === "ar" ? "تعيين كلمة مرور" : "Set a password   "}
+              </h1>
               <h6 className="parg_forgetpass">
-                Your previous password has been reseted. Please set a new
-                password for your account.{" "}
+                {lang === "ar"
+                  ? "لقد تم إعادة تعيين كلمة المرور السابقة الخاصة بك. يرجى تعيين كلمة مرور جديدة لحسابك"
+                  : " Your previous password has been reseted. Please set a newpassword for your account"}
               </h6>
 
               <Form.Group controlId="validationCustom02">
-                <Form.Label>Create Password</Form.Label>
+                <Form.Label>
+                  {" "}
+                  {lang === "ar" ? "انشاء كلمة مرور" : "Create Password"}
+                </Form.Label>
                 <div className="password-input-wrapper">
                   <Form.Control
                     required
@@ -82,7 +89,12 @@ function ResetPassword() {
                 </div>
               </Form.Group>
               <Form.Group controlId="validationCustom03">
-                <Form.Label>Re-enter Password</Form.Label>
+                <Form.Label>
+                  {" "}
+                  {lang === "ar"
+                    ? "أعد إدخال كلمة المرور"
+                    : " Re-enter Password"}
+                </Form.Label>
                 <div className="password-input-wrapper">
                   <Form.Control
                     required
@@ -102,7 +114,7 @@ function ResetPassword() {
                 </div>
               </Form.Group>
               <button type="submit" className="Login-button w-100 mt-5">
-                Submit
+                {lang === "ar" ? "ارسال" : "Submit"}
               </button>
               {message && <p className="message">{message}</p>}
               {error && <p className="error_message">{error}</p>}

@@ -47,7 +47,9 @@ align-items: center;
     box-shadow: 4px 4px 4px 0px var(--beige-color);
     transition: all ease-in-out 350ms;
   }
-  
+  .cont_blog_details{
+    width: 120vh;
+  }
   @media screen and (max-width:768px) {
     .background_blogs {
     height: auto;
@@ -58,5 +60,8 @@ align-items: center;
     }
     .subtitle_blog{
         font-size: 20px;
+    }
+    .cont_blog_details{
+      width: auto;
     }
   }

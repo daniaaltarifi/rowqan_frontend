@@ -106,32 +106,76 @@
   cursor: pointer;
   font-size: 1.2em;
 }
-.main_cont_cashback{
+.main_cont_cashback {
   display: flex;
   justify-content: center;
+  margin-top: 35px;
 }
 .cont_balance {
-  width: 628px;
-  height: 199px;
+  width: 100%;
+  height: 399px;
   background: linear-gradient(110.18deg, #6da6ba 4.2%, #f2c79d 96.78%);
   border-radius: 25px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-align-items: center;
-color: #fff;
+  align-items: center;
+  color: #fff;
+  margin-top: 15px;
+
 }
-::-webkit-scrollbar{
+::-webkit-scrollbar {
   height: 8px;
   width: 9px;
 }
-::-webkit-scrollbar-thumb{
-  background-color: #F2C79D;
+::-webkit-scrollbar-thumb {
+  background-color: #f2c79d;
   border-radius: 4px;
 }
-::-webkit-scrollbar-track{
+::-webkit-scrollbar-track {
   background-color: #f1f1f1;
 }
+.input_profile {
+  background: none;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  border-bottom: 2px solid #e5e5e5;
+  margin-bottom: 18px;
+}
+
+.profile-bg {
+  width: 300px;
+  height: 100%;
+  background-color: #7ea9b8;
+  border-radius: 15px;
+  text-align: center;
+  margin: 0 auto;
+  padding: 0px;
+  color: #fff;
+}
+
+.profile-bg img {
+  width: 80px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.content {
+  padding: 30px;
+}
+
+.content p {
+  margin-top: 30px;
+}
+
+.profile_data {
+  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 0.2em;
+  font-weight: bold;
+}
+
 .error_message {
   color: red;
   font-size: 0.9em;

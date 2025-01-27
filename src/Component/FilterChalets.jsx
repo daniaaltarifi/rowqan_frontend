@@ -4,7 +4,6 @@ import { cities } from "./CityData";
 import {
   getRoomOptions,
   getBathroomOptions,
-  getFurnishedOptions,
   getFeatures,
   getAdditionalFeatures,
   getInterfaceOptions,
@@ -32,7 +31,6 @@ function FilterChalets({
   const lang = location.pathname.split("/")[1] || "en";
   const roomOptions = getRoomOptions();
   const bathroomOptions = getBathroomOptions();
-  const furnishedOptions = getFurnishedOptions(lang);
   const features = getFeatures();
   const additionalFeatures = getAdditionalFeatures();
   const interfaceOptions = getInterfaceOptions(lang);
@@ -157,24 +155,6 @@ function FilterChalets({
               {bathroomOptions.map((bathroom, index) => (
                 <option key={index} value={bathroom}>
                   {bathroom}
-                </option>
-              ))}
-            </Form.Select>
-          </Col>
-          {/* FURNISHED OPTIONS */}
-          <Col lg={12} md={6} sm={12}>
-            <Form.Select
-              aria-label={lang === "ar" ? "مفروشة/غير مفروشة" :"Number of FURNISHED"}
-              value={filterValues[lang === "ar" ? "مفروشة/غير مفروشة" :"Furnished/Unfurnished"] || ""} // Display selected value or default to empty
-              onChange={handleFilterChange(lang === "ar" ? "مفروشة/غير مفروشة" : "Furnished/Unfurnished")}
-              className="select_location mt-3"
-            >
-              <option value="">
-                {lang === "ar" ? "مفروشة" : "Furnished/Unfurnished"}
-              </option>
-              {furnishedOptions.map((furn, index) => (
-                <option key={index} value={furn}>
-                  {furn}
                 </option>
               ))}
             </Form.Select>

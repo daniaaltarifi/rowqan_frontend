@@ -104,7 +104,6 @@ const [receiverId,setReceiverId]=useState(null)
       if (receiverIds.length > 0) {
         const randomReceiver = receiverIds[Math.floor(Math.random() * receiverIds.length)];
         const randomReceiverId = randomReceiver.id;
-        console.log("receiver ID", randomReceiverId);
         return randomReceiverId;
       }
       return null;

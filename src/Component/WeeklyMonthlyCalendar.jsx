@@ -169,7 +169,6 @@ function WeeklyMonthlyCalendar({
     if (selectedStartedDate) {
       const days = calculateNumberOfDays(selectedStartedDate, newDate);
       setNumberOfDaysValue(days);
-      console.log("first date selected",days)
     }
   };
 

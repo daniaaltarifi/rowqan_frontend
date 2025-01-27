@@ -1,7 +1,6 @@
 import { Container, Card, Row, Col } from "react-bootstrap";
 import "../Css/chalets.css";
 import { Link } from "react-router-dom";
-import TopPicks from "../Component/TopPicks";
 import { useCallback, useEffect, useState } from "react";
 import { API_URL } from "../App";
 import axios from "axios";
@@ -11,6 +10,7 @@ import { useUser } from "../Component/UserContext";
 import FilterChalets from "../Component/FilterChalets";
 import { cities } from "../Component/CityData";
 import PropTypes from "prop-types";
+import BestRated from "../Component/BestRated";
 function Chalets() {
   const { userId } = useUser();
   const lang = location.pathname.split("/")[1] || "en";
@@ -137,7 +137,6 @@ function Chalets() {
           response = await axios.get(
             `${API_URL}/chalets/getAllChaletsByType/${lang}?key=${queryKey}&value=${queryValue}`
           );
-          console.log("Filter Value Sent to API:", key, value);
         }
         // If features or additional features are provided, call the `getchaletsbyfeature` API
         else if (features.length > 0 || additionalFeatures.length > 0) {
@@ -390,7 +389,7 @@ Chalets.propTypes={
           Treasure to Choose
         </h4>
       </Container>
-      <TopPicks />
+      <BestRated />
     </>
   );
 }

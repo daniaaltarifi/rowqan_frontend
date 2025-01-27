@@ -124,7 +124,7 @@ function CashBack() {
     }
 
     try {
-      const res = await axios.put(
+       await axios.put(
         `${API_URL}/users/UpdateUser/${userId}`,
         user
       );
@@ -132,7 +132,6 @@ function CashBack() {
         messageValue: "Successfully updated",
         color: "green",
       });
-      console.log(res.data);
     } catch (error) {
       console.error("Error updating user:", error);
     }

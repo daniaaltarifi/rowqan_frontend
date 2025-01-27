@@ -83,7 +83,6 @@ const RatingForm = () => {
         `${API_URL}/ReservationsChalets/reservationsByUserId/${userId}/${lang}`
       );
       setChalets(res.data);
-      console.log("first request", res.data);
     } catch (error) {
       console.error("Error fetching reservation:", error);
     }

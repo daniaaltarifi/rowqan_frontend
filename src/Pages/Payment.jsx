@@ -111,7 +111,6 @@ function Payment() {
 
   const onApprove = async (data, actions) => {
     const order = await actions.order.capture();
-    console.log("Order captured:", order);
     if (order) {
       handleConfirmPayment();
     }

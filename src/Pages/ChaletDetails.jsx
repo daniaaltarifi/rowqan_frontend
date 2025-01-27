@@ -14,7 +14,6 @@ function ChaletsDetails() {
   const { userId } = useUser();
   const lang = location.pathname.split("/")[1] || "en";
   const price = localStorage.getItem('price') || 0;
-  console.log("price: ",price);
   const [chaletsImages, setChaletsImages] = useState([]);
   const [dataChalets, setdataChalets] = useState([]);
   const isImage = (fileName) => {

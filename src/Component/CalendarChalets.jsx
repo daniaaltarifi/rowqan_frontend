@@ -24,8 +24,6 @@ function CalendarChalets({ setSelectedDate,setTimeIdDaily, setTimePriceDaily }) 
   const handleShowModal = () => setShowModal(true);
   // Function to handle date selection for morning and evening calendars
   const handleSelectDate = (day, time_id,priceForDaily) => {
-    console.log(`Date selected: ${day}, time_id: ${time_id}`);
-
     const newDate = new Date(
       currentDate.getFullYear(),
       currentDate.getMonth(),
@@ -40,7 +38,6 @@ function CalendarChalets({ setSelectedDate,setTimeIdDaily, setTimePriceDaily }) 
       (reservedDate) => reservedDate.date === selectedFormattedDate
     );
   
-    console.log("first date", isReserved);
     if (isReserved) {
       setModalTitle("This Date is Reserved");
       setModalMessage(
@@ -55,7 +52,6 @@ function CalendarChalets({ setSelectedDate,setTimeIdDaily, setTimePriceDaily }) 
     setSelectedDate(newDate);
     setTimeIdDaily(time_id);
     setTimePriceDaily(priceForDaily)
-    console.log("Updated selected date and time:", priceForDaily);
   };
 
   const formatDate = (date) => {

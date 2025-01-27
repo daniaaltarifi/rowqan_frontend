@@ -6,13 +6,6 @@ export const getRoomOptions = () => ['1', '2', '3', '4', '5', '+6'];
 // Function to return bathroom options
 export const getBathroomOptions = () => ['1', '2', '3', '4', '5', '+6'];
 
-// Function to return furnished options
-export const getFurnishedOptions = (lang) => [
-  `${lang === 'ar' ? 'مفروشة' : ' Furnished'}`,
-  `${lang === 'ar' ? 'غير مفروشة' : ' Unfurnished'}`,
-  `${lang === 'ar' ? 'مفروش جزيئاً' : ' Partially furnished'}`,
-];
-
 // Function to return features
 export const getFeatures = () => [
   { id: 'central-air-conditioning', en: 'Central air conditioning', ar: 'تكييف مركزي' },

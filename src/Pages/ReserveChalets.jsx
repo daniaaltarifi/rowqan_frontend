@@ -119,11 +119,6 @@ const [isLoading, setIsLoading] = useState(false);
         `${API_URL}/ReservationsChalets/createReservationChalet`,
         reservationData
       );
-
-      // setModalTitle("Success");
-      // setModalMessage("Reservation confirmed successfully!");
-      // setShowModal(true);
-      // console.log("end",formattedEndDate)
       const reservation_id = res.data.reservation.id;
       const total_amount = res.data.reservation.total_amount;
       setTimeout(() => navigate(`/${lang}/payment/${reservation_id}?initial_amount=${intial_Amount}&total_amount=${total_amount}`), 2000);
@@ -139,7 +134,6 @@ const [isLoading, setIsLoading] = useState(false);
   const toggleDropdown = () => {
     setIsOpen(() => {
       const newIsOpen = true;
-      console.log("Dropdown state:", newIsOpen ? "Opened" : "Closed"); // Log the state to debug
       return newIsOpen;
     });
     setError(""); // Reset error on successful selection

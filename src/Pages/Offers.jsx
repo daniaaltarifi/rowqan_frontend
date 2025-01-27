@@ -1,7 +1,6 @@
 import { Container, Card, Row, Col } from "react-bootstrap";
 import "../Css/chalets.css";
 import { Link } from "react-router-dom";
-import TopPicks from "../Component/TopPicks";
 import { useCallback, useEffect, useState } from "react";
 import { API_URL } from "../App";
 import axios from "axios";
@@ -9,6 +8,7 @@ import chalets from "../assets/outdoor-swimming-pool.jpeg";
 import chat from "../assets/chat.png";
 import { useUser } from "../Component/UserContext";
 import Form from "react-bootstrap/Form";
+import BestRated from "../Component/BestRated";
 
 function Offers() {
   const { userId } = useUser();
@@ -155,7 +155,7 @@ const fetchData = useCallback(async () => {
           Treasure to Choose
         </h4>
       </Container>
-      <TopPicks />
+      <BestRated />
     </>
   );
 }

@@ -42,7 +42,19 @@ function ChatNowHeader({ dataChalets, chalet_id, price }) {
                   <h2 className="title_chat_header">
                     🌟 {dataChalets.title} 🌟
                   </h2>
-                  <div className="d-flex flex-wrap">{dataChalets.features}</div>
+                  {dataChalets.features ? (
+                    <div className="d-flex flex-wrap">
+                      {dataChalets.features
+                        .replace(/"/g, "") // Remove quotes around features
+                        .split(",") // Split the string by commas
+                        .slice(-2) // Take the last three features
+                        .map((feature, index) => (
+                          <span key={index} className="feature-item me-2">
+                            {feature.trim()},
+                          </span>
+                        ))}
+                    </div>
+                  ) : null}
                 </>
               )}
             </Col>
@@ -56,7 +68,7 @@ function ChatNowHeader({ dataChalets, chalet_id, price }) {
                 to={`/${lang}/reservechalet/${chalet_id}`}
                 state={{
                   price,
-                  type: dataChalets.type
+                  type: dataChalets.type,
                 }}
               >
                 <button className="chat_now_btn_header">Book Now</button>

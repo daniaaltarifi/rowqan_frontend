@@ -8,20 +8,30 @@ import BestRated from "../Component/BestRated";
 import { useCallback, useEffect, useState } from "react";
 import { API_URL } from "../App";
 import axios from "axios";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 function Home() {
   const location = useLocation();
+  const navigate = useNavigate();
   const lang = location.pathname.split("/")[1] || "en";
   const [heroes, setHeroes] = useState([]);
   const [services, setServices] = useState([]);
+  const [chaletOffersData, setChaletOffersData] = useState([]);
+
   const getHero = useCallback(async () => {
-    const [heroRes, servRes] = await Promise.all([
+    const [heroRes, servRes,offersRes] = await Promise.all([
       axios.get(`${API_URL}/heroes/getAllHeroes/${lang}`),
       axios.get(`${API_URL}/chalets/getallchalets/${lang}`),
+      axios.get( `${API_URL}/chalets/getChaletsByTypeOfTimeAndOffer/Morning/${lang}`)
+
     ]);
     setHeroes(heroRes.data);
     const chalets=servRes.data.slice(-4)
     setServices(chalets);
+    if (offersRes.data.success === true) {
+    const offers=offersRes.data.data.slice(-4)
+    setChaletOffersData(offers);
+    }
+    
   }, [lang]);
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -57,7 +67,7 @@ function Home() {
           <Container>
             <Row>
               <Col xl={4}>
-                <button className="service_home_overlay services_btn_home">
+                <button className="service_home_overlay services_btn_home" onClick={()=>navigate(`/${lang}/chalets`)}>
                   {lang === "ar" ? "الشاليهات" : "Chalets"}
                 </button>
               </Col>
@@ -96,13 +106,52 @@ function Home() {
           <Container>
             <Row>
               <Col xl={4}>
-                <button className="service_home_overlay services_btn_home">
+                <button className="service_home_overlay services_btn_home"  onClick={()=>navigate(`/${lang}/chalets`)}>
                   {lang === "ar" ? "أفضل تقييم" : "Best Rated"}
                 </button>
               </Col>
             </Row>
           </Container>
           <BestRated />
+        </section>
+        <section className="margin_section">
+          <Container>
+            <Row>
+              <Col xl={4}>
+                <button className="service_home_overlay services_btn_home"  onClick={()=>navigate(`/${lang}/offers`)}>
+                  {lang === "ar" ? "العروض" : "Offers"}
+                </button>
+              </Col>
+            </Row>
+          </Container>
+          <Container className="text-center mt-5 ">
+            <Row>
+              {chaletOffersData.map((service) => (
+                <>
+                  <Col
+                    xl={3}
+                    md={6}
+                    sm={12}
+                    className="cont_img_home_serv"
+                    key={service.id}
+                  >
+                <Link to={`/${lang}/chaletdetails/${service.id}`}>
+                    <img
+                      src={service.image}
+                      alt="service"
+                      height={"250px"}
+                      width={"420px"}
+                      className="img_services_home"
+                    />
+
+                    <div className="bottom-right">{service.title}</div>
+                </Link>
+                  </Col>
+
+                </>
+              ))}
+            </Row>
+          </Container>
         </section>
       </Container>
     </div>

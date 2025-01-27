@@ -24,10 +24,13 @@ const fetchData = useCallback(async () => {
       `${API_URL}/chalets/getChaletsByTypeOfTimeAndOffer/${type_of_time}/${lang}`
     );
 
-    if (response.data.data.length > 0) {
+    if (response.data.success === true) {
       setChaletOffersData(response.data.data);
       setMessage(""); 
     } 
+    else{
+      setMessage(response.data.message);
+    }
   } catch (error) {
     console.error("Error fetching chalets:", error);
     setMessage(error.response?.data?.message || "Failed to fetch data.");

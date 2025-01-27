@@ -7,15 +7,18 @@ import ChatNowHeader from "../Component/ChatNowHeader";
 import BestRated from "../Component/BestRated";
 import { useUser } from "../Component/UserContext";
 import Carousel from "react-bootstrap/Carousel";
+import PropTypes from "prop-types";
 
 function ChaletsDetails() {
   const location = useLocation();
   const { id } = useParams();
   const { userId } = useUser();
   const lang = location.pathname.split("/")[1] || "en";
-  const price = localStorage.getItem('price') || 0;
+  const price = localStorage.getItem("price") || 0;
   const [chaletsImages, setChaletsImages] = useState([]);
   const [dataChalets, setdataChalets] = useState([]);
+  const [ratingUser, setRatingUser] = useState("");
+
   const isImage = (fileName) => {
     return /\.(jpg|jpeg|png|gif|webp)$/i.test(fileName); // Checks if the file is an image
   };
@@ -26,9 +29,10 @@ function ChaletsDetails() {
 
   const fetchData = useCallback(async () => {
     try {
-      const [imgchaletRes, chaletsRes] = await Promise.all([
+      const [imgchaletRes, chaletsRes, ratingRes] = await Promise.all([
         axios.get(`${API_URL}/chaletsimages/chaletgetChaletImage/${id}`),
         axios.get(`${API_URL}/chalets/getchaletbyid/${id}`),
+        axios.get(`${API_URL}/NOstars/getAvergaestars/${id}`),
       ]);
 
       // Update images if different
@@ -40,6 +44,9 @@ function ChaletsDetails() {
       if (chaletsRes.data !== dataChalets) {
         setdataChalets(chaletsRes.data);
       }
+      if (ratingRes.data.averageStars !== ratingUser) {
+        setRatingUser(ratingRes.data.averageStars);
+      }
     } catch (error) {
       console.error("Error fetching chalet data:", error);
     }
@@ -48,14 +55,31 @@ function ChaletsDetails() {
     window.scrollTo(0, 0); // Scroll only when necessary
     fetchData();
   }, [lang, id]); // This will run when `lang` or `id` changes
+  const colors = {
+    orange: "#F2C265",
+    grey: "#a9a9a9",
+  };
 
+  // Star icon SVG component
+  const StarIcon = ({ filled }) => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width="24"
+      height="24"
+    >
+      <path
+        d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+        fill={filled ? colors.orange : colors.grey} // Use colors.orange for filled and colors.grey for empty
+      />
+    </svg>
+  );
+  ChaletsDetails.propTypes={
+    filled:PropTypes.string.isRequired,
+  }
   return (
     <div>
-      <ChatNowHeader
-        dataChalets={dataChalets}
-        chalet_id={id}
-        price={price}
-      />
+      <ChatNowHeader dataChalets={dataChalets} chalet_id={id} price={price} />
       <Container className="mt-5">
         <h1>
           {" "}
@@ -102,6 +126,19 @@ function ChaletsDetails() {
                           )
                         )}
                     </ul>
+                    <div className="cont_rating">
+                      {[...Array(5)].map((_, index) => (
+                        <span
+                          key={index}
+                          style={{
+                            display: "inline-block",
+                            marginRight: "5px",
+                          }}
+                        >
+                          <StarIcon filled={ratingUser > index} />
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
                 <Link to={userId ? `/${lang}/chatbot/${id}` : `/${lang}/login`}>
@@ -133,7 +170,11 @@ function ChaletsDetails() {
                         .replace(/"/g, "") // Remove quotes around features
                         .split(",") // Split the string by commas
                         .map((feature, index) => (
-                          <li key={index} style={{ fontSize: "18px" }}className="py-1">
+                          <li
+                            key={index}
+                            style={{ fontSize: "18px" }}
+                            className="py-1"
+                          >
                             {feature.trim()}
                           </li> // Trim spaces and display as list
                         ))
@@ -146,7 +187,7 @@ function ChaletsDetails() {
               state={{
                 chaletsImages,
                 dataChalets,
-                 // properitesChalets,
+                // properitesChalets,
               }}
             >
               <button className="booknow_button_events mt-4">

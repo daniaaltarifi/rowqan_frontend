@@ -3,7 +3,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Image from "react-bootstrap/Image";
 import "../Css/Home.css";
-import TopPicks from "../Component/TopPicks";
+// import TopPicks from "../Component/TopPicks";
 import BestRated from "../Component/BestRated";
 import { useCallback, useEffect, useState } from "react";
 import { API_URL } from "../App";
@@ -74,7 +74,7 @@ function Home() {
                     className="cont_img_home_serv"
                     key={service.id}
                   >
-                <Link to={`/${lang}/chalets`}>
+                <Link to={`/${lang}/chaletdetails/${service.id}`}>
                     <img
                       src={service.image}
                       alt="service"

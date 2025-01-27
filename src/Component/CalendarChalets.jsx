@@ -16,14 +16,12 @@ function CalendarChalets({ setSelectedDate,setTimeIdDaily, setTimePriceDaily }) 
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
-  const handleCloseModal = () => setShowModal(false);
-  const handleShowModal = () => setShowModal(true);
-
   // State for the selected date from either calendar
   const [selectedDateAndTime, setSelectedDateAndTime] = useState({});
-  // const [selectedDateAndTime, setSelectedDateAndTime] = useState(null);
   const [rightTimes, setRightTimes] = useState([]);
-
+  const [loading, setLoading] = useState(true);
+  const handleCloseModal = () => setShowModal(false);
+  const handleShowModal = () => setShowModal(true);
   // Function to handle date selection for morning and evening calendars
   const handleSelectDate = (day, time_id,priceForDaily) => {
     console.log(`Date selected: ${day}, time_id: ${time_id}`);
@@ -38,25 +36,6 @@ function CalendarChalets({ setSelectedDate,setTimeIdDaily, setTimePriceDaily }) 
     )
       .toString()
       .padStart(2, "0")}-${newDate.getDate().toString().padStart(2, "0")}`;
-
-    // const reservedDates = isMorning
-    //   ? reservedDatesMorning
-    //   : reservedDatesEvening;
-    // const isDateReserved = reservedDates.some(
-    //   (reserved) => reserved.date === selectedFormattedDate
-    // );
-
-    // if (isDateReserved) {
-    //   setModalTitle("This Date is reserved");
-    //   setModalMessage(
-    //     "This date is already reserved. Please choose another date."
-    //   );
-    //   handleShowModal();
-    //   return;
-    // }
-    // const isReserved = reservedDates.some(
-    //   (reservedDate) => reservedDate.date === selectedFormattedDate
-    // );
     const isReserved = reservedDates[time_id]?.some(
       (reservedDate) => reservedDate.date === selectedFormattedDate
     );
@@ -88,26 +67,6 @@ function CalendarChalets({ setSelectedDate,setTimeIdDaily, setTimePriceDaily }) 
       .padStart(2, "0")}-${localDay.toString().padStart(2, "0")}`;
   };
 
-  // const fetchReservedDates = useCallback(
-  //   async (timeOfDay, setReservedDates) => {
-  //     try {
-  //       const res = await axios.get(
-  //         `${API_URL}/ReservationsChalets/getReservationsByRightTimeName/${id}/${timeOfDay}/${lang}`
-  //       );
-  //       const reservedDates = res.data.reserved_days.map((reservation) => {
-  //         const utcDate = new Date(reservation);
-  //         const formattedDate = formatDate(utcDate); // Replace with your actual formatting function
-  //         return { date: formattedDate };
-  //       });
-  //       console.log("reserved dates", timeOfDay, reservedDates)
-  //       setReservedDates(reservedDates);
-  //       console.log("reserved dates",timeOfDay,reservedDates)
-  //     } catch (error) {
-  //       console.error(`Error fetching reserved dates for ${timeOfDay}:`, error);
-  //     }
-  //   },
-  //   [lang, id]
-  // );
   const fetchReservedDates = useCallback(
     async (timeOfDay, timeId) => {
       try {
@@ -139,20 +98,6 @@ function CalendarChalets({ setSelectedDate,setTimeIdDaily, setTimePriceDaily }) 
     }
   }, [rightTimes, lang, id, fetchReservedDates]);
   
-  
-  // useEffect(() => {
-  //   if (rightTimes && rightTimes.length > 0) {
-  //     rightTimes.forEach((time) => {
-  //       fetchReservedDates(time.type_of_time, setReservedDates); // Pass type_of_time and use time.id as the key
-  //     });
-  //   }
-  // }, [rightTimes, lang, id, fetchReservedDates]);
-
-  // useEffect(() => {
-  //   fetchReservedDates("Morning%20Full%20day", setReservedDatesMorning);
-  //   fetchReservedDates("Evening%20Full%20day", setReservedDatesEvening);
-  // }, [lang, id, currentDate, fetchReservedDates]);
-
   const handlePrevMonth = () => {
     const prevMonth = new Date(currentDate);
     prevMonth.setMonth(currentDate.getMonth() - 1);
@@ -177,37 +122,57 @@ function CalendarChalets({ setSelectedDate,setTimeIdDaily, setTimePriceDaily }) 
     currentDate.getFullYear(),
     currentDate.getMonth()
   );
+
   CalendarChalets.propTypes = {
     setSelectedDate: PropTypes.string.isRequired, // Ensure selectedDate is a Date object
     toggleDropdown: PropTypes.func.isRequired,
     setTimeIdDaily: PropTypes.string.isRequired,
     setTimePriceDaily: PropTypes.string.isRequired,
-
-
   };
+  // const getTimesBychaletsId = useCallback(async () => {
+  //   try {
+  //     const res = await axios.get(
+  //       `${API_URL}/RightTimes/getallrighttimesbyChaletId/${id}/${lang}`
+  //     );
+  //     setRightTimes(res.data);
+  //     console.log("first time", res.data);
+  //   } catch (error) {
+  //     console.error("Error fetching available times:", error);
+  //     alert(
+  //       "There was an error fetching the available times. Please try again later."
+  //     );
+  //   }
+  // }, [lang, id]);
+
+  // useEffect(() => {
+  //   getTimesBychaletsId();
+  // }, [id]);
   const getTimesBychaletsId = useCallback(async () => {
     try {
+      setLoading(true);
       const res = await axios.get(
         `${API_URL}/RightTimes/getallrighttimesbyChaletId/${id}/${lang}`
       );
-      setRightTimes(res.data);
-      console.log("first time", res.data);
+      setRightTimes(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
       console.error("Error fetching available times:", error);
-      alert(
-        "There was an error fetching the available times. Please try again later."
-      );
+      alert("There was an error fetching the available times. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   }, [lang, id]);
-
+  
+  
   useEffect(() => {
     getTimesBychaletsId();
-  }, [id]);
-
+  }, [getTimesBychaletsId, id, lang]);
+  
   return (
     <>
       <div className="date-picker-container">
-        {rightTimes.length > 0 ? (
+        {loading ? (
+      <p>Loading...</p>
+    ) : rightTimes.length > 0 ? (
           rightTimes.map((time) => (
             <div className="calendar" key={time.id}>
               <h4 className="text-center" style={{ color: "#fff" }}>
@@ -304,7 +269,7 @@ function CalendarChalets({ setSelectedDate,setTimeIdDaily, setTimePriceDaily }) 
             </div>
           ))
         ) : (
-          <p> Loading...</p>
+          <p> No Times Available...</p>
         )}
       </div>
 

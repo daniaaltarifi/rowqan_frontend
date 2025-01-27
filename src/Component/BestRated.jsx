@@ -31,16 +31,16 @@ function BestRated() {
           {BestRated.map((best) => (
             <>
               <Col xl={3} md={6} sm={12} key={best.id}>
-              <Link to={`/${lang}/${best.url}`} style={{textDecoration:"none"}}>
-                {/* <img
-                  src={`https://res.cloudinary.com/dqimsdiht/${best.image}`}
+              <Link to={`/${lang}/chaletdetails/${best.chalet_id}`} style={{textDecoration:"none"}}>
+                <img
+                  src={best.chalet?.image}
                   alt="top picks"
                   height={"200px"}
                   width={"100%"}
                   className="toppicks_home_img"
-                /> */}
+                />
                 <div>
-                  {/* <h5 className="title_of_toppick">{best.title}</h5> */}
+                  <h5 className="title_of_toppick">{best.chalet?.title}</h5>
                 </div>
               </Link>
 

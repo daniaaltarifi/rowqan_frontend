@@ -34,8 +34,8 @@ import Contact from './Pages/Contact.jsx';
 import Offers from './Pages/Offers.jsx';
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 
-export const API_URL="http://localhost:5000";
-// export const API_URL="https://rowqanbackend.rowqan.com";
+// export const API_URL="http://localhost:5000";
+export const API_URL="https://rowqanbackend.rowqan.com";
 const DirectionHandler = () => {
   const location = useLocation();
   const lang = location.pathname.split("/")[1] || "en";

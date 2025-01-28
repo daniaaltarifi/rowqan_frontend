@@ -18,12 +18,12 @@
   height: 470px;
   border-radius: 40px;
   box-shadow: 16px 16px 4px 0px rgba(109, 166, 186, 1);
-  transform: translateX(100%);
+  /* transform: translateX(100%);
   opacity: 0; 
-  animation: slideInFromRight 1s forwards;
+  animation: slideInFromRight 1s forwards; */
   object-fit: cover;
 }
-
+/* 
 @keyframes slideInFromRight {
   0% {
     transform: translateX(100%); 
@@ -33,7 +33,7 @@
     transform: translateX(0); 
     opacity: 1; 
   }
-}
+} */
 
 .maintext_home {
   font-family: Poppins;

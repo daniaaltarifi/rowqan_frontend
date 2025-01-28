@@ -41,25 +41,15 @@ function Payment() {
     if (e && e.preventDefault) {
       e.preventDefault();
     }
-    let status;
-    if (selectedPayment === "cliq") {
-      status = "Pending";
-    } else {
-      status = "Confirmed";
-    }
     try {
       const res = await axios.post(`${API_URL}/payments/createPayment`, {
         user_id: userId || null,
         reservation_id: reservation_id,
-        status,
         paymentMethod: selectedPayment,
-        Phone_Number: phoneNumber,
         UserName: name,
+        Phone_Number: phoneNumber,
       });
       setResponse(res.data);
-      // setModalTitle("Success");
-      // setModalMessage("Payment Added successfully!");
-      // setShowModal(true);
       window.scrollTo(0, 500);
       setTimeout(() => navigate(`/${lang}`), 5500);
     } catch (error) {
@@ -155,9 +145,9 @@ function Payment() {
                     <Col sm={12} md={4} lg={4} className="mb-2">
                       <div
                         className={`type ${
-                          selectedPayment === "cliq" ? "selected" : ""
+                          selectedPayment === "Cliq" ? "selected" : ""
                         }`}
-                        onClick={() => handlePaymentTypeChange("cliq")}
+                        onClick={() => handlePaymentTypeChange("Cliq")}
                       >
                         <div className="logo">
                           <i className="fab fa-paypal"></i>
@@ -237,8 +227,8 @@ function Payment() {
                 </div>
               )}
 
-              {/* cliq Info */}
-              {selectedPayment === "cliq" && (
+              {/* Cliq Info */}
+              {selectedPayment === "Cliq" && (
                 <div className="col-12 col-md-6">
                   <h4>Pay with Cliq</h4>
                   <p>

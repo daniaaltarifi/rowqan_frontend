@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { API_URL } from "../App";
 import { Link } from "react-router-dom";
+import arrow from "../assets/arrowtop.png";
 function Footer() {
   const lang = location.pathname.split("/")[1] || "en";
   const [footer, setFooter] = useState([]);
@@ -24,6 +25,8 @@ function Footer() {
   useEffect(() => {
     getData();
   }, [lang]);
+  const scrolltoTop = () => [window.scrollTo(0, 0)];
+
   return (
     <>
       <section className="margin_section">
@@ -44,23 +47,36 @@ function Footer() {
             </Col>
           </Row>
         </Container>
-        <Col xl={12} md={12} sm={12} className="cont_copyright">
-          {iconfooter.map((icons) => (
-            <Link target="blank" to={icons.link_to} key={icons.id}>
-              <img
-                src={`https://res.cloudinary.com/dqimsdiht/${icons.icon}`}
-                alt="icon"
-                className="rounded-circle mx-3"
-                height={"25px"}
-                width={"25px"}
-              />
-            </Link>
-          ))}
+        <Container fluid>
+          <Row className="cont_copyright">
+            <Col xl={4} md={12} sm={12}>
+              <button
+                type="button"
+                className="btn arrow_btn"
+                onClick={scrolltoTop}
+              >
+                <img src={arrow} alt="arrow" />
+              </button>
+            </Col>
+            <Col xl={8} md={12} sm={12} className="cont_icons_footer">
+              {iconfooter.map((icons) => (
+                <Link target="blank" to={icons.link_to} key={icons.id}>
+                  <img
+                    src={`https://res.cloudinary.com/dqimsdiht/${icons.icon}`}
+                    alt="icon"
+                    className="rounded-circle mx-3"
+                    height={"25px"}
+                    width={"25px"}
+                  />
+                </Link>
+              ))}
 
-          <h6 className="text_copyright">
-            Copyright 2024 • All rights reserved • Rowqan
-          </h6>
-        </Col>
+              <h6 className="text_copyright">
+                Copyright 2024 • All rights reserved • Rowqan
+              </h6>
+            </Col>
+          </Row>
+        </Container>
       </section>
     </>
   );

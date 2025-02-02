@@ -178,7 +178,7 @@ function WeeklyMonthlyCalendar({
         {/* Start Date Calendar */}
         <div className="calendar">
           <h3 className="text-center">
-            <img src={clock} alt="clock" /> Select Start Date
+            <img src={clock} alt="clock" /> {lang === 'ar' ? 'حدد تاريخ البدء' : 'Select Start Date'}
           </h3>
           <div className="calendar-header">
             <button onClick={handlePrevMonth}>Prev</button>
@@ -230,7 +230,7 @@ function WeeklyMonthlyCalendar({
         {/* End Date Calendar */}
         <div className="calendar">
           <h3 className="text-center">
-            <img src={clock} alt="clock" /> Select End Date
+            <img src={clock} alt="clock" /> {lang === 'ar' ? 'حدد تاريخ الانتهاء' : 'Select End Date'}
           </h3>
           <div className="calendar-header">
             <button onClick={handlePrevMonth}>Prev</button>

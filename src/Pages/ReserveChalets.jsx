@@ -34,7 +34,7 @@ const [isLoading, setIsLoading] = useState(false);
     if (typeChalets) {
       try {
         const typeData = JSON.parse(typeChalets);
-        const familiesCount = typeData["Number of Families"] || null;
+        const familiesCount = typeData["Number of Visitors"] || typeData["عدد الغرف"] ||  null;
         setNumberOfFamilies(familiesCount);
       } catch (error) {
         console.error("Error parsing the type data:", error);
@@ -145,10 +145,10 @@ const [isLoading, setIsLoading] = useState(false);
         <Form.Select
           aria-label="Default select example"
           onChange={handleTypeOfReservationChange}         >
-          <option>Select type of reservation</option>
-          <option value="Daily">Daily</option>
-          <option value="Weekly">Weekly</option>
-          <option value="Monthly">Monthly</option>
+          <option>{lang === 'ar' ? 'اختر نوع الحجز' : 'Select type of reservation'}</option>
+          <option value="Daily">{lang === 'ar' ? 'يومي' : 'Daily'}</option>
+          <option value="Weekly">{lang === 'ar' ? 'اسبوعي' : 'Weekly'}</option>
+          <option value="Monthly">{lang === 'ar' ? 'شهري' : 'Monthly'}</option>
         </Form.Select>
       </Container>
       {typeOfReseravtion === "Daily" ? (
@@ -174,8 +174,8 @@ const [isLoading, setIsLoading] = useState(false);
       <Container className="mt-5">
         <h6 className="py-2">
           <img src={info} alt="info" height={"30px"} width={"30px"} />
-          The number of visitors to the chalet reaches {numberOfFamilies}{" "}
-          visitors
+
+          {lang === 'ar' ? ` عدد الزائرين لهذا الشاليه ${numberOfFamilies } زوار ` : ` The number of visitors to the chalet reaches ${numberOfFamilies} visitors`} 
         </h6>
 
         {/* {fulldayState && (
@@ -209,7 +209,7 @@ const [isLoading, setIsLoading] = useState(false);
         <h6>
           <div className="plus-minus-container">
             <img src={people} alt="info" height={"30px"} width={"30px"} />
-            Number of additional visitors:
+            {lang === 'ar' ? ' عدد الزوار الاضافيين ' : 'Number of additional visitors:'}
             <button
               className="plus-minus-button"
               onClick={() =>
@@ -240,11 +240,11 @@ const [isLoading, setIsLoading] = useState(false);
         </h6>
         <div className="d-flex mb-3">
           <img src={money} alt="info" height={"30px"} width={"30px"} />
-          <h6 className="ms-2 mt-2">Initial amount: {intial_Amount} JD</h6>
+          <h6 className="ms-2 mt-2">{lang === 'ar' ? 'المبلغ الاولي :' : 'Initial amount:'} {intial_Amount} JD</h6>
         </div>
         <h6>
           <img src={dollar} alt="info" height={"30px"} width={"30px"} />
-          Value of Reservation is: {calculatePrice()} JD
+          {lang === 'ar' ? 'قيمة الحجز هي : ' : 'Value of Reservation is:'} {calculatePrice()} JD
         </h6>
 
         {error && <p style={{ color: "red" }}>{error}</p>}

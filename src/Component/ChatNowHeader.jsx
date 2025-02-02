@@ -42,19 +42,6 @@ function ChatNowHeader({ dataChalets, chalet_id, price }) {
                   <h2 className="title_chat_header">
                     🌟 {dataChalets.title} 🌟
                   </h2>
-                  {dataChalets.features ? (
-                    <div className="d-flex flex-wrap">
-                      {dataChalets.features
-                        .replace(/"/g, "") // Remove quotes around features
-                        .split(",") // Split the string by commas
-                        .slice(-2) // Take the last three features
-                        .map((feature, index) => (
-                          <span key={index} className="feature-item me-2">
-                            {feature.trim()},
-                          </span>
-                        ))}
-                    </div>
-                  ) : null}
                 </>
               )}
             </Col>
@@ -62,7 +49,7 @@ function ChatNowHeader({ dataChalets, chalet_id, price }) {
               <Link
                 to={userId ? `/${lang}/chatbot/${chalet_id}` : `/${lang}/login`}
               >
-                <button className="chat_now_btn_header m-2">Chat Now</button>
+                <button className="chat_now_btn_header m-2">{lang==='ar' ? 'دردش الان' : 'Chat Now'}</button>
               </Link>
               <Link
                 to={`/${lang}/reservechalet/${chalet_id}`}
@@ -71,7 +58,7 @@ function ChatNowHeader({ dataChalets, chalet_id, price }) {
                   type: dataChalets.type,
                 }}
               >
-                <button className="chat_now_btn_header">Book Now</button>
+                <button className="chat_now_btn_header"> {lang=== 'ar' ? 'احجز الان ' : ' Book Now'}</button>
               </Link>
             </Col>
           </Row>

@@ -162,7 +162,7 @@ function ChaletsDetails() {
               <h5>{price} JD</h5>
             </div>
             <>
-              <h4>Features:</h4>
+              <h4>{lang === 'ar' ? 'المميزات :' : 'Features :'}</h4>
               <h6>
                 <ul>
                   {dataChalets.features

@@ -320,7 +320,7 @@ Chalets.propTypes={
                         <Row className="mt-4">
                           <div className="d-flex justify-content-evenly flex-wrap mb-3">
                             {Object.entries(typeChalets)
-                              .filter(([key]) => key === "Number of Visitors") // Only keep the "Number_of_Visitors" key
+                              .filter(([key]) => key === "Number of Visitors" || key === "عدد الغرف") // Only keep the "Number_of_Visitors" key
                               .map(([key, value], index) => (
                                 <Card.Text key={index} className="type_chalets">
                                   {key.replace(/_/g, " ")}: {value}

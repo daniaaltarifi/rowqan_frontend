@@ -170,7 +170,6 @@ function FilterChalets({
                   color: "black",
                   border: "1px solid #cacaca",
                   borderRadius: "10px",
-                  textAlign: "left",
                   marginTop: "12px",
                 }}
               >
@@ -212,7 +211,6 @@ function FilterChalets({
                   color: "black",
                   border: "1px solid #cacaca",
                   borderRadius: "10px",
-                  textAlign: "left",
                   marginTop: "12px",
                 }}
               >

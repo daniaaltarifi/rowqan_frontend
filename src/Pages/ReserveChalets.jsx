@@ -57,6 +57,7 @@ const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [typeOfReseravtion, setTypeOfReservation] = useState("Daily");
   const [isReservationTypeChanged, setIsReservationTypeChanged] = useState(false); // New state
+  const [lastFinalPrice, setLastFinalPrice] = useState("");
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -89,9 +90,12 @@ const [isLoading, setIsLoading] = useState(false);
     const basePrice = priceBerTime ?? storedPrice;
   
     const totalAmount = basePrice + additionalCost + visitorsCost;  
+    setLastFinalPrice(totalAmount);
     return totalAmount;
   };
-  
+  useEffect(() => {
+    calculatePrice();
+  }, [number_of_daysValue, additional_visitorsValue, timePriceDaily, priceTime, storedPrice, isReservationTypeChanged]);
   const handleConfirmReservation = async () => {
      if (!selectedDate || !lang || !id ) {
       setError("Please make sure you have selected a Date and Time.");
@@ -112,6 +116,7 @@ const [isLoading, setIsLoading] = useState(false);
       user_id: userId,
       chalet_id: id,
       right_time_id: timeIdDaily || timeId,
+      total_amount:lastFinalPrice
     };
 
     try {
@@ -144,6 +149,7 @@ const [isLoading, setIsLoading] = useState(false);
       <Container className="mt-5">
         <Form.Select
           aria-label="Default select example"
+          value={typeOfReseravtion ?? ""}
           onChange={handleTypeOfReservationChange}         >
           <option>{lang === 'ar' ? 'اختر نوع الحجز' : 'Select type of reservation'}</option>
           <option value="Daily">{lang === 'ar' ? 'يومي' : 'Daily'}</option>
@@ -244,7 +250,7 @@ const [isLoading, setIsLoading] = useState(false);
         </div>
         <h6>
           <img src={dollar} alt="info" height={"30px"} width={"30px"} />
-          {lang === 'ar' ? 'قيمة الحجز هي : ' : 'Value of Reservation is:'} {calculatePrice()} JD
+          {lang === 'ar' ? 'قيمة الحجز هي : ' : 'Value of Reservation is:'} {lastFinalPrice} JD
         </h6>
 
         {error && <p style={{ color: "red" }}>{error}</p>}

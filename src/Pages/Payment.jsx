@@ -3,7 +3,6 @@ import "../Css/Payment.css";
 import { Row, Container, Col } from "react-bootstrap";
 import { API_URL } from "../App";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
-import Form from "react-bootstrap/Form";
 import axios from "axios";
 import { useUser } from "../Component/UserContext";
 import checked from "../assets/checked.png";
@@ -25,7 +24,7 @@ function Payment() {
   const [selectedPayment, setSelectedPayment] = useState("credit_card");
   const [phoneNumber, setPhoneNumber] = useState(null);
   const [name, setName] = useState("");
-  const [final_price_pay, setFinal_price_pay] = useState(null);
+  // const [final_price_pay, setFinal_price_pay] = useState(null);
   const [conversionRate, setConversionRate] = useState(0); // Store the conversion rate
   const [response, setResponse] = useState(null);
   const [error, setError] = useState(null);
@@ -48,6 +47,7 @@ function Payment() {
         paymentMethod: selectedPayment,
         UserName: name,
         Phone_Number: phoneNumber,
+        initialAmount:initial_amount
       });
       setResponse(res.data);
       window.scrollTo(0, 500);
@@ -78,13 +78,14 @@ function Payment() {
     fetchConversionRate();
   }, []);
   const createOrder = (data, actions) => {
-    const total_amount_usd = (final_price_pay / conversionRate).toFixed(2); // Convert JOD to USD
+    // const total_amount_usd = (final_price_pay / conversionRate).toFixed(2); // Convert JOD to USD
+    const total_amount_usd = (initial_amount / conversionRate).toFixed(2); // Convert JOD to USD
     return actions.order
       .create({
         intent: "CAPTURE",
         purchase_units: [
           {
-            description: "Cool looking table",
+            description: "Chalets reservation",
             amount: {
               currency_code: "USD", // Use USD as the currency
               value: total_amount_usd, // Use the converted value
@@ -197,27 +198,28 @@ function Payment() {
                     <label className="label_of_payment">Phone Number</label>
 
                     <input
-                      className="input_payment"
+                      className="input_payment my-2"
                       type="number"
                       required
                       onChange={(e) => {
                         setPhoneNumber(e.target.value);
                       }}
                     />
-                    <Form.Select
+                    {/* <Form.Select
                       aria-label="Default select example"
                       className="my-2"
+                      value={final_price_pay ?? ""} 
                       onChange={(e) => setFinal_price_pay(e.target.value)}
                       required
                     >
                       <option>Choose Total Payment</option>
                       <option value={initial_amount}>Initial amount</option>
                       <option value={total_amount}>Total amount</option>
-                    </Form.Select>
+                    </Form.Select> */}
 
                     <PayPalButtons
                       style={style}
-                      disabled={!name || !phoneNumber || !final_price_pay}
+                      disabled={!name || !phoneNumber || !initial_amount}
                       createOrder={createOrder}
                       onApprove={onApprove}
                       onError={onError}

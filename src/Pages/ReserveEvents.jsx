@@ -203,6 +203,7 @@ const ReservationEvents = () => {
             <Form.Select
               aria-label="Select Duration"
               onClick={validateSelectDate}
+              value={duration ?? ""}
               onChange={(e)=>{setDuration(e.target.value)}}
             >
               <option>Duration</option>
@@ -215,7 +216,7 @@ const ReservationEvents = () => {
             </Form.Select>
           </div>
           <div className="my-3">
-            <Form.Select aria-label="Select Plan" onChange={handleSelectPlan}>
+            <Form.Select aria-label="Select Plan" value={selectedPlan} onChange={handleSelectPlan}>
               <option>Plans</option>
               {plans.map((plan) => (
                 <option key={plan.id} value={plan.id}>

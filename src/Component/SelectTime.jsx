@@ -77,7 +77,7 @@ const SelectTime = ({ isOpen, setIsOpen, toggleDropdown, selectedDate }) => {
   // PropTypes definition to ensure the correct data types
   SelectTime.propTypes = {
     isOpen: PropTypes.bool.isRequired, // Fix to bool type as per usage
-    setIsOpen: PropTypes.bool.isRequired, // Fix to bool type as per usage
+    setIsOpen: PropTypes.func.isRequired, // Fix to bool type as per usage
     toggleDropdown: PropTypes.func.isRequired,
     selectedDate: PropTypes.instanceOf(Date), // Ensure selectedDate is a Date object
   };

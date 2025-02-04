@@ -3,7 +3,7 @@ import Modal from 'react-bootstrap/Modal';
 import PropTypes from 'prop-types';
 function ModelAlert({ show, handleClose, title, message }) {
   ModelAlert.propTypes = {
-    show: PropTypes.string.isRequired, 
+    show: PropTypes.bool.isRequired, 
     handleClose: PropTypes.func.isRequired, 
     title: PropTypes.string.isRequired, 
     message: PropTypes.string.isRequired, 

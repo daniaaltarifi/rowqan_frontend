@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Container, Row, Col,Image } from "react-bootstrap";
 import { API_URL } from "../App";
 
@@ -20,10 +20,9 @@ function About() {
     <div className="home-container">
          <Container>
         <Row className="align-items-center justify-content-center">
-
           {heroes.map((hero) => (
-            <>
-              <Col md={6} key={hero.id}>
+            <React.Fragment key={hero.id}>
+              <Col md={6} >
                 <h1 className="maintext_home">{hero.title} </h1>
                 <p className="text_home">{hero.description}</p>
               </Col>
@@ -38,7 +37,7 @@ function About() {
                 loading="eager"
                 />
               </Col>
-            </>
+            </React.Fragment>
           ))}
         </Row>
         </Container>

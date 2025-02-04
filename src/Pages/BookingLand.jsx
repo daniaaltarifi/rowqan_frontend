@@ -212,7 +212,7 @@ const BookingLand = () => {
         </label>
         <select
           id="time-picker"
-          value={selectedTime}
+          value={selectedTime ?? ""}
           onChange={(e) => setSelectedTime(e.target.value)}
           className="custom-select"
         >

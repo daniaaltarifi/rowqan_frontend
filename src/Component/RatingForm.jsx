@@ -124,6 +124,7 @@ const RatingForm = () => {
                 <div>
                   <Form.Select
                     aria-label="Default select example"
+                    value={chalet_id ?? ""}
                     onChange={(e) => setChalet_id(e.target.value)}
                   >
                     <option>{lang === 'ar' ? ' اختر شاليه':'Select Chalets'}</option>

@@ -27,7 +27,7 @@ function ChatNowHeader({ dataChalets, chalet_id, price }) {
     };
   }, []);
   ChatNowHeader.propTypes = {
-    dataChalets: PropTypes.array.isRequired,
+    dataChalets: PropTypes.object.isRequired,
     chalet_id: PropTypes.string.isRequired,
     price: PropTypes.string.isRequired,
   };

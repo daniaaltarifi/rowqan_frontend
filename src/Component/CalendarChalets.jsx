@@ -46,12 +46,16 @@ function CalendarChalets({ setSelectedDate,setTimeIdDaily, setTimePriceDaily }) 
       handleShowModal();
       return;
     }
+      // Check if selected day is Friday (5) or Saturday (6)
+  const dayOfWeek = newDate.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
+  const updatedPrice = (dayOfWeek === 5 || dayOfWeek === 6) ? priceForDaily + 50 : priceForDaily;
+
     setSelectedDateAndTime({
-      [time_id]: newDate, // Keep the selected date for the current calendar
+      [time_id]: newDate,
     });
     setSelectedDate(newDate);
     setTimeIdDaily(time_id);
-    setTimePriceDaily(priceForDaily)
+    setTimePriceDaily(updatedPrice) // previous value => priceForDaily
   };
 
   const formatDate = (date) => {
@@ -120,29 +124,10 @@ function CalendarChalets({ setSelectedDate,setTimeIdDaily, setTimePriceDaily }) 
   );
 
   CalendarChalets.propTypes = {
-    setSelectedDate: PropTypes.string.isRequired, // Ensure selectedDate is a Date object
-    toggleDropdown: PropTypes.func.isRequired,
-    setTimeIdDaily: PropTypes.string.isRequired,
-    setTimePriceDaily: PropTypes.string.isRequired,
+    setSelectedDate: PropTypes.func.isRequired, // Ensure selectedDate is a Date object
+    setTimeIdDaily: PropTypes.func.isRequired,
+    setTimePriceDaily: PropTypes.func.isRequired,
   };
-  // const getTimesBychaletsId = useCallback(async () => {
-  //   try {
-  //     const res = await axios.get(
-  //       `${API_URL}/RightTimes/getallrighttimesbyChaletId/${id}/${lang}`
-  //     );
-  //     setRightTimes(res.data);
-  //     console.log("first time", res.data);
-  //   } catch (error) {
-  //     console.error("Error fetching available times:", error);
-  //     alert(
-  //       "There was an error fetching the available times. Please try again later."
-  //     );
-  //   }
-  // }, [lang, id]);
-
-  // useEffect(() => {
-  //   getTimesBychaletsId();
-  // }, [id]);
   const getTimesBychaletsId = useCallback(async () => {
     try {
       setLoading(true);
@@ -229,15 +214,6 @@ function CalendarChalets({ setSelectedDate,setTimeIdDaily, setTimePriceDaily }) 
                     .getDate()
                     .toString()
                     .padStart(2, "0")}`;
-                  // const isSelected =
-                  //   selectedDateAndTime[time.id]?.getDate() === day &&
-                  //   selectedDateAndTime[time.id]?.getMonth() ===
-                  //     currentDate.getMonth() &&
-                  //   selectedDateAndTime[time.id]?.getFullYear() ===
-                  //     currentDate.getFullYear();
-                  // const isReserved = reservedDates.some(
-                  //   (reservedDate) => reservedDate.date === currentFormattedDate
-                  // );
                   const isReserved = reservedDates[time.id]?.some(
                     (reservedDate) => reservedDate.date === currentFormattedDate
                   );

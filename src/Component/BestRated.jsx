@@ -29,7 +29,6 @@ function BestRated() {
       <Container className=" mt-5 ">
         <Row>
           {BestRated.map((best) => (
-            <>
               <Col xl={3} md={6} sm={12} key={best.id}>
               <Link to={`/${lang}/chaletdetails/${best.chalet_id}`} style={{textDecoration:"none"}}>
                 <img
@@ -45,7 +44,6 @@ function BestRated() {
               </Link>
 
               </Col>
-            </>
           ))}
         </Row>
       </Container>

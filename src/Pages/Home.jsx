@@ -5,7 +5,7 @@ import Image from "react-bootstrap/Image";
 import "../Css/Home.css";
 // import TopPicks from "../Component/TopPicks";
 import BestRated from "../Component/BestRated";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { API_URL } from "../App";
 import axios from "axios";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -18,20 +18,20 @@ function Home() {
   const [chaletOffersData, setChaletOffersData] = useState([]);
 
   const getHero = useCallback(async () => {
-    const [heroRes, servRes,offersRes] = await Promise.all([
+    const [heroRes, servRes, offersRes] = await Promise.all([
       axios.get(`${API_URL}/heroes/getAllHeroes/${lang}`),
       axios.get(`${API_URL}/chalets/getallchalets/${lang}`),
-      axios.get( `${API_URL}/chalets/getChaletsByTypeOfTimeAndOffer/Morning/${lang}`)
-
+      axios.get(
+        `${API_URL}/chalets/getChaletsByTypeOfTimeAndOffer/Morning/${lang}`
+      ),
     ]);
     setHeroes(heroRes.data);
-    const chalets=servRes.data.slice(-4)
+    const chalets = servRes.data.slice(-4);
     setServices(chalets);
     if (offersRes.data.success === true) {
-    const offers=offersRes.data.data.slice(-4)
-    setChaletOffersData(offers);
+      const offers = offersRes.data.data.slice(-4);
+      setChaletOffersData(offers);
     }
-    
   }, [lang]);
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -43,31 +43,34 @@ function Home() {
       <Container>
         <Row className="align-items-center justify-content-center">
           {heroes.map((hero) => (
-            <>
-              <Col md={6} key={hero.id}>
+            <React.Fragment key={hero.id}>
+              <Col lg={6} md={6}>
                 <h1 className="maintext_home">{hero.title} </h1>
                 <p className="text_home">{hero.description}</p>
-                <Link to={`/${lang}/chalets`}><button className="Login-button">{hero.title_btn}</button></Link>
+                <Link to={`/${lang}/chalets`}>
+                  <button className="Login-button">{hero.title_btn}</button>
+                </Link>
               </Col>
-              <Col md={6}>
+              <Col lg={6} md={6}>
                 <Image
-                srcSet={`
-                  https://res.cloudinary.com/dqimsdiht/${hero.image}?w=400&f_auto&q_auto:eco 400w,
-                `}
-                sizes="(max-width: 768px) 100vw, 50vw"
-                alt="home img"
-                className="mainHome_img"
-                loading="eager"
+                  srcSet={`https://res.cloudinary.com/dqimsdiht/${hero.image}?w=400&f_auto&q_auto:eco 400w`}
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  alt="home img"
+                  className="mainHome_img"
+                  loading="eager"
                 />
               </Col>
-            </>
+            </React.Fragment>
           ))}
         </Row>
         <section className="margin_section ">
           <Container>
             <Row>
               <Col xl={4}>
-                <button className="service_home_overlay services_btn_home" onClick={()=>navigate(`/${lang}/chalets`)}>
+                <button
+                  className="service_home_overlay services_btn_home"
+                  onClick={() => navigate(`/${lang}/chalets`)}
+                >
                   {lang === "ar" ? "الشاليهات" : "Chalets"}
                 </button>
               </Col>
@@ -76,15 +79,14 @@ function Home() {
           <Container className="text-center mt-5 ">
             <Row>
               {services.map((service) => (
-                <>
-                  <Col
-                    xl={3}
-                    md={6}
-                    sm={12}
-                    className="cont_img_home_serv"
-                    key={service.id}
-                  >
-                <Link to={`/${lang}/chaletdetails/${service.id}`}>
+                <Col
+                  xl={3}
+                  md={6}
+                  sm={12}
+                  className="cont_img_home_serv"
+                  key={service.id}
+                >
+                  <Link to={`/${lang}/chaletdetails/${service.id}`}>
                     <img
                       src={service.image}
                       alt="service"
@@ -94,10 +96,8 @@ function Home() {
                     />
 
                     <div className="bottom-right">{service.title}</div>
-                </Link>
-                  </Col>
-
-                </>
+                  </Link>
+                </Col>
               ))}
             </Row>
           </Container>
@@ -106,7 +106,10 @@ function Home() {
           <Container>
             <Row>
               <Col xl={4}>
-                <button className="service_home_overlay services_btn_home"  onClick={()=>navigate(`/${lang}/chalets`)}>
+                <button
+                  className="service_home_overlay services_btn_home"
+                  onClick={() => navigate(`/${lang}/chalets`)}
+                >
                   {lang === "ar" ? "أفضل تقييم" : "Best Rated"}
                 </button>
               </Col>
@@ -118,7 +121,10 @@ function Home() {
           <Container>
             <Row>
               <Col xl={4}>
-                <button className="service_home_overlay services_btn_home"  onClick={()=>navigate(`/${lang}/offers`)}>
+                <button
+                  className="service_home_overlay services_btn_home"
+                  onClick={() => navigate(`/${lang}/offers`)}
+                >
                   {lang === "ar" ? "العروض" : "Offers"}
                 </button>
               </Col>
@@ -127,15 +133,14 @@ function Home() {
           <Container className="text-center mt-5 ">
             <Row>
               {chaletOffersData.map((service) => (
-                <>
-                  <Col
-                    xl={3}
-                    md={6}
-                    sm={12}
-                    className="cont_img_home_serv"
-                    key={service.id}
-                  >
-                <Link to={`/${lang}/chaletdetails/${service.id}`}>
+                <Col
+                  xl={3}
+                  md={6}
+                  sm={12}
+                  className="cont_img_home_serv"
+                  key={service.id}
+                >
+                  <Link to={`/${lang}/chaletdetails/${service.id}`}>
                     <img
                       src={service.image}
                       alt="service"
@@ -145,10 +150,8 @@ function Home() {
                     />
 
                     <div className="bottom-right">{service.title}</div>
-                </Link>
-                  </Col>
-
-                </>
+                  </Link>
+                </Col>
               ))}
             </Row>
           </Container>

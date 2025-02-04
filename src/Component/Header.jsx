@@ -106,7 +106,7 @@ const Header = () => {
             <div className="dropdown-wrapper">
               <select
                 className="form-select small-select"
-                value={selectedOption}
+                value={selectedOption ?? ""}
                 onChange={handleSelection}
               >
                 <option value="en">en</option>

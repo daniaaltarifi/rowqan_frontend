@@ -63,10 +63,10 @@ function FilterChalets({
     handleAreaChange: PropTypes.func.isRequired,
     handleFilterChange: PropTypes.func.isRequired,
     availableAreas: PropTypes.array.isRequired,
-    selectedFeatures: PropTypes.string.isRequired,
-    setSelectedFeatures: PropTypes.string.isRequired,
-    selectedAdditionalFeatures: PropTypes.string.isRequired,
-    setSelectedAdditionalFeatures: PropTypes.string.isRequired,
+    selectedFeatures: PropTypes.array.isRequired,
+    setSelectedFeatures: PropTypes.func.isRequired,
+    selectedAdditionalFeatures: PropTypes.array.isRequired,
+    setSelectedAdditionalFeatures: PropTypes.func.isRequired,
   };
   return (
     <>
@@ -92,7 +92,7 @@ function FilterChalets({
           <Col lg={12} md={6} sm={12}>
             <Form.Select
               aria-label="Select City"
-              value={selectedCity}
+              value={selectedCity ?? ""}
               onChange={handleCityChange}
               className="select_location"
             >
@@ -109,7 +109,7 @@ function FilterChalets({
             <Form.Select
               aria-label="Select Area"
               className="select_location mt-3"
-              value={selectedArea}
+              value={selectedArea ?? ""}
               onChange={handleAreaChange}
               disabled={!selectedCity} // Disable area dropdown if no city is selected
             >

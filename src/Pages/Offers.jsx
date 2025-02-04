@@ -59,9 +59,10 @@ const fetchData = useCallback(async () => {
         <Row className="mb-4">
           <Form.Select
             aria-label="Default select example"
+            value={type_of_time ?? ""}
             onChange={(e) => setType_of_time(e.target.value)}
           >
-            <option>Select type of time</option>
+            <option value="">Select type of time</option>
             <option value="Morning">Morning</option>
             <option value="Evening">Evening</option>
             <option value="FullDay">Full Day</option>

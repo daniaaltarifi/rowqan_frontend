@@ -46,16 +46,16 @@ export const getAdditionalFeatures = () => [
 ];
 
 // Function to return interface options
-export const getInterfaceOptions = (lang) => [
-  `${lang === 'ar' ? 'شمالية' : ' Northern'}`,
-  `${lang === 'ar' ? 'جنوبية' : ' Southern'}`,
-  `${lang === 'ar' ? 'شرقية' : 'Eastern'}`,
-  `${lang === 'ar' ? 'غربية' : 'Western'}`,
-  `${lang === 'ar' ? 'شمالية شرقية' : 'Northeast'}`,
-  `${lang === 'ar' ? 'شمالية غربية' : 'Northwest'}`,
-  `${lang === 'ar' ? 'جنوبية شرقية' : 'southeast'}`,
-  `${lang === 'ar' ? 'جنوبية غربية' : 'Southwest'}`,
-];
-export const getFamilyOptions = () => ['1', '2', '3', '4', '5', '+6'];
+// export const getInterfaceOptions = (lang) => [
+//   `${lang === 'ar' ? 'شمالية' : ' Northern'}`,
+//   `${lang === 'ar' ? 'جنوبية' : ' Southern'}`,
+//   `${lang === 'ar' ? 'شرقية' : 'Eastern'}`,
+//   `${lang === 'ar' ? 'غربية' : 'Western'}`,
+//   `${lang === 'ar' ? 'شمالية شرقية' : 'Northeast'}`,
+//   `${lang === 'ar' ? 'شمالية غربية' : 'Northwest'}`,
+//   `${lang === 'ar' ? 'جنوبية شرقية' : 'southeast'}`,
+//   `${lang === 'ar' ? 'جنوبية غربية' : 'Southwest'}`,
+// ];
+// export const getFamilyOptions = () => ['1', '2', '3', '4', '5', '+10', '+20'];
 export const getkitchenOptions = () => ['1', '2', '3', '+4'];
 export const getswimmingpoolsOptions = () => ['1', '2', '+3'];

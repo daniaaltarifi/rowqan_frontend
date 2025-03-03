@@ -4,7 +4,7 @@ import Col from "react-bootstrap/Col";
 import Image from "react-bootstrap/Image";
 import "../Css/Home.css";
 // import TopPicks from "../Component/TopPicks";
-import BestRated from "../Component/BestRated";
+// import BestRated from "../Component/BestRated";
 import React, { useCallback, useEffect, useState } from "react";
 import { API_URL } from "../App";
 import axios from "axios";
@@ -20,6 +20,7 @@ function Home() {
   const getHero = useCallback(async () => {
     const [heroRes, servRes, offersRes] = await Promise.all([
       axios.get(`${API_URL}/heroes/getAllHeroes/${lang}`),
+      // axios.get(`https://kassel.icu/rowqan/wp-json/wp/v2/hero?acf_format=standard&_fields=id,title.rendered,acf.title,acf.description,acf.image,acf.title_btn&lang=${lang}`),
       axios.get(`${API_URL}/chalets/getallchalets/${lang}`),
       axios.get(
         `${API_URL}/chalets/getChaletsByTypeOfTimeAndOffer/Morning/${lang}`
@@ -41,7 +42,7 @@ function Home() {
   return (
     <div className="home-container">
       <Container>
-        <Row className="align-items-center justify-content-center">
+        <Row className="align-items-center justify-content-center hero_cont">
           {heroes.map((hero) => (
             <React.Fragment key={hero.id}>
               <Col lg={6} md={6}>
@@ -53,7 +54,11 @@ function Home() {
               </Col>
               <Col lg={6} md={6}>
                 <Image
-                  srcSet={`https://res.cloudinary.com/dqimsdiht/${hero.image}?w=400&f_auto&q_auto:eco 400w`}
+                  src={`https://res.cloudinary.com/dqimsdiht/image/upload/f_auto,q_auto,w_800/${hero.image}`}
+                  srcSet={`
+    https://res.cloudinary.com/dqimsdiht/image/upload/f_auto,q_auto,w_400/${hero.image} 400w,
+    https://res.cloudinary.com/dqimsdiht/image/upload/f_auto,q_auto,w_800/${hero.image} 800w
+  `}
                   sizes="(max-width: 768px) 100vw, 50vw"
                   alt="home img"
                   className="mainHome_img"
@@ -63,7 +68,7 @@ function Home() {
             </React.Fragment>
           ))}
         </Row>
-        <section className="margin_section ">
+        <section className="margin_section cont_chalets_home">
           <Container>
             <Row>
               <Col xl={4}>
@@ -76,7 +81,7 @@ function Home() {
               </Col>
             </Row>
           </Container>
-          <Container className="text-center mt-5 ">
+          <Container className="text-center mt-5">
             <Row>
               {services.map((service) => (
                 <Col
@@ -88,7 +93,12 @@ function Home() {
                 >
                   <Link to={`/${lang}/chaletdetails/${service.id}`}>
                     <img
-                      src={service.image}
+                      // src={service.image}
+                      src={service.image} // Default image
+                      srcSet={`${service.image}?w=400&f_auto&q_auto:eco 400w,
+                    ${service.image}?w=800&f_auto&q_auto:eco 800w,
+                    ${service.image}?w=1200&f_auto&q_auto:eco 1200w`}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       alt="service"
                       height={"250px"}
                       width={"420px"}
@@ -102,7 +112,7 @@ function Home() {
             </Row>
           </Container>
         </section>
-        <section className="margin_section">
+        {/* <section className="margin_section">
           <Container>
             <Row>
               <Col xl={4}>
@@ -116,9 +126,9 @@ function Home() {
             </Row>
           </Container>
           <BestRated />
-        </section>
+        </section> */}
         <section className="margin_section">
-          <Container>
+          <Container >
             <Row>
               <Col xl={4}>
                 <button
@@ -142,7 +152,11 @@ function Home() {
                 >
                   <Link to={`/${lang}/chaletdetails/${service.id}`}>
                     <img
-                      src={service.image}
+                      src={service.image} // Default image
+                      srcSet={`${service.image}?w=400&f_auto&q_auto:eco 400w,
+                      ${service.image}?w=800&f_auto&q_auto:eco 800w,
+                      ${service.image}?w=1200&f_auto&q_auto:eco 1200w`}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       alt="service"
                       height={"250px"}
                       width={"420px"}

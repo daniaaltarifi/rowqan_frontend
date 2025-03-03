@@ -6,8 +6,7 @@ import {
   getBathroomOptions,
   getFeatures,
   getAdditionalFeatures,
-  getInterfaceOptions,
-  getFamilyOptions,
+  // getInterfaceOptions,
   getkitchenOptions,
   getswimmingpoolsOptions,
 } from "./Data";
@@ -33,8 +32,7 @@ function FilterChalets({
   const bathroomOptions = getBathroomOptions();
   const features = getFeatures();
   const additionalFeatures = getAdditionalFeatures();
-  const interfaceOptions = getInterfaceOptions(lang);
-  const familyoptions = getFamilyOptions();
+  // const interfaceOptions = getInterfaceOptions(lang);
   const kitchenOptions = getkitchenOptions();
   const swimmingpoolsOptions = getswimmingpoolsOptions();
     const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -251,27 +249,9 @@ function FilterChalets({
               </Dropdown.Menu>
             </Dropdown>
           </Col>
-          {/* INTERFACE OPTIONS */}
-          <Col lg={12} md={6} sm={12}>
-            <Form.Select
-              aria-label={lang === "ar" ? "واجهة" :"interface"}
-              value={filterValues[lang === "ar" ? "واجهة" : "Interface"] || ""} // Display selected value or default to empty
-              onChange={handleFilterChange(lang === "ar" ? "واجهة" : "Interface")}
-              className="select_location mt-3"
-            >
-              <option value="">
-                {lang === "ar" ? "الواجهة" : "Interface"}
-              </option>
-              {interfaceOptions.map((inter, index) => (
-                <option key={index} value={inter}>
-                  {inter}
-                </option>
-              ))}
-            </Form.Select>
-          </Col>
           {/* FAMILY OPTIONS */}
           <Col lg={12} md={6} sm={12}>
-            <Form.Select
+            {/* <Form.Select
               aria-label={lang === "ar" ? "عدد الزوار" :"Number of Visitors"}
               value={filterValues[lang === "ar" ? "عدد الزوار" : "Number of Visitors"] || ""} // Display selected value or default to empty
               onChange={handleFilterChange(lang === "ar" ? "عدد الزوار" : "Number of Visitors")}
@@ -285,7 +265,17 @@ function FilterChalets({
                   {family}
                 </option>
               ))}
-            </Form.Select>
+            </Form.Select> */}
+            <div>
+            <input
+              type="number"
+              value={filterValues["Number of Visitors"] || ""} // Display selected value or default to empty
+              onChange={handleFilterChange("Number of Visitors")}
+              id="Number of Visitors"
+              className="search_course mt-3"
+              placeholder={lang === "ar" ? "عدد الزوار" : "Number of Visitors"}
+            />
+          </div>
           </Col>
           {/* KITHENS OPTIONS */}
           <Col lg={12} md={6} sm={12}>
@@ -333,7 +323,7 @@ function FilterChalets({
               onChange={handleFilterChange("Building Area")}
               id="Building"
               className="search_course mt-3"
-              placeholder="Building Area"
+              placeholder={lang === "ar" ? "مساحة البناء" : "Building Area"}
             />
           </div>
         </Row>

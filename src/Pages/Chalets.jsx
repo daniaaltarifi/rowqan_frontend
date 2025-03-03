@@ -10,7 +10,8 @@ import { useUser } from "../Component/UserContext";
 import FilterChalets from "../Component/FilterChalets";
 import { cities } from "../Component/CityData";
 import PropTypes from "prop-types";
-import BestRated from "../Component/BestRated";
+// import BestRated from "../Component/BestRated";
+import '../Css/Events.css'
 function Chalets() {
   const { userId } = useUser();
   const lang = location.pathname.split("/")[1] || "en";
@@ -52,7 +53,8 @@ function Chalets() {
           ? axios.get(
               `${API_URL}/chalets/getallchaletsbystatus/${statusId}/${lang}`
             )
-          : axios.get(`${API_URL}/chalets/getallchalets/${lang}`),
+            : axios.get(`${API_URL}/chalets/getallchalets/${lang}`),
+          
       ]);
       // Update state only if the data has changed
       if (statueRes.data.statuses !== statusChalets) {
@@ -234,7 +236,7 @@ Chalets.propTypes={
           ))}
         </div>
       </div>
-      <Container className="margin_section">
+      <Container className="margin_section mt-4">
         <Row className="mb-3">
           <Col lg={10} md={12} sm={12}>
             <div className="navbar__search">
@@ -295,6 +297,7 @@ Chalets.propTypes={
                           chal.intial_Amount
                         );
                         localStorage.setItem("price", eveningPrice);
+                        localStorage.setItem("Number of Visitors", typeChalets["Number of Visitors"] || typeChalets["عدد الغرف"] ||  null)
                       } catch (error) {
                         console.error("Error accessing localStorage", error);
                       }
@@ -346,6 +349,7 @@ Chalets.propTypes={
                                 ? "يبدأ السعر من "
                                 : "Starting Price :"}{" "}
                               {eveningPrice} JD
+                              {/* {chal.acf.initial_amount} JD */}
                             </Card.Text>
                           </div>
                         </Row>
@@ -384,12 +388,12 @@ Chalets.propTypes={
             <p className="text-center">{message}</p> // Properly render the fallback message
           )}
         </Row>
-
+{/* 
         <h4 style={{ color: "#152C5B", marginTop: "10vh" }}>
           Treasure to Choose
-        </h4>
+        </h4> */}
       </Container>
-      <BestRated />
+      {/* <BestRated /> */}
     </>
   );
 }

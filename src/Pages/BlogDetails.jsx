@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { API_URL } from "../App";
+
 function BlogDetails() {
   const { id } = useParams();
   const lang = location.pathname.split("/")[1] || "en";
@@ -24,6 +25,7 @@ function BlogDetails() {
     window.scrollTo(0, 0);
     fetchData();
   }, [lang]);
+
   return (
     <div>
       <Container>
@@ -38,7 +40,7 @@ function BlogDetails() {
               <img
                 srcSet={`https://res.cloudinary.com/dqimsdiht/${blog.image}?w=400&f_auto&q_auto:eco 400w`}
                 alt="blog"
-                style={{ borderRadius: "25px", height: "500px",width:"100%" }}
+                style={{ borderRadius: "25px", height: "500px", width: "100%" }}
               />
             </Col>
             <Col
@@ -51,6 +53,7 @@ function BlogDetails() {
                 <h1 className="mt-4" style={{ textAlign: "center" }}>
                   {blog.title}
                 </h1>
+
                 <p className="mt-5">{blog.description}</p>
               </div>
             </Col>

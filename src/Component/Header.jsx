@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../App";
 import { useUser } from "./UserContext.jsx";
+// import GoogleTranslate from "./GoogleTranslate.jsx";
 
 const Header = () => {
   const { userId, logout } = useUser();
@@ -112,6 +113,7 @@ const Header = () => {
                 <option value="en">en</option>
                 <option value="ar">ar</option>
               </select>
+{/* <GoogleTranslate/> */}
             </div>
           </div>
         </li>

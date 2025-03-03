@@ -248,3 +248,31 @@
     color: #495057;
     font-weight: 500;
 }
+.invoice_text{
+  color: #28a745;
+  font-weight: bold;
+  /* margin-top:15px; */
+}
+.inquires{
+  font-size: 10px;
+}
+.phone-input-container .PhoneInputCountry {
+  pointer-events: none; /* Prevent clicking on the flag */
+  cursor: default;
+}
+.phone-input-container .PhoneInputInput {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 2px solid #e8ebed;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.3s ease;
+  margin-bottom: 10px;
+}
+
+/* Change border color on focus */
+.phone-input-container .PhoneInputInput:focus {
+  border-color: #000;
+}
+

@@ -4,6 +4,9 @@ import axios from "axios";
 import "../Css/BLogs.css";
 import { Container, Card, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import '../Css/Events.css'
+import '../Css/Home.css'
+import '../Css/Chalets.css'
 
 function Blogs() {
   const lang = location.pathname.split("/")[1] || "en";
@@ -29,11 +32,10 @@ function Blogs() {
       <Container fluid>
         <Row className="text-center">
           <Col className="background_blogs">
-            <h1 className="title_blogs">Resources And Blogs</h1>
+            <h1 className="title_blogs">{lang === 'ar' ? 'الموارد والمدونات':'Resources And Blogs'}</h1>
             <h5 className="subtitle_blog">
-              our blogs offer insightful content to help you plan your next
-              memorable escape. Dive in and discover the charm and comfort of
-              bloget living.
+              {lang=== 'ar' ? 'تقدم مدوناتنا محتوى مفيدًا لمساعدتك في التخطيط لرحلتك القادمة التي لا تنسى. انغمس في اكتشاف سحر وراحة الحياة في مدوناتنا.' : 'our blogs offer insightful content to help you plan your next memorable escape. Dive in and discover the charm and comfort ofbloget living.'}
+              
             </h5>
             <svg
               className="wave"

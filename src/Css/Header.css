@@ -22,13 +22,16 @@ body {
 }
 
 .logo img {
-  height: 10rem;
+  height: 150px;
   width: 13rem;
 }
-
 .nav-links {
   display: flex;
   list-style: none;
+  min-width: 18vw;
+  /* min-height: 10px; */
+   min-height: 50px; 
+  transition: transform 0.3s ease-in-out;
   width: 88vw;
   padding: 0 0.7vw;
   justify-content: space-evenly;

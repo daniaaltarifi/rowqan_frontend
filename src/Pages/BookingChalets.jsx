@@ -8,7 +8,7 @@ import { Link, useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../App.jsx";
 import ChatNowHeader from "../Component/ChatNowHeader.jsx";
-import BestRated from "../Component/BestRated.jsx";
+// import BestRated from "../Component/BestRated.jsx";
 import { useUser } from "../Component/UserContext";
 
 function BookingChalets() {
@@ -89,7 +89,6 @@ function BookingChalets() {
               ) : isVideo(image) ? (
                 <video
                   controls
-                  autoPlay
                   width="100%"
                   height="550px"
                   src={`${image}`}
@@ -172,7 +171,6 @@ function BookingChalets() {
           <Col xl={8} md={12} sm={12}>
             <Link
               to={`/${lang}/reservechalet/${id}`}
-              state={{ type: dataChalets.type }}
             >
               <button className="booknow_button_events w-100 my-5">
                 {lang === "ar" ? "احجز الشاليه " : " Reserve Now"}{" "}
@@ -180,11 +178,11 @@ function BookingChalets() {
             </Link>
           </Col>{" "}
         </Row>
-        <h4 style={{ color: "#152C5B", marginTop: "10vh" }}>
+        {/* <h4 style={{ color: "#152C5B", marginTop: "10vh" }}>
           {lang === "ar" ? "خيارات مفضلة " : " Treasure to Choose"}{" "}
-        </h4>
+        </h4> */}
       </Container>
-      <BestRated />
+      {/* <BestRated /> */}
     </div>
   );
 }

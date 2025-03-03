@@ -9,31 +9,22 @@
   justify-content: center;
   align-items: center;
 }
+.hero_cont{
+  height: 70vh;
+  width: 100%;
+}
 .margin_section {
   margin-top: 15vh;
+  /* min-height: 300px; */
 }
 .mainHome_img {
   width: 100%;
-  max-width: 613px;
-  height: 470px;
+  max-width: 600px;
+  height: 465px;
   border-radius: 40px;
   box-shadow: 16px 16px 4px 0px rgba(109, 166, 186, 1);
-  /* transform: translateX(100%);
-  opacity: 0; 
-  animation: slideInFromRight 1s forwards; */
   object-fit: cover;
 }
-/* 
-@keyframes slideInFromRight {
-  0% {
-    transform: translateX(100%); 
-    opacity: 0; 
-  }
-  100% {
-    transform: translateX(0); 
-    opacity: 1; 
-  }
-} */
 
 .maintext_home {
   font-family: Poppins;
@@ -81,13 +72,16 @@
   margin-top: 2vh;
 }
 /* SERVICES SECTION */
-
+.cont_chalets_home{
+  /* height: 40vh; */
+  width: 100%;
+}
 .cont_img_home_serv {
   position: relative;
-  
 }
 
 .bottom-right {
+  font-display: swap;
   position: absolute;
   bottom: 55px;
   right: 36px;
@@ -150,11 +144,17 @@ font-weight: 300;
 line-height: 15.5px;
 color: #B0B0B0;
 }
+@media screen and (max-width: 2300px) {
+  .hero_cont{
+    height: auto;
+  }
+}
 @media screen and (max-width: 768px) {
   .home-container {
     margin-top: 8vh;
     text-align: center;
   }
+
   .mainHome_img {
     margin-top: 4vh;
     height:300px
@@ -174,5 +174,7 @@ color: #B0B0B0;
   }
   .services_btn_home {
     font-size: 14px;
+
   }
+
 }

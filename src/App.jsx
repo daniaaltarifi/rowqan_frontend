@@ -1,39 +1,40 @@
 
 import './App.css'
-import Header from './Component/Header'
+import React, { Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Routes,Route, useLocation } from 'react-router-dom'
-import Home from './Pages/Home'
-// Import Bootstrap CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Header from './Component/Header'
 import Footer from './Component/Footer';
-import SignUp from './Pages/SignUp';
-import Login from './Pages/Login';
-import Chalets from './Pages/Chalets';
-import ForgetPassword from './Pages/ForgetPassword';
-import ResetPassword from './Pages/ResetPassword';
-import Events from './Pages/Events';
-import { useEffect } from 'react';
-import EventsCategory from './Pages/EventsCategory';
-import EventDetails from './Pages/EventDetails';
-import ChaletsDetails from './Pages/ChaletDetails';
-import BookingChalets from './Pages/BookingChalets';
-import Lands from './Pages/Lands';
-import LandsDetails from './Pages/LandsDetails';
-import BookingLand from './Pages/BookingLand';
-import ReserveChalets from './Pages/ReserveChalets';
-import ReserveEvents from './Pages/ReserveEvents';
-import Playgrounds from './Pages/Playgrounds';
-import { UserProvider } from './Component/UserContext.jsx';
-import CashBack from './Pages/CashBack.jsx';
-import ChatBot from './Component/ChatBot.jsx';
-import Payment from './Pages/Payment.jsx';
-import About from './Pages/About.jsx';
-import Blogs from './Pages/Blogs.jsx';
-import BlogDetails from './Pages/BlogDetails.jsx';
-import Contact from './Pages/Contact.jsx';
-import Offers from './Pages/Offers.jsx';
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+const Home=React.lazy(()=>import('./Pages/Home.jsx'))
+const SignUp=React.lazy(()=>import('./Pages/SignUp.jsx'))
+const Login=React.lazy(()=>import('./Pages/Login.jsx'))
+const Chalets=React.lazy(()=>import('./Pages/Chalets.jsx'))
+const ForgetPassword=React.lazy(()=>import('./Pages/ForgetPassword.jsx'))
+const ResetPassword=React.lazy(()=>import('./Pages/ResetPassword.jsx'))
+const ChaletsDetails=React.lazy(()=>import('./Pages/ChaletDetails.jsx'))
+const BookingChalets=React.lazy(()=>import('./Pages/BookingChalets.jsx'))
+const ReserveChalets=React.lazy(()=>import('./Pages/ReserveChalets.jsx'))
+const CashBack=React.lazy(()=>import('./Pages/CashBack.jsx'))
+const ChatBot=React.lazy(()=>import('./Component/ChatBot.jsx'))
+const Payment=React.lazy(()=>import('./Pages/Payment.jsx'))
+const About=React.lazy(()=>import('./Pages/About.jsx'))
+const Blogs=React.lazy(()=>import('./Pages/Blogs.jsx'))
+const BlogDetails=React.lazy(()=>import('./Pages/BlogDetails.jsx'))
+const Contact=React.lazy(()=>import('./Pages/Contact.jsx'))
+const Offers=React.lazy(()=>import('./Pages/Offers.jsx'))
+import { UserProvider } from './Component/UserContext.jsx';
 
+    // EVENTS IMPORTS
+// import Events from './Pages/Events';
+// import EventsCategory from './Pages/EventsCategory';
+// import EventDetails from './Pages/EventDetails';
+// import ReserveEvents from './Pages/ReserveEvents';
+   // LANDS IMPORTS
+// import Lands from './Pages/Lands';
+// import LandsDetails from './Pages/LandsDetails';
+// import BookingLand from './Pages/BookingLand';
+// import Playgrounds from './Pages/Playgrounds';
 // export const API_URL="http://localhost:5000";
 export const API_URL="https://rowqanbackend.rowqan.com";
 const DirectionHandler = () => {
@@ -53,6 +54,7 @@ function App() {
     currency: "USD",
     intent: "capture",
   };
+  
   return (
     <>
     <Router>
@@ -60,6 +62,7 @@ function App() {
     <UserProvider>
     <Header/>
     <PayPalScriptProvider options={initialOptions}>
+    <Suspense fallback={<div>Loading...</div>}>
 
     <Routes>
 
@@ -83,19 +86,21 @@ function App() {
       <Route path="/:lang/forgetpassword" element={ <ForgetPassword/>} />
       <Route path="/:lang/resetpassword/:token" element={ <ResetPassword/>} />
       {/* EVENTS ROUTES */}
-      <Route path="/:lang/events" element={ <Events/>} />
+      {/* <Route path="/:lang/events" element={ <Events/>} />
       <Route path="/:lang/eventscategory/:id" element={ <EventsCategory/>} />
       <Route path="/:lang/eventdetails/:id" element={ <EventDetails/>} />
-      <Route path="/:lang/reserveevent/:id" element={ <ReserveEvents/>} />
+      <Route path="/:lang/reserveevent/:id" element={ <ReserveEvents/>} /> */}
       {/* LANDS ROUTES */}
-      <Route path="/:lang/lands" element={ <Lands/>} />
+      {/* <Route path="/:lang/lands" element={ <Lands/>} />
       <Route path="/:lang/landdetails/:id" element={ <LandsDetails/>} />
-      <Route path="/:lang/bookingland/:id" element={ <BookingLand/>} />
+      <Route path="/:lang/bookingland/:id" element={ <BookingLand/>} /> */}
       {/* PLAYGROUND ROUTES */}
-      <Route path="/:lang/playgrounds" element={ <Playgrounds/>} />
+      {/* <Route path="/:lang/playgrounds" element={ <Playgrounds/>} /> */}
+
       <Route path="/:lang/cashback" element={ <CashBack/>} />
 
     </Routes>
+    </Suspense>
     </PayPalScriptProvider>
 
       </UserProvider>

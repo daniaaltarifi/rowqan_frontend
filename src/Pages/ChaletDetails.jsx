@@ -4,10 +4,11 @@ import { Link, useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../App";
 import ChatNowHeader from "../Component/ChatNowHeader";
-import BestRated from "../Component/BestRated";
+// import BestRated from "../Component/BestRated";
 import { useUser } from "../Component/UserContext";
 import Carousel from "react-bootstrap/Carousel";
 import PropTypes from "prop-types";
+import '../Css/Events.css'
 
 function ChaletsDetails() {
   const location = useLocation();
@@ -44,6 +45,7 @@ function ChaletsDetails() {
       if (chaletsRes.data !== dataChalets) {
         setdataChalets(chaletsRes.data);
       }
+
       if (ratingRes.data.averageStars !== ratingUser) {
         setRatingUser(ratingRes.data.averageStars);
       }
@@ -59,7 +61,6 @@ function ChaletsDetails() {
     orange: "#F2C265",
     grey: "#a9a9a9",
   };
-
   // Star icon SVG component
   const StarIcon = ({ filled }) => (
     <svg
@@ -74,12 +75,12 @@ function ChaletsDetails() {
       />
     </svg>
   );
-  ChaletsDetails.propTypes={
-    filled:PropTypes.string.isRequired,
-  }
+  ChaletsDetails.propTypes = {
+    filled: PropTypes.string.isRequired,
+  };
   return (
     <div>
-      <ChatNowHeader dataChalets={dataChalets} chalet_id={id} price={price} />
+    <ChatNowHeader dataChalets={dataChalets} chalet_id={id} price={price} /> 
       <Container className="mt-5">
         <h1>
           {" "}
@@ -126,6 +127,14 @@ function ChaletsDetails() {
                           )
                         )}
                     </ul>
+                    {/* <ul>
+                      {dataChalets?.acf?.type
+                        ?.split("\r\n")
+                        .map((item, index) => (
+                          <li key={index}>{item}</li>
+                        ))}
+                    </ul> */}
+
                     <div className="cont_rating">
                       {[...Array(5)].map((_, index) => (
                         <span
@@ -162,7 +171,7 @@ function ChaletsDetails() {
               <h5>{price} JD</h5>
             </div>
             <>
-              <h4>{lang === 'ar' ? 'المميزات :' : 'Features :'}</h4>
+              <h4>{lang === "ar" ? "المميزات :" : "Features :"}</h4>
               <h6>
                 <ul>
                   {dataChalets.features
@@ -180,6 +189,14 @@ function ChaletsDetails() {
                         ))
                     : null}
                 </ul>
+                {/* <ul>
+                      {dataChalets?.acf?.features
+                        ?.split("\r\n")
+                        .map((item, index) => (
+                          <li key={index} style={{ fontSize: "18px" }}
+                           >{item}</li>
+                        ))}
+                    </ul> */}
               </h6>
             </>
             <Link
@@ -196,10 +213,10 @@ function ChaletsDetails() {
             </Link>
           </Col>
         </Row>
-        <h4 style={{ color: "#152C5B", marginTop: "10vh" }}>
+        {/* <h4 style={{ color: "#152C5B", marginTop: "10vh" }}>
           {lang === "ar" ? "خيارات مفضلة " : " Treasure to Choose"}{" "}
         </h4>
-        <BestRated />
+        <BestRated /> */}
       </Container>
     </div>
   );

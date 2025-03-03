@@ -99,7 +99,7 @@ const [receiverId,setReceiverId]=useState(null)
   }, [receiverId, userId]); // Dependency array updated to include receiverId
    const getReciverId = async () => {
     try {
-      const res = await axios.get(`${API_URL}/userstypes/getAdmins/${lang}`);
+      const res = await axios.get(`${API_URL}/adminChalets/getUserIdByChaletId/${chalet_id}`);
       const receiverIds = res.data;
       if (receiverIds.length > 0) {
         const randomReceiver = receiverIds[Math.floor(Math.random() * receiverIds.length)];

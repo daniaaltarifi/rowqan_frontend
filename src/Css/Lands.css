@@ -53,7 +53,7 @@
 .calendar {
   position: relative;
   width: 100%;
-  max-width: 450px;
+  max-width: 350px;
   background: linear-gradient(180deg, #f2c79d 0%, #6da6ba 100%);
 margin: 5px;
   border: 1px solid #ccc;

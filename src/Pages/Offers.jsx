@@ -8,8 +8,8 @@ import chalets from "../assets/outdoor-swimming-pool.jpeg";
 import chat from "../assets/chat.png";
 import { useUser } from "../Component/UserContext";
 import Form from "react-bootstrap/Form";
-import BestRated from "../Component/BestRated";
-
+// import BestRated from "../Component/BestRated";
+import '../Css/Events.css'
 function Offers() {
   const { userId } = useUser();
   const lang = location.pathname.split("/")[1] || "en";
@@ -55,8 +55,8 @@ const fetchData = useCallback(async () => {
           <h1> {lang === "ar" ? "عروض الشاليهات " : "Offers Of Chalets"}</h1>
         </div>
       </div>
-      <Container className="margin_section">
-        <Row className="mb-4">
+      <Container className="margin_section cont_chalets_home mt-4">
+        <Row className="mb-4 ">
           <Form.Select
             aria-label="Default select example"
             value={type_of_time ?? ""}
@@ -154,12 +154,12 @@ const fetchData = useCallback(async () => {
   )}
 </Row>
 
-
+{/* 
         <h4 style={{ color: "#152C5B", marginTop: "10vh" }}>
           Treasure to Choose
-        </h4>
+        </h4> */}
       </Container>
-      <BestRated />
+      {/* <BestRated /> */}
     </>
   );
 }

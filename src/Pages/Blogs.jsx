@@ -4,9 +4,9 @@ import axios from "axios";
 import "../Css/BLogs.css";
 import { Container, Card, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import '../Css/Events.css'
-import '../Css/Home.css'
-import '../Css/Chalets.css'
+import "../Css/Events.css";
+import "../Css/Home.css";
+import "../Css/Chalets.css";
 
 function Blogs() {
   const lang = location.pathname.split("/")[1] || "en";
@@ -32,10 +32,13 @@ function Blogs() {
       <Container fluid>
         <Row className="text-center">
           <Col className="background_blogs">
-            <h1 className="title_blogs">{lang === 'ar' ? 'الموارد والمدونات':'Resources And Blogs'}</h1>
+            <h1 className="title_blogs">
+              {lang === "ar" ? "الموارد والمدونات" : "Resources And Blogs"}
+            </h1>
             <h5 className="subtitle_blog">
-              {lang=== 'ar' ? 'تقدم مدوناتنا محتوى مفيدًا لمساعدتك في التخطيط لرحلتك القادمة التي لا تنسى. انغمس في اكتشاف سحر وراحة الحياة في مدوناتنا.' : 'our blogs offer insightful content to help you plan your next memorable escape. Dive in and discover the charm and comfort ofbloget living.'}
-              
+              {lang === "ar"
+                ? "تقدم مدوناتنا محتوى مفيدًا لمساعدتك في التخطيط لرحلتك القادمة التي لا تنسى. انغمس في اكتشاف سحر وراحة الحياة في مدوناتنا."
+                : "our blogs offer insightful content to help you plan your next memorable escape. Dive in and discover the charm and comfort ofbloget living."}
             </h5>
             <svg
               className="wave"
@@ -60,39 +63,45 @@ function Blogs() {
         <Row>
           {blogs.map((blog) => (
             <Col xl={4} md={6} sm={12} key={blog.id}>
-              <Link to={`/${lang}/blogdetails/${blog.id}`} style={{textDecoration:"none"}}>
-              <Card className="cont_card_blogs">
-                <Card.Img
-                  variant="top"
-                  height={"200px"}
-                  className="object-fit-cover"
-                  srcSet={`https://res.cloudinary.com/dqimsdiht/${blog.image}?w=400&f_auto&q_auto:eco 400w`}
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  alt="blog img"
-                  decoding="async"
-                  loading="lazy"
-                />
-                <Card.Body className="d-flex flex-column">
-                  <Card.Title className="title_chalets mt-3">
-                    {blog.title}
-                  </Card.Title>
+              <Link
+                to={`/${lang}/blogdetails/${blog.id}`}
+                style={{ textDecoration: "none" }}
+              >
+                <Card className="cont_card_blogs">
+                  <Card.Img
+                    variant="top"
+                    height={"200px"}
+                    className="object-fit-cover"
+                    srcSet={`https://res.cloudinary.com/dqimsdiht/${blog.image}?w=400&f_auto&q_auto:eco 400w`}
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    alt="blog img"
+                    decoding="async"
+                    loading="lazy"
+                  />
+                  <Card.Body className="d-flex flex-column">
+                    <Card.Title className="title_chalets mt-3">
+                      {blog.title}
+                    </Card.Title>
 
-                  <Row>
-                    <div className="d-flex justify-content-evenly mt-3">
-                      <Card.Text className="column-title">
-                        {blog.description}
-                      </Card.Text>
+                    <Row>
+                      <div className="d-flex justify-content-evenly mt-3">
+                        <Card.Text
+                          className="column-title"
+                          dangerouslySetInnerHTML={{
+                            __html: blog.description,
+                          }}
+                        >
+                        </Card.Text>
+                      </div>
+                    </Row>
+                    <div className="d-flex justify-content-evenly mt-3 mt-auto ">
+                      <button className="booknow_button_events ">
+                        {lang === "ar" ? "شاهد المزيد" : "View More"}
+                      </button>
                     </div>
-                  </Row>
-                  <div className="d-flex justify-content-evenly mt-3 mt-auto ">
-                    <button className="booknow_button_events ">
-                      {lang === "ar" ? "شاهد المزيد" : "View More"}
-                    </button>
-                  </div>
-                </Card.Body>
-              </Card>
+                  </Card.Body>
+                </Card>
               </Link>
-
             </Col>
           ))}
         </Row>

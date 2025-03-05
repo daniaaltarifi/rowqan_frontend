@@ -53,8 +53,12 @@ function BlogDetails() {
                 <h1 className="mt-4" style={{ textAlign: "center" }}>
                   {blog.title}
                 </h1>
-
-                <p className="mt-5">{blog.description}</p>
+                <p
+                            dangerouslySetInnerHTML={{
+                              __html: blog.description,
+                            }}
+                          ></p>
+                {/* <p className="mt-5">{blog.description}</p> */}
               </div>
             </Col>
           </Row>

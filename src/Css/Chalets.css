@@ -15,7 +15,26 @@
   font-weight: 700;
   line-height: 28.26px;
 }
+.location-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  padding-left: 5px;
+}
 
+.location-label {
+  color: #666;
+  font-size: 14px;
+  font-weight: bolder;
+  margin-left: 130px;
+}
+
+html[lang="ar"] .location-container {
+  padding-right: 5px;
+  padding-left: 0;
+}
 .cont_rating {
   text-align: center;
 }
@@ -62,11 +81,11 @@
   text-decoration: underline;
 }
 .column-title {
-  min-width: 100px; /* Adjust as necessary */
+  min-width: 100px; 
   text-align: center;
 }
 
-/* BASIC CHALETS DETAILS */
+
 .box_price{
   background: #F3F3FA;
   width: 100%;
@@ -95,7 +114,7 @@ min-height: 65vh;
  box-shadow: 10px 10px 4px 0px var(--beige-color);
 }
 
-/* BOOKING CHALETS PAGE */
+
 .box_overview_chalets{
   background: #F3F3FA;
   width: 100%;
@@ -132,11 +151,11 @@ padding-bottom: 5px;
 }
 
 
-/* Chalets.css */
 
-/* General styles for mobile layout */
+
+
 .imagegallery {
-  display: none; /* Hide by default */
+  display: none; 
 }
 
 .section_of_mobile_img {
@@ -146,7 +165,7 @@ padding-bottom: 5px;
 }
 
 .mobile_img {
-  height: 100px; /* Fixed height for the small images */
+  height: 100px; 
   width: 100px;
   border: 1px solid lightgray;
   opacity: 0.5;
@@ -162,7 +181,7 @@ padding-bottom: 5px;
   width: 100%;
   object-fit: cover;
 }
-/* SEARCH BAR */
+
 .navbar__search {
   position: relative;
   color: #aaa;
@@ -214,7 +233,7 @@ padding-bottom: 5px;
   box-shadow: 4px 4px 4px 0px var(--beige-color);
 
 }
-/* Initially hide the filter container */
+
 .filter-popup {
   position: fixed;
   top: 0;
@@ -230,7 +249,7 @@ padding-bottom: 5px;
   transition: right 0.3s ease-in-out;
 }
 
-/* Animation when opened */
+
 @keyframes slideIn {
   from {
     right: -350px;
@@ -255,7 +274,7 @@ padding-bottom: 5px;
 }
 
 
-/* Media Query for Mobile Devices */
+
 @media (max-width: 992px) {
   .imagegallery {
     width: 100%;
@@ -267,7 +286,7 @@ padding-bottom: 5px;
     overflow: hidden;
   
   }
-  /* Hide the Bootstrap layout on mobile */
+  
   .desktop_chalets_img {
     display: none;
   }

@@ -10,8 +10,8 @@ import { useUser } from "../Component/UserContext";
 import FilterChalets from "../Component/FilterChalets";
 import { cities } from "../Component/CityData";
 import PropTypes from "prop-types";
-// import BestRated from "../Component/BestRated";
-import '../Css/Events.css'
+import "../Css/Events.css";
+
 function Chalets() {
   const { userId } = useUser();
   const lang = location.pathname.split("/")[1] || "en";
@@ -24,14 +24,14 @@ function Chalets() {
   const [availableAreas, setAvailableAreas] = useState([]);
   const [message, setMessage] = useState("");
   const [dataToDisplay, setDataToDisplay] = useState([]);
-  const [allData, setAllData] = useState([]); // Original unfiltered data
+  const [allData, setAllData] = useState([]); 
 
   const colors = {
     orange: "#F2C265",
     grey: "#a9a9a9",
   };
 
-  // Star icon SVG component
+ 
   const StarIcon = ({ filled }) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -41,10 +41,11 @@ function Chalets() {
     >
       <path
         d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
-        fill={filled ? colors.orange : colors.grey} // Use colors.orange for filled and colors.grey for empty
+        fill={filled ? colors.orange : colors.grey} 
       />
     </svg>
   );
+
   const fetchData = useCallback(async () => {
     try {
       const [statueRes, chaletRes] = await Promise.all([
@@ -53,10 +54,9 @@ function Chalets() {
           ? axios.get(
               `${API_URL}/chalets/getallchaletsbystatus/${statusId}/${lang}`
             )
-            : axios.get(`${API_URL}/chalets/getallchalets/${lang}`),
-          
+          : axios.get(`${API_URL}/chalets/getallchalets/${lang}`),
       ]);
-      // Update state only if the data has changed
+      
       if (statueRes.data.statuses !== statusChalets) {
         setStatusChalets(statueRes.data);
       }
@@ -77,33 +77,35 @@ function Chalets() {
 
   const handleInputChange = (event) => {
     const query = event.target.value.toLowerCase();
-    setSearchQuery(query); // Update search query state
+    setSearchQuery(query); 
 
     if (query.trim() === "") {
-      // If query is empty, reset to allData
+      
       setDataToDisplay(allData);
     } else {
-      // Filter chalets by title
+      
       const filteredResults = allData.filter((chalet) =>
         chalet.title.toLowerCase().includes(query)
       );
       setDataToDisplay(filteredResults);
     }
   };
+
   useEffect(() => {
     if (searchQuery.trim() === "") {
-      setDataToDisplay(allData); // Reset to all data when query is cleared
+      setDataToDisplay(allData); 
     } else {
       const filteredResults = allData.filter((chalet) =>
         chalet.title.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setDataToDisplay(filteredResults);
     }
-  }, [searchQuery, allData]); // Only re-run when searchQuery or allData changes
+  }, [searchQuery, allData]); 
 
   const handleStatusChange = (status_id) => {
     setStatusId(status_id);
   };
+
   const [selectedFeatures, setSelectedFeatures] = useState([]);
   const [selectedAdditionalFeatures, setSelectedAdditionalFeatures] = useState(
     []
@@ -117,14 +119,14 @@ function Chalets() {
       key = null,
       value = null
     ) => {
-      const queryKey = encodeURIComponent(key); // Encode the key
+      const queryKey = encodeURIComponent(key); 
       const queryValue = encodeURIComponent(value);
       try {
         let response;
 
         const { features = [], additionalFeatures = [] } = filters;
 
-        // Priority: If city or area is provided, call the `filterByAreaOrCity` API
+        
         if (city || area) {
           response = await axios.post(
             `${API_URL}/chalets/filterByAreaOrCity/${lang}`,
@@ -134,13 +136,13 @@ function Chalets() {
             }
           );
         }
-        // If key and value are provided, call the `getAllChaletsByType` API
+        
         else if (key && value) {
           response = await axios.get(
             `${API_URL}/chalets/getAllChaletsByType/${lang}?key=${queryKey}&value=${queryValue}`
           );
         }
-        // If features or additional features are provided, call the `getchaletsbyfeature` API
+        
         else if (features.length > 0 || additionalFeatures.length > 0) {
           const params = new URLSearchParams();
           if (features.length > 0) params.append("feature", features.join(","));
@@ -151,21 +153,21 @@ function Chalets() {
           );
         }
 
-        // Handle response
+        
         if (response && response.data && response.data.length > 0) {
-          setDataToDisplay(response.data); // Update the data to display
+          setDataToDisplay(response.data); 
           setAllData(response.data);
-          setMessage(""); // Clear any error messages
+          setMessage(""); 
         } else {
-          setDataToDisplay([]); // No data found
+          setDataToDisplay([]); 
           setMessage(lang === "ar" ? "لا توجد شاليهات" : "No chalets found");
         }
       } catch (error) {
         console.error("Error fetching filtered data:", error);
 
-        // Handle 404 errors gracefully
+        
         if (error.response && error.response.status === 404) {
-          setDataToDisplay([]); // Clear the data
+          setDataToDisplay([]); 
           setMessage(lang === "ar" ? "لا توجد شاليهات" : "No chalets found");
         } else {
           setMessage(
@@ -184,6 +186,7 @@ function Chalets() {
       additionalFeatures: selectedAdditionalFeatures,
     });
   }, [selectedFeatures, selectedAdditionalFeatures]);
+
   // Handle city change
   const handleCityChange = (e) => {
     const cityId = e.target.value;
@@ -191,29 +194,31 @@ function Chalets() {
 
     const city = cities.find((city) => city.id === cityId);
     setAvailableAreas(city ? city.areas : []);
-    setSelectedArea(""); // Reset area when the city changes
+    setSelectedArea(""); 
 
-    fetchChaletData({}, cityId, null); // Fetch based on city
+    fetchChaletData({}, cityId, null); 
   };
 
   const handleAreaChange = (e) => {
     const areaId = e.target.value;
     setSelectedArea(areaId);
 
-    fetchChaletData({}, selectedCity, areaId); // Fetch based on city and area
+    fetchChaletData({}, selectedCity, areaId); 
   };
 
   const handleFilterChange = useCallback(
     (key) => (e) => {
-      const value = e.target.value.trim(); // Trim whitespace for consistent comparisons
+      const value = e.target.value.trim(); 
       setFilterValues((prev) => ({ ...prev, [key]: value }));
-      fetchChaletData({}, null, null, key, value); // Fetch data based on updated filter
+      fetchChaletData({}, null, null, key, value); 
     },
     [fetchChaletData]
   );
-Chalets.propTypes={
-  filled:PropTypes.string.isRequired,
-}
+
+  Chalets.propTypes = {
+    filled: PropTypes.string.isRequired,
+  };
+
   return (
     <>
       <div className="container_big_img">
@@ -255,7 +260,7 @@ Chalets.propTypes={
               />
             </div>
           </Col>
-          {/* Filter Section */}
+          
           <Col lg={2} md={12} sm={12}>
             <FilterChalets
               selectedCity={selectedCity}
@@ -280,11 +285,11 @@ Chalets.propTypes={
                 chal.type.replace(/\\/g, "").replace(/^"|"$/g, "")
               );
 
-              // Find the Evening time model
+              
               const eveningTime = chal.RightTimeModels.find(
                 (time) => time.type_of_time === "Evening"
               );
-              const eveningPrice = eveningTime ? eveningTime.price : 0; // If no Evening time, fallback to default reserve price
+              const eveningPrice = eveningTime ? eveningTime.price : 0; 
 
               return (
                 <Col xl={4} md={6} sm={12} key={chal.id}>
@@ -297,7 +302,12 @@ Chalets.propTypes={
                           chal.intial_Amount
                         );
                         localStorage.setItem("price", eveningPrice);
-                        localStorage.setItem("Number of Visitors", typeChalets["Number of Visitors"] || typeChalets["عدد الغرف"] ||  null)
+                        localStorage.setItem(
+                          "Number of Visitors",
+                          typeChalets["Number of Visitors"] ||
+                            typeChalets["عدد الغرف"] ||
+                            null
+                        );
                       } catch (error) {
                         console.error("Error accessing localStorage", error);
                       }
@@ -316,14 +326,27 @@ Chalets.propTypes={
                         loading="lazy"
                       />
                       <Card.Body className="d-flex flex-column">
-                        <Card.Title className="title_chalets">
+                        <Card.Title className="title_chalets mb-1">
                           {chal.title}
                         </Card.Title>
-
+                        <div className="location-container mb-2">
+                          <i
+                            className="fas fa-location-dot"
+                            style={{ color: "#833988" }}
+                          ></i>
+                          <span className="location-label">
+                            {lang === "ar" ? "الموقع: " : "Location: "}
+                            <span className="location-value">{chal.area}</span>
+                          </span>
+                        </div>
                         <Row className="mt-4">
                           <div className="d-flex justify-content-evenly flex-wrap mb-3">
                             {Object.entries(typeChalets)
-                              .filter(([key]) => key === "Number of Visitors" || key === "عدد الغرف") // Only keep the "Number_of_Visitors" key
+                              .filter(
+                                ([key]) =>
+                                  key === "Number of Visitors" ||
+                                  key === "عدد الغرف"
+                              ) // Only keep the "Number_of_Visitors" key
                               .map(([key, value], index) => (
                                 <Card.Text key={index} className="type_chalets">
                                   {key.replace(/_/g, " ")}: {value}
@@ -349,7 +372,6 @@ Chalets.propTypes={
                                 ? "يبدأ السعر من "
                                 : "Starting Price :"}{" "}
                               {eveningPrice} JD
-                              {/* {chal.acf.initial_amount} JD */}
                             </Card.Text>
                           </div>
                         </Row>
@@ -385,10 +407,10 @@ Chalets.propTypes={
               );
             })
           ) : (
-            <p className="text-center">{message}</p> // Properly render the fallback message
+            <p className="text-center">{message}</p> 
           )}
         </Row>
-{/* 
+        {/* 
         <h4 style={{ color: "#152C5B", marginTop: "10vh" }}>
           Treasure to Choose
         </h4> */}

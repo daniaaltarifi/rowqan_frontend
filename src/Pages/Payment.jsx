@@ -133,7 +133,7 @@ function Payment() {
       }
 
       const paymentResponse = await axios.post(
-        `http://localhost:5000/payments/createPayment`, 
+        `${API_URL}/payments/createPayment`, 
         formDataToSend, 
         {
           headers: {

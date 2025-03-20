@@ -41,8 +41,6 @@ function Home() {
 
 
 
-
-  
   return (
     <div className="home-container">
       <Container>

@@ -39,6 +39,8 @@ function Home() {
     getHero();
   }, [lang]);
 
+
+
   return (
     <div className="home-container">
       <Container>

@@ -133,13 +133,21 @@ const ReserveChalets = () => {
       );
       const reservation_id = res.data.reservation.id;
       const total_amount = res.data.reservation.total_amount;
-      setTimeout(
-        () =>
-          navigate(
-            `/${lang}/payment/${reservation_id}?initial_amount=${intial_Amount}&total_amount=${total_amount}`
-          ),
-        2000
-      );
+     setTimeout(
+      () =>
+        navigate(
+          `/${lang}/payment/${reservation_id}`,
+          {
+            state: {
+              initialAmount: intial_Amount,
+              totalAmount: total_amount,
+              reservationType: typeOfReseravtion,
+              chaletId: id
+            }
+          }
+        ),
+      2000
+    );
     } catch (error) {
       const errorMessage =
         error.response && error.response.data && error.response.data.error

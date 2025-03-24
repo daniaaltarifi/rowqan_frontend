@@ -86,11 +86,94 @@ function Payment() {
     }));
   };
 
+  // const handleConfirmPayment = async (e) => {
+  //   if (e && e.preventDefault) {
+  //     e.preventDefault();
+  //   }
+    
+    
+  //   setError(null);
+  //   setValidatePhone(null);
+  
+  //   if (!formData.phoneNumber || !formData.phoneNumber.startsWith("+962")) {
+  //     setValidatePhone("Phone number must start with +962");
+  //     return;
+  //   }
+  
+  //   if (!isValidPhoneNumber(formData.phoneNumber)) {
+  //     setValidatePhone("Invalid phone number format.");
+  //     return;
+  //   }
+  
+  //   if (!formData.name.trim()) {
+  //     setError("Please enter your full name");
+  //     return;
+  //   }
+  
+  //   setIsLoading(true);
+  
+  //   try {
+  //     const paymentData = {
+  //       reservation_id: Number(reservation_id),
+  //       paymentMethod: formData.selectedPayment,
+  //       UserName: formData.name,
+  //       Phone_Number: formData.phoneNumber,
+  //       initialAmount: initial_amount,
+  //       Status: 'Pending',  
+  //       payment_status: 'Pending' 
+  //     };
+
+  //     const formDataToSend = new FormData();
+  //     Object.keys(paymentData).forEach(key => {
+  //       formDataToSend.append(key, paymentData[key]);
+  //     });
+
+  //     if (formData.invoiceImg) {
+  //       formDataToSend.append('image', formData.invoiceImg);
+  //     }
+
+  //     const paymentResponse = await axios.post(
+  //       `${API_URL}/payments/createPayment`, 
+  //       formDataToSend, 
+  //       {
+  //         headers: {
+  //           'Content-Type': 'multipart/form-data',
+  //         }
+  //       }
+  //     );
+
+  //     setResponse(paymentResponse.data);
+
+      
+  //     try {
+  //       await axios.post(`${API_URL}/reservations/${reservation_id}`, {
+  //         Status: 'Pending',
+  //         payment_status: 'Pending'
+  //       });
+  //     } catch (updateError) {
+  //       console.error('Error updating reservation status:', updateError);
+  //       Swal.fire({
+  //         title: 'Warning',
+  //         text: 'Payment processing, but could not update reservation status',
+  //         icon: 'warning',
+  //         confirmButtonText: 'OK'
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error confirming Payment:", error);
+  //     setError(error.response?.data?.error || "An error occurred during payment.");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+
+
+ 
   const handleConfirmPayment = async (e) => {
     if (e && e.preventDefault) {
       e.preventDefault();
     }
-    
     
     setError(null);
     setValidatePhone(null);
@@ -113,38 +196,61 @@ function Payment() {
     setIsLoading(true);
   
     try {
+      // Get reservation details from state
+      const date = state?.date ? new Date(state.date).toLocaleDateString() : '';
+      const startTime = state?.startTime || '';
+      const endTime = state?.endTime || '';
+      const chaletName = state?.chaletName || '';
+      
+      // Create WhatsApp message
+      const message = `For booking confirmation, please pay ${initial_amount}JOD 💰 as a reservation fee and a refundable security deposit of 50 JOD to be paid upon arrival at the farm 💵. Booking details are as follows:
+  Date: ${date} 📅
+  Time: From ${startTime} to ${endTime} 🕙 - 🕘
+  Chalet Name: ${chaletName} 🏡
+  CliQ account name: ${formData.name}
+  Name that will appear on CliQ: ${formData.name}
+  يرجى تأكيد الدفع للمتابعة. شكراً لاختياركم روقان🌿`;
+  
+      // Get the user's phone number from the form
+      const userPhoneNumber = formData.phoneNumber.replace('+', '');
+      
+      // Create WhatsApp link directly to the user's number
+      const whatsappUrl = `https://api.whatsapp.com/send?phone=${userPhoneNumber}&text=${encodeURIComponent(message)}`;
+      
+      // Open WhatsApp with the message
+      window.location.href = whatsappUrl;
+  
       const paymentData = {
         reservation_id: Number(reservation_id),
         paymentMethod: formData.selectedPayment,
         UserName: formData.name,
         Phone_Number: formData.phoneNumber,
         initialAmount: initial_amount,
-        Status: 'Pending',  
-        payment_status: 'Pending' 
+        Status: 'Pending',
+        payment_status: 'Pending'
       };
-
+  
       const formDataToSend = new FormData();
       Object.keys(paymentData).forEach(key => {
         formDataToSend.append(key, paymentData[key]);
       });
-
+  
       if (formData.invoiceImg) {
         formDataToSend.append('image', formData.invoiceImg);
       }
-
+  
       const paymentResponse = await axios.post(
-        `${API_URL}/payments/createPayment`, 
-        formDataToSend, 
+        `${API_URL}/payments/createPayment`,
+        formDataToSend,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
           }
         }
       );
-
+  
       setResponse(paymentResponse.data);
-
-      
+  
       try {
         await axios.post(`${API_URL}/reservations/${reservation_id}`, {
           Status: 'Pending',
@@ -166,7 +272,6 @@ function Payment() {
       setIsLoading(false);
     }
   };
-
   
   const renderPaymentMethods = () => (
     <div className="payment-type">

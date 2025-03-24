@@ -196,30 +196,6 @@ function Payment() {
     setIsLoading(true);
   
     try {
-      // Get reservation details from state
-      const date = state?.date ? new Date(state.date).toLocaleDateString() : '';
-      const startTime = state?.startTime || '';
-      const endTime = state?.endTime || '';
-      const chaletName = state?.chaletName || '';
-      
-      // Create WhatsApp message
-      const message = `For booking confirmation, please pay ${initial_amount}JOD 💰 as a reservation fee and a refundable security deposit of 50 JOD to be paid upon arrival at the farm 💵. Booking details are as follows:
-  Date: ${date} 📅
-  Time: From ${startTime} to ${endTime} 🕙 - 🕘
-  Chalet Name: ${chaletName} 🏡
-  CliQ account name: ${formData.name}
-  Name that will appear on CliQ: ${formData.name}
-  يرجى تأكيد الدفع للمتابعة. شكراً لاختياركم روقان🌿`;
-  
-      // Get the user's phone number from the form
-      const userPhoneNumber = formData.phoneNumber.replace('+', '');
-      
-      // Create WhatsApp link directly to the user's number
-      const whatsappUrl = `https://api.whatsapp.com/send?phone=${userPhoneNumber}&text=${encodeURIComponent(message)}`;
-      
-      // Open WhatsApp with the message
-      window.location.href = whatsappUrl;
-  
       const paymentData = {
         reservation_id: Number(reservation_id),
         paymentMethod: formData.selectedPayment,
@@ -240,7 +216,7 @@ function Payment() {
       }
   
       const paymentResponse = await axios.post(
-        `${API_URL}/payments/createPayment`,
+        `http://localhost:5000/payments/createPayment`,
         formDataToSend,
         {
           headers: {

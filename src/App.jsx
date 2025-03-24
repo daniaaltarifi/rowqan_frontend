@@ -23,6 +23,8 @@ const Blogs=React.lazy(()=>import('./Pages/Blogs.jsx'))
 const BlogDetails=React.lazy(()=>import('./Pages/BlogDetails.jsx'))
 const Contact=React.lazy(()=>import('./Pages/Contact.jsx'))
 const Offers=React.lazy(()=>import('./Pages/Offers.jsx'))
+const ReservationForm=React.lazy(()=>import('./Pages/ReservationForm.jsx'))
+
 import { UserProvider } from './Component/UserContext.jsx';
 
     // EVENTS IMPORTS
@@ -74,6 +76,7 @@ function App() {
       <Route path="/:lang/blogs" element={ <Blogs/>} />
       <Route path="/:lang/blogdetails/:id" element={ <BlogDetails/>} />
       <Route path="/:lang/contact" element={ <Contact/>} />
+      <Route path="/:lang/ReservationForm" element={ <ReservationForm/>} />
       {/* CHALETS ROUTES */}
       <Route path="/:lang/chalets" element={ <Chalets/>} />
       <Route path="/:lang/chaletdetails/:id" element={ <ChaletsDetails/>} />

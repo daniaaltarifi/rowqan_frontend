@@ -549,78 +549,134 @@ const RowqanSurpriseReservation = () => {
 
     const getFinalValue = (standardValue, isOther, otherValue) => {
         return isOther === 'other' ? otherValue : standardValue;
-      };
+    };
+
+
+
+    const formatPhoneForAPI = (phone) => {
+     
+      let cleaned = phone.replace(/\D/g, '');
+      
+      
+      if (cleaned.startsWith('962')) {
+          cleaned = cleaned.substring(3);
+      }
+      
+      
+      if (cleaned.startsWith('0')) {
+          cleaned = cleaned.substring(1);
+      }
+      
+      
+      if (cleaned.length !== 9) {
+          throw new Error('رقم الهاتف يجب أن يكون 9 أرقام');
+      }
+      
+      
+      return "+962" + cleaned;
+  };
     
+    const selectedFacilities = Object.entries(facilities)
+        .filter(([, isSelected]) => isSelected)
+        .map(([facility]) => facility);
+
+    if (showOtherFacility && otherFacility) {
+        selectedFacilities.push(otherFacility);
+    }
+
     
-    const cleanParams = {
-      to_email: "khalidnaser245@gmail.com",
-      from_name: String(fullName || "Unknown Sender"),
-      phone_number: String(phoneNumber || "No Phone"),
-      contact_method: String(contactMethod || "Not Specified"),
-      reservation_type: String(reservationType || "No Type Selected"),
-      start_date: startDate ? startDate.toLocaleDateString() : "No Date",
-      duration: String(
-        getFinalValue(duration, duration, otherDuration) || "Unspecified"
-      ),
-      visitor_count: String(visitorCount || 0),
-      family_count: reservationType === "family" ? String(familyCount) : "N/A",
-      number_of_rooms: String(numberOfRooms || 0),
-      rating: String(rating || "No Rating"),
-      location: getLocationLink(),
-      facilities:
-        Object.entries(facilities)
-          .filter(([, value]) => value)
-          .map(([key]) => String(key))
-          .join(", ") || "No Facilities",
-      budget: `${String(budget || 0)} JOD`,
-      additional_notes: String(additionalNotes || "No Additional Notes"),
+    const requestData = {
+        reservation_type: reservationType === 'other' ? otherType : reservationType,
+        Rating: rating === 'other' ? parseInt(otherRating) : 
+               rating === 'five' ? 5 : 
+               rating === 'four' ? 4 : 
+               rating === 'three' ? 3 : null,
+        startDate: startDate ? startDate.toISOString().split('T')[0] : null,
+        Duration: duration === 'other' ? otherDuration : t.duration.options[duration],
+        number_of_visitors: visitorCount,
+        Facilities: selectedFacilities,
+        number_of_rooms: numberOfRooms,
+        Preferred_Location: location === 'other' ? otherLocation : t.location.options[location],
+        Budget: parseFloat(budget),
+        Additional_Notes: additionalNotes,
+        Full_Name: fullName,
+        Phone_Number: formatPhoneForAPI(phoneNumber) 
     };
 
     try {
-      console.log("Sending parameters:", cleanParams);
+        
+        const apiResponse = await fetch('http://localhost:5000/RowqanChoose/createChoose', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData)
+        });
 
-      const result = await emailjs.send(
-        "service_y4q64ed",
-        "template_yt4v1gr",
-        cleanParams,
-        "5MLzPwwzLqFmboNft"
-      );
+        if (!apiResponse.ok) {
+            throw new Error(`HTTP error! status: ${apiResponse.status}`);
+        }
 
-      console.log("Email sent successfully:", result);
-      setSubmissionStatus("success");
-      resetForm();
+        
+        const emailParams = {
+            to_email: "khalidnaser245@gmail.com",
+            from_name: String(fullName || "Unknown Sender"),
+            phone_number: String(phoneNumber || "No Phone"),
+            contact_method: String(contactMethod || "Not Specified"),
+            reservation_type: String(reservationType || "No Type Selected"),
+            start_date: startDate ? startDate.toLocaleDateString() : "No Date",
+            duration: String(getFinalValue(duration, duration, otherDuration) || "Unspecified"),
+            visitor_count: String(visitorCount || 0),
+            family_count: reservationType === "family" ? String(familyCount) : "N/A",
+            number_of_rooms: String(numberOfRooms || 0),
+            rating: String(rating || "No Rating"),
+            location: getLocationLink(),
+            facilities: selectedFacilities.join(", ") || "No Facilities",
+            budget: `${String(budget || 0)} JOD`,
+            additional_notes: String(additionalNotes || "No Additional Notes"),
+        };
+
+        const emailResult = await emailjs.send(
+            "service_y4q64ed",
+            "template_yt4v1gr",
+            emailParams,
+            "5MLzPwwzLqFmboNft"
+        );
+
+      
+        console.log(emailResult)
+    
+
+        
+        resetForm();
+        setSubmissionStatus("success");
+
     } catch (error) {
-      console.error("EmailJS Error:", {
-        name: error.name,
-        message: error.message,
-        status: error.status,
-        text: error.text,
-        details: JSON.stringify(error),
-      });
+        console.error("Error:", error);
 
-      let errorMessage = "حدث خطأ أثناء إرسال الطلب. يرجى المحاولة مرة أخرى.";
+        let errorMessage = "حدث خطأ أثناء إرسال الطلب. يرجى المحاولة مرة أخرى.";
 
-      if (error.status === 412) {
-        errorMessage = "خطأ في المصادقة. يرجى التحقق من إعدادات EmailJS.";
-      } else if (error.status === 429) {
-        errorMessage = "تم تجاوز حد الإرسال. يرجى المحاولة لاحقًا.";
-      } else if (error.status === 400) {
-        errorMessage = "خطأ في البيانات المرسلة. يرجى التحقق من صحة المدخلات.";
-      }
-      Swal.fire({
-        icon: "error",
-        title: "Error!",
-        text: errorMessage,
-        confirmButtonColor: "#d33",
-        confirmButtonText: "OK",
-      });
+        if (error.status === 412) {
+            errorMessage = "خطأ في المصادقة. يرجى التحقق من إعدادات EmailJS.";
+        } else if (error.status === 429) {
+            errorMessage = "تم تجاوز حد الإرسال. يرجى المحاولة لاحقًا.";
+        } else if (error.status === 400) {
+            errorMessage = "خطأ في البيانات المرسلة. يرجى التحقق من صحة المدخلات.";
+        }
 
-      //   alert(errorMessage);
-      setSubmissionStatus("error");
+        Swal.fire({
+            icon: "error",
+            title: "Error!",
+            text: errorMessage,
+            confirmButtonColor: "#d33",
+            confirmButtonText: "OK",
+        });
+
+        setSubmissionStatus("error");
     } finally {
-      setIsSubmitting(false);
+        setIsSubmitting(false);
     }
-  };
+};
 
   const getLocationLink = () => {
     if (currentLocation) {
@@ -689,7 +745,7 @@ const RowqanSurpriseReservation = () => {
 
 
   const handleOtherRatingChange = (e) => {
-    // Only allow numbers and limit to reasonable rating values (1-10)
+
     const value = e.target.value;
     const numberValue = value.replace(/[^0-9]/g, "");
 

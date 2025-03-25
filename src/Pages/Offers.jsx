@@ -10,13 +10,29 @@ import { useUser } from "../Component/UserContext";
 import Form from "react-bootstrap/Form";
 // import BestRated from "../Component/BestRated";
 import '../Css/Events.css'
+
+import { Globe2 } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+
+
 function Offers() {
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const { userId } = useUser();
   const lang = location.pathname.split("/")[1] || "en";
   const [chaletOffersData, setChaletOffersData] = useState([]);
   const [type_of_time, setType_of_time] = useState("Evening");
   const [message, setMessage] = useState("");
 
+
+
+  const toggleLanguage = () => {
+    const newLang = lang === "ar" ? "en" : "ar";
+    const currentPath = location.pathname.split("/").slice(2).join("/");
+    navigate(`/${newLang}${currentPath ? "/" + currentPath : "/chalets"}`);
+  };
 
 const fetchData = useCallback(async () => {
   try {
@@ -44,6 +60,27 @@ const fetchData = useCallback(async () => {
 
   return (
     <>
+      <div
+        className="language-toggle-container"
+        style={{
+          position: "absolute",
+          top: "20px",
+          right: "20px",
+          zIndex: 1000,
+        }}
+      >
+        <button
+          onClick={toggleLanguage}
+          className="btn btn-light rounded-circle p-2"
+          style={{
+            backgroundColor: "white",
+            border: "1px solid #ddd",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+          }}
+        >
+          <Globe2 className="w-6 h-6" />
+        </button>
+      </div>
       <div className="container_big_img">
         <img
           src={chalets}

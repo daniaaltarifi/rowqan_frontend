@@ -3,6 +3,8 @@ import axios from "axios";
 import { Container, Row, Col } from "react-bootstrap";
 import { motion } from "framer-motion";
 import { API_URL } from "../App";
+import { Globe2 } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const imageVariants = {
   hidden: { 
@@ -41,10 +43,21 @@ const textVariants = {
 };
 
 function About() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const lang = location.pathname.split("/")[1] || "en";
   const [heroes, setHeroes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+
+
+
+
+  const toggleLanguage = () => {
+    const newLang = lang === "ar" ? "en" : "ar";
+    const currentPath = location.pathname.split('/').slice(2).join('/');
+    navigate(`/${newLang}${currentPath ? '/' + currentPath : '/about'}`);
+  };
 
   const getHero = useCallback(async () => {
     try {
@@ -68,6 +81,27 @@ function About() {
   return (
     <div className="about-page py-5" style={{ minHeight: '80vh' }}>
       <Container>
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-end mb-4"
+        >
+          <button
+            onClick={toggleLanguage}
+            className="btn btn-outline-secondary rounded-circle p-2"
+            style={{
+              border: '1px solid #ddd',
+              background: 'white',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            }}
+          >
+            <Globe2 className="w-6 h-6" />
+            <span className="ms-2 visually-hidden">
+              {lang === "ar" ? "English" : "العربية"}
+            </span>
+          </button>
+        </motion.div>
+
         {isLoading ? (
           <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
             <div className="spinner-border text-primary" role="status">

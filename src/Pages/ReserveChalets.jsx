@@ -18,6 +18,9 @@ import Form from "react-bootstrap/Form";
 import WeeklyMonthlyCalendar from "../Component/WeeklyMonthlyCalendar";
 import "../Css/Chalets.css";
 import "../Css/Events.css";
+// Import Globe icon
+import { Globe2 } from "lucide-react";
+
 const ReserveChalets = () => {
   const { userId } = useUser();
   const { id } = useParams();
@@ -47,6 +50,21 @@ const ReserveChalets = () => {
   const [isReservationTypeChanged, setIsReservationTypeChanged] =
     useState(false); // New state
   const [lastFinalPrice, setLastFinalPrice] = useState("");
+
+  // Function to toggle language
+  const toggleLanguage = () => {
+    const newLang = lang === "ar" ? "en" : "ar";
+    
+    // Get the current path without the language part
+    const pathParts = location.pathname.split("/");
+    pathParts[1] = newLang;
+    const newPath = pathParts.join("/");
+    
+    // Navigate to the same page but with the new language
+    navigate(newPath, { 
+      state: location.state // Preserve the state when changing language
+    });
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -170,6 +188,29 @@ const ReserveChalets = () => {
 
   return (
     <>
+      {/* Language Switcher Button */}
+      <div
+        className="language-toggle-container"
+        style={{
+          position: "absolute",
+          top: "20px",
+          right: "20px",
+          zIndex: 1000,
+        }}
+      >
+        <button
+          onClick={toggleLanguage}
+          className="btn btn-light rounded-circle p-2"
+          style={{
+            backgroundColor: "white",
+            border: "1px solid #ddd",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+          }}
+        >
+          <Globe2 className="w-6 h-6" />
+        </button>
+      </div>
+      
       <Container className="mt-5">
         <Form.Select
           aria-label="Default select example"
@@ -212,34 +253,6 @@ const ReserveChalets = () => {
             ? ` عدد الزائرين لهذا الشاليه ${numberOfFamilies} زوار `
             : ` The number of visitors to the chalet reaches ${numberOfFamilies} visitors`}
         </h6>
-
-        {/* {fulldayState && (
-          <h6>
-            <div className="plus-minus-container">
-              <img src={days} alt="info" height={"30px"} width={"30px"} />
-              Number Of Days:
-              <button
-                className="plus-minus-button"
-                onClick={() =>
-                  updateState(setNumberOfDaysValue, number_of_daysValue, false)
-                }
-              >
-                <LuMinus />
-              </button>
-              <span className="number_of_daysvalue mx-2">
-                {number_of_daysValue}
-              </span>
-              <button
-                className="plus-minus-button"
-                onClick={() =>
-                  updateState(setNumberOfDaysValue, number_of_daysValue)
-                }
-              >
-                <GoPlus />
-              </button>
-            </div>
-          </h6>
-        )} */}
 
         <h6>
           <div className="plus-minus-container">

@@ -11,8 +11,13 @@ import FilterChalets from "../Component/FilterChalets";
 import { cities } from "../Component/CityData";
 import PropTypes from "prop-types";
 import "../Css/Events.css";
+import { Globe2 } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function Chalets() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const { userId } = useUser();
   const lang = location.pathname.split("/")[1] || "en";
   const [statusChalets, setStatusChalets] = useState([]);
@@ -24,14 +29,19 @@ function Chalets() {
   const [availableAreas, setAvailableAreas] = useState([]);
   const [message, setMessage] = useState("");
   const [dataToDisplay, setDataToDisplay] = useState([]);
-  const [allData, setAllData] = useState([]); 
+  const [allData, setAllData] = useState([]);
+
+  const toggleLanguage = () => {
+    const newLang = lang === "ar" ? "en" : "ar";
+    const currentPath = location.pathname.split("/").slice(2).join("/");
+    navigate(`/${newLang}${currentPath ? "/" + currentPath : "/chalets"}`);
+  };
 
   const colors = {
     orange: "#F2C265",
     grey: "#a9a9a9",
   };
 
- 
   const StarIcon = ({ filled }) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -41,7 +51,7 @@ function Chalets() {
     >
       <path
         d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
-        fill={filled ? colors.orange : colors.grey} 
+        fill={filled ? colors.orange : colors.grey}
       />
     </svg>
   );
@@ -56,7 +66,7 @@ function Chalets() {
             )
           : axios.get(`${API_URL}/chalets/getallchalets/${lang}`),
       ]);
-      
+
       if (statueRes.data.statuses !== statusChalets) {
         setStatusChalets(statueRes.data);
       }
@@ -77,13 +87,11 @@ function Chalets() {
 
   const handleInputChange = (event) => {
     const query = event.target.value.toLowerCase();
-    setSearchQuery(query); 
+    setSearchQuery(query);
 
     if (query.trim() === "") {
-      
       setDataToDisplay(allData);
     } else {
-      
       const filteredResults = allData.filter((chalet) =>
         chalet.title.toLowerCase().includes(query)
       );
@@ -93,14 +101,14 @@ function Chalets() {
 
   useEffect(() => {
     if (searchQuery.trim() === "") {
-      setDataToDisplay(allData); 
+      setDataToDisplay(allData);
     } else {
       const filteredResults = allData.filter((chalet) =>
         chalet.title.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setDataToDisplay(filteredResults);
     }
-  }, [searchQuery, allData]); 
+  }, [searchQuery, allData]);
 
   const handleStatusChange = (status_id) => {
     setStatusId(status_id);
@@ -119,14 +127,13 @@ function Chalets() {
       key = null,
       value = null
     ) => {
-      const queryKey = encodeURIComponent(key); 
+      const queryKey = encodeURIComponent(key);
       const queryValue = encodeURIComponent(value);
       try {
         let response;
 
         const { features = [], additionalFeatures = [] } = filters;
 
-        
         if (city || area) {
           response = await axios.post(
             `${API_URL}/chalets/filterByAreaOrCity/${lang}`,
@@ -135,15 +142,11 @@ function Chalets() {
               area: area || null,
             }
           );
-        }
-        
-        else if (key && value) {
+        } else if (key && value) {
           response = await axios.get(
             `${API_URL}/chalets/getAllChaletsByType/${lang}?key=${queryKey}&value=${queryValue}`
           );
-        }
-        
-        else if (features.length > 0 || additionalFeatures.length > 0) {
+        } else if (features.length > 0 || additionalFeatures.length > 0) {
           const params = new URLSearchParams();
           if (features.length > 0) params.append("feature", features.join(","));
           if (additionalFeatures.length > 0)
@@ -153,21 +156,19 @@ function Chalets() {
           );
         }
 
-        
         if (response && response.data && response.data.length > 0) {
-          setDataToDisplay(response.data); 
+          setDataToDisplay(response.data);
           setAllData(response.data);
-          setMessage(""); 
+          setMessage("");
         } else {
-          setDataToDisplay([]); 
+          setDataToDisplay([]);
           setMessage(lang === "ar" ? "لا توجد شاليهات" : "No chalets found");
         }
       } catch (error) {
         console.error("Error fetching filtered data:", error);
 
-        
         if (error.response && error.response.status === 404) {
-          setDataToDisplay([]); 
+          setDataToDisplay([]);
           setMessage(lang === "ar" ? "لا توجد شاليهات" : "No chalets found");
         } else {
           setMessage(
@@ -194,23 +195,23 @@ function Chalets() {
 
     const city = cities.find((city) => city.id === cityId);
     setAvailableAreas(city ? city.areas : []);
-    setSelectedArea(""); 
+    setSelectedArea("");
 
-    fetchChaletData({}, cityId, null); 
+    fetchChaletData({}, cityId, null);
   };
 
   const handleAreaChange = (e) => {
     const areaId = e.target.value;
     setSelectedArea(areaId);
 
-    fetchChaletData({}, selectedCity, areaId); 
+    fetchChaletData({}, selectedCity, areaId);
   };
 
   const handleFilterChange = useCallback(
     (key) => (e) => {
-      const value = e.target.value.trim(); 
+      const value = e.target.value.trim();
       setFilterValues((prev) => ({ ...prev, [key]: value }));
-      fetchChaletData({}, null, null, key, value); 
+      fetchChaletData({}, null, null, key, value);
     },
     [fetchChaletData]
   );
@@ -221,6 +222,27 @@ function Chalets() {
 
   return (
     <>
+      <div
+        className="language-toggle-container"
+        style={{
+          position: "absolute",
+          top: "20px",
+          right: "20px",
+          zIndex: 1000,
+        }}
+      >
+        <button
+          onClick={toggleLanguage}
+          className="btn btn-light rounded-circle p-2"
+          style={{
+            backgroundColor: "white",
+            border: "1px solid #ddd",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+          }}
+        >
+          <Globe2 className="w-6 h-6" />
+        </button>
+      </div>
       <div className="container_big_img">
         <img
           src={chalets}
@@ -260,7 +282,7 @@ function Chalets() {
               />
             </div>
           </Col>
-          
+
           <Col lg={2} md={12} sm={12}>
             <FilterChalets
               selectedCity={selectedCity}
@@ -285,11 +307,10 @@ function Chalets() {
                 chal.type.replace(/\\/g, "").replace(/^"|"$/g, "")
               );
 
-              
               const eveningTime = chal.RightTimeModels.find(
                 (time) => time.type_of_time === "Evening"
               );
-              const eveningPrice = eveningTime ? eveningTime.price : 0; 
+              const eveningPrice = eveningTime ? eveningTime.price : 0;
 
               return (
                 <Col xl={4} md={6} sm={12} key={chal.id}>
@@ -407,7 +428,7 @@ function Chalets() {
               );
             })
           ) : (
-            <p className="text-center">{message}</p> 
+            <p className="text-center">{message}</p>
           )}
         </Row>
         {/* 

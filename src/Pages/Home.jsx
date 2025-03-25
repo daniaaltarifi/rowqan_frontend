@@ -2,6 +2,7 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Image from "react-bootstrap/Image";
+import { Globe2 } from "lucide-react";
 import "../Css/Home.css";
 // import TopPicks from "../Component/TopPicks";
 // import BestRated from "../Component/BestRated";
@@ -12,11 +13,12 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 function Home() {
   const location = useLocation();
   const navigate = useNavigate();
-  const lang = location.pathname.split("/")[1] || "en";
+  
+  // const lang = location.pathname.split("/")[1] || "en";
   const [heroes, setHeroes] = useState([]);
   const [services, setServices] = useState([]);
   const [chaletOffersData, setChaletOffersData] = useState([]);
-
+  const [lang, setLang] = useState(location.pathname.split("/")[1] || "en");
   const getHero = useCallback(async () => {
     const [heroRes, servRes, offersRes] = await Promise.all([
       axios.get(`${API_URL}/heroes/getAllHeroes/${lang}`),
@@ -41,9 +43,29 @@ function Home() {
 
 
 
+  const toggleLanguage = () => {
+    const newLang = lang === "ar" ? "en" : "ar";
+    setLang(newLang);
+    const newPath = location.pathname.split("/").slice(2).join("/");
+    navigate(`/${newLang}/${newPath}`);
+  };
+
+
   return (
     <div className="home-container">
       <Container>
+      <Row className="justify-content-end py-3">
+          <Col xs="auto">
+            <button
+              onClick={toggleLanguage}
+              className="btn btn-light rounded-circle p-2"
+              aria-label="Toggle language"
+            >
+              <Globe2 className="w-6 h-6" />
+              <span className="ms-2">{lang === "ar" ? "English" : "عربي"}</span>
+            </button>
+          </Col>
+        </Row>
         <Row className="align-items-center justify-content-center hero_cont">
           {heroes.map((hero) => (
             <React.Fragment key={hero.id}>

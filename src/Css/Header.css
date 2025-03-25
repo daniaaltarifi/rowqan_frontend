@@ -15,6 +15,35 @@ body {
   z-index: 10;
 }
 
+/* Header.css */
+.language-select {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  background-color: white;
+  cursor: pointer;
+  margin-left: 10px;
+  font-size: 14px;
+}
+
+
+@media screen and (max-width: 768px) {
+  .language-select {
+    margin: 10px 0;
+    width: 100%;
+  }
+}
+
+/* دعم RTL */
+[dir="rtl"] .nav {
+  direction: rtl;
+}
+
+[dir="rtl"] .language-select {
+  margin-right: 10px;
+  margin-left: 0;
+}
+
 
 .logo {
   padding: 1vh 5vw;

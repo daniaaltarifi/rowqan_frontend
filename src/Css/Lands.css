@@ -124,6 +124,27 @@ margin: 5px;
   text-decoration: line-through;
 }
 
+.calendar-day.pending {
+  position: relative;
+  color: yellow;
+  text-decoration: line-through;
+  text-decoration-color: yellow;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.calendar-day-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.status-text {
+  font-size: 0.7rem;
+  margin-top: 2px;
+}
+
 .empty-day {
   display: inline-block;
   padding: 10px;

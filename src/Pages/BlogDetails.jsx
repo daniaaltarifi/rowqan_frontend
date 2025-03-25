@@ -3,11 +3,25 @@ import { useParams } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { API_URL } from "../App";
+import { Globe2 } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+
 
 function BlogDetails() {
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const { id } = useParams();
   const lang = location.pathname.split("/")[1] || "en";
   const [blogs, setBlogs] = useState([]);
+
+  const toggleLanguage = () => {
+    const newLang = lang === "ar" ? "en" : "ar";
+    const currentPath = location.pathname.split("/").slice(2).join("/");
+    navigate(`/${newLang}${currentPath ? "/" + currentPath : "/chalets"}`);
+  };
+
   const fetchData = useCallback(async () => {
     try {
       const blogRes = await axios.get(
@@ -28,6 +42,27 @@ function BlogDetails() {
 
   return (
     <div>
+        <div
+        className="language-toggle-container"
+        style={{
+          position: "absolute",
+          top: "20px",
+          right: "20px",
+          zIndex: 1000,
+        }}
+      >
+        <button
+          onClick={toggleLanguage}
+          className="btn btn-light rounded-circle p-2"
+          style={{
+            backgroundColor: "white",
+            border: "1px solid #ddd",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+          }}
+        >
+          <Globe2 className="w-6 h-6" />
+        </button>
+      </div>
       <Container>
         {blogs.map((blog) => (
           <Row key={blog.id}>

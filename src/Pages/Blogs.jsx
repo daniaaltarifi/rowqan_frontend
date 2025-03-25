@@ -7,10 +7,25 @@ import { Link } from "react-router-dom";
 import "../Css/Events.css";
 import "../Css/Home.css";
 import "../Css/Chalets.css";
+import { Globe2 } from "lucide-react"; 
+import { useNavigate, useLocation } from "react-router-dom";
+
 
 function Blogs() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const lang = location.pathname.split("/")[1] || "en";
   const [blogs, setBlogs] = useState([]);
+
+
+  const toggleLanguage = () => {
+    const newLang = lang === "ar" ? "en" : "ar";
+    const currentPath = location.pathname.split('/').slice(2).join('/');
+    navigate(`/${newLang}${currentPath ? '/' + currentPath : '/chalets'}`);
+  };
+
+
+
   const fetchData = useCallback(async () => {
     try {
       const blogRes = await axios.get(`${API_URL}/Blogs/getAllBlogs/${lang}`);
@@ -22,6 +37,8 @@ function Blogs() {
     }
   }, [lang, blogs]);
 
+
+
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchData();
@@ -30,6 +47,26 @@ function Blogs() {
   return (
     <div>
       <Container fluid>
+        <div className="language-toggle-container" 
+                     style={{
+                       position: 'absolute',
+                       top: '20px',
+                       right: '20px',
+                       zIndex: 1000
+                     }}>
+                  <button
+                    onClick={toggleLanguage}
+                    className="btn btn-light rounded-circle p-2"
+                    style={{
+                      backgroundColor: 'white',
+                      border: '1px solid #ddd',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                    }}
+                  >
+                    <Globe2 className="w-6 h-6" />
+                  </button>
+                </div>
+        
         <Row className="text-center">
           <Col className="background_blogs">
             <h1 className="title_blogs">

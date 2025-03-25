@@ -4,17 +4,20 @@ import Carousel from "react-bootstrap/Carousel";
 import PropTypes from "prop-types";
 import whats from "../assets/whats.png";
 import { useCallback, useEffect, useState } from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../App.jsx";
 import ChatNowHeader from "../Component/ChatNowHeader.jsx";
 // import BestRated from "../Component/BestRated.jsx";
 import { useUser } from "../Component/UserContext";
+// Import Globe icon
+import { Globe2 } from "lucide-react";
 
 function BookingChalets() {
   const location = useLocation();
   const { id } = useParams();
   const { userId } = useUser();
+  const navigate = useNavigate();
 
   const lang = location.pathname.split("/")[1] || "en";
   const chaletsImages = location.state?.chaletsImages || [];
@@ -26,6 +29,21 @@ function BookingChalets() {
   const colors = {
     orange: "#F2C265",
     grey: "#a9a9a9",
+  };
+
+  // Function to toggle language
+  const toggleLanguage = () => {
+    const newLang = lang === "ar" ? "en" : "ar";
+    
+    // Get the current path without the language part
+    const pathParts = location.pathname.split("/");
+    pathParts[1] = newLang;
+    const newPath = pathParts.join("/");
+    
+    // Navigate to the same page but with the new language
+    navigate(newPath, { 
+      state: location.state // Preserve the state when changing language
+    });
   };
 
   // Star icon SVG component
@@ -62,7 +80,8 @@ function BookingChalets() {
   useEffect(() => {
     window.scrollTo(0, 0);
     getContact();
-  }, [lang]);
+  }, [lang, getContact]);
+  
   const isImage = (fileName) => {
     return /\.(jpg|jpeg|png|gif|webp)$/i.test(fileName); // Checks if the file is an image
   };
@@ -70,11 +89,35 @@ function BookingChalets() {
   const isVideo = (fileName) => {
     return /\.(mp4|mov|avi|mkv)$/i.test(fileName); // Checks if the file is a video
   };
-  const descriptionList = dataChalets.description.split("\n");
+  
+  const descriptionList = dataChalets.description?.split("\n") || [];
 
   return (
     <div>
       <ChatNowHeader dataChalets={dataChalets} chalet_id={id} price={price} />
+
+      {/* Language Switcher Button */}
+      <div
+        className="language-toggle-container"
+        style={{
+          position: "absolute",
+          top: "20px",
+          right: "20px",
+          zIndex: 1000,
+        }}
+      >
+        <button
+          onClick={toggleLanguage}
+          className="btn btn-light rounded-circle p-2"
+          style={{
+            backgroundColor: "white",
+            border: "1px solid #ddd",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+          }}
+        >
+          <Globe2 className="w-6 h-6" />
+        </button>
+      </div>
 
       <Container>
         <Carousel fade>

@@ -31,20 +31,21 @@ function CalendarChalets({
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
   
-  // Function to toggle language
+  
   const toggleLanguage = () => {
     const newLang = lang === "ar" ? "en" : "ar";
     
-    // Get the current path without the language part
+    
     const pathParts = location.pathname.split("/");
     pathParts[1] = newLang;
     const newPath = pathParts.join("/");
     
-    // Navigate to the same page but with the new language
+    
     navigate(newPath, { 
-      state: location.state // Preserve the state when changing language
+      state: location.state 
     });
   };
+
 
   const handleSelectDate = (day, time_id, priceForDaily) => {
     const newDate = new Date(
@@ -59,28 +60,32 @@ function CalendarChalets({
       .toString()
       .padStart(2, "0")}-${newDate.getDate().toString().padStart(2, "0")}`;
 
-    // Find the time object by ID
+    
     const timeObject = rightTimes.find((time) => time.id === time_id);
-    // Check if the selected date is reserved
-    const isReserved = reservedDates.some(
+    
+    
+    const isPending = reservedDates.some(
       (reservedDate) =>
         reservedDate.date === selectedFormattedDate &&
-        (reservedDate.time === timeObject?.type_of_time ||
-          reservedDate.time === "FullDay")
+        reservedDate.time === timeObject?.type_of_time &&
+        reservedDate.status === "Pending"
     );
 
-    if (isReserved) {
-      setModalTitle(lang === "ar" ? "هذا التاريخ محجوز" : "This Date is Reserved");
-      setModalMessage(
+    if (isPending) {
+      setModalTitle(
         lang === "ar" 
-          ? "هذا التاريخ محجوز بالفعل. يرجى اختيار تاريخ آخر."
-          : "This date is already reserved. Please choose another date."
+          ? "حجز قيد الانتظار" 
+          : "Pending Reservation"
+      );
+      setModalMessage(
+        lang === "ar"
+          ? "يوجد حجز معلق لهذا التاريخ. يمكنك المتابعة بالحجز، ولكن يجب عليك الإسراع في إتمام عملية الدفع لضمان الحصول على الحجز قبل الآخرين."
+          : "There is a pending reservation for this date. You can proceed with booking, but you need to complete the payment process quickly to secure the reservation before others."
       );
       handleShowModal();
-      return;
     }
 
-    // Proceed with the rest of your logic
+    
     const dateInRightTimes = timeObject?.DatesForRightTimes.find(
       (dateObj) => dateObj.date === selectedFormattedDate
     );
@@ -93,7 +98,7 @@ function CalendarChalets({
     setSelectedDate(newDate);
     setTimeIdDaily(time_id);
     setTimePriceDaily(finalPrice);
-  };
+};
 
   const handlePrevMonth = () => {
     const prevMonth = new Date(currentDate);
@@ -121,7 +126,7 @@ function CalendarChalets({
   );
 
   CalendarChalets.propTypes = {
-    setSelectedDate: PropTypes.func.isRequired, // Ensure selectedDate is a Date object
+    setSelectedDate: PropTypes.func.isRequired,
     setTimeIdDaily: PropTypes.func.isRequired,
     setTimePriceDaily: PropTypes.func.isRequired,
   };
@@ -156,8 +161,8 @@ function CalendarChalets({
       .then((response) => response.json())
       .then((data) => {
         const formattedReservations = data.reservations.map((res) => ({
-          date: res.start_date, // Keep the date
-          time: res.Time, // Store the time slot
+          date: res.start_date,
+          time: res.Time,
           status: res.status,
         }));
         setReservedDates(formattedReservations);
@@ -288,10 +293,9 @@ function CalendarChalets({
                       <span
                         className={`calendar-day 
           ${isSelected ? "selected" : ""} 
-          ${isPending ? "pending" : ""} 
           ${isConfirmed ? "reserved" : ""}`}
                         onClick={() =>
-                          isPending || isConfirmed
+                          isConfirmed
                             ? null
                             : handleSelectDate(
                                 day,

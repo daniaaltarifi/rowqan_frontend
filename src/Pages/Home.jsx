@@ -33,6 +33,8 @@ function Home() {
         `${API_URL}/chalets/getChaletsByTypeOfTimeAndOffer/Morning/${lang}`
       ),
     ]);
+
+    
     setHeroes(heroRes.data);
     const chalets = servRes.data.slice(-4);
     setServices(chalets);

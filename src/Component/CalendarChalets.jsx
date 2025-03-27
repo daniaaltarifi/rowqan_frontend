@@ -206,39 +206,128 @@ function CalendarChalets({
         </button>
       </div>
 
-      <div className="date-picker-container">
+      <div 
+        className="date-picker-container"
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          gap: "20px",
+          maxWidth: "1200px",
+          margin: "0 auto",
+          padding: "10px",
+        }}
+      >
         {loading ? (
-          <p>{lang === "ar" ? "جاري التحميل..." : "Loading..."}</p>
+          <p className="w-full text-center" style={{ color: "#fff", fontSize: "18px" }}>
+            {lang === "ar" ? "جاري التحميل..." : "Loading..."}
+          </p>
         ) : rightTimes.length > 0 ? (
           rightTimes.map((time) => (
-            <div className="calendar" key={time.id}>
-              <h4 className="text-center" style={{ color: "#fff" }}>
-                <img src={clock} alt="clock" height={"30px"} width={"35px"} />{" "}
-                {lang === "ar" ? "تواريخ " + time.type_of_time : time.type_of_time + " Dates"}
-              </h4>
-              <h5 className="text-center" style={{ color: "#fff" }}>
-                {time.from_time} - {time.to_time}
-              </h5>
-              <div className="calendar-header">
-                <button className="prev-month" onClick={handlePrevMonth}>
+            <div 
+              className="calendar" 
+              key={time.id}
+              style={{
+                width: "350px",
+                borderRadius: "10px",
+                padding: "15px",
+                boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+                margin: "10px 0",
+              }}
+            >
+              <div className="calendar-title" style={{ marginBottom: "15px", textAlign: "center" }}>
+                <h4 style={{ color: "#fff", margin: "0 0 8px 0", fontSize: "18px", fontWeight: "600" }}>
+                  <img src={clock} alt="clock" height={"30px"} width={"35px"} style={{ verticalAlign: "middle", marginRight: "8px" }} />{" "}
+                  {lang === "ar" ? "تواريخ " + time.type_of_time : time.type_of_time + " Dates"}
+                </h4>
+                <h5 style={{ color: "#fff", margin: "0", fontSize: "16px" }}>
+                  {time.from_time} - {time.to_time}
+                </h5>
+              </div>
+              <div 
+                className="calendar-header"
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: "15px",
+                }}
+              >
+                <button 
+                  className="prev-month" 
+                  onClick={handlePrevMonth}
+                  style={{
+                    padding: "5px 10px",
+                    backgroundColor: "rgba(255,255,255,0.2)",
+                    border: "none",
+                    borderRadius: "5px",
+                    color: "#fff",
+                    cursor: "pointer",
+                  }}
+                >
                   {lang === "ar" ? "السابق" : "Prev"}
                 </button>
-                <span className="month">
+                <span 
+                  className="month"
+                  style={{
+                    fontSize: "16px",
+                    fontWeight: "500",
+                    color: "#fff",
+                  }}
+                >
                   {currentDate.toLocaleString(lang === "ar" ? "ar-SA" : "default", {
                     month: "long",
                     year: "numeric",
                   })}
                 </span>
-                <button className="next-month" onClick={handleNextMonth}>
+                <button 
+                  className="next-month" 
+                  onClick={handleNextMonth}
+                  style={{
+                    padding: "5px 10px",
+                    backgroundColor: "rgba(255,255,255,0.2)",
+                    border: "none",
+                    borderRadius: "5px",
+                    color: "#fff",
+                    cursor: "pointer",
+                  }}
+                >
                   {lang === "ar" ? "التالي" : "Next"}
                 </button>
               </div>
-              <div className="days-of-week" style={{ direction: lang === "ar" ? "rtl" : "ltr" }}>
+              <div 
+                className="days-of-week" 
+                style={{ 
+                  display: "grid",
+                  gridTemplateColumns: "repeat(7, 1fr)",
+                  direction: lang === "ar" ? "rtl" : "ltr",
+                  textAlign: "center",
+                  marginBottom: "10px",
+                }}
+              >
                 {dayNames.map((day, index) => (
-                  <span key={index}>{day}</span>
+                  <span 
+                    key={index}
+                    style={{
+                      color: "#fff",
+                      fontSize: "14px",
+                      padding: "5px 0",
+                      fontWeight: "500",
+                    }}
+                  >
+                    {day}
+                  </span>
                 ))}
               </div>
-              <div className="calendar-days">
+              <div 
+                className="calendar-days"
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(7, 1fr)",
+                  gap: "5px",
+                  direction: lang === "ar" ? "rtl" : "ltr",
+                }}
+              >
                 {Array(startDay)
                   .fill(null)
                   .map((_, index) => (
@@ -288,12 +377,13 @@ function CalendarChalets({
                         flexDirection: "column",
                         alignItems: "center",
                         position: "relative",
+                        padding: "2px",
                       }}
                     >
                       <span
                         className={`calendar-day 
-          ${isSelected ? "selected" : ""} 
-          ${isConfirmed ? "reserved" : ""}`}
+                          ${isSelected ? "selected" : ""} 
+                          ${isConfirmed ? "reserved" : ""}`}
                         onClick={() =>
                           isConfirmed
                             ? null
@@ -305,6 +395,24 @@ function CalendarChalets({
                                   : time.price
                               )
                         }
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          width: "32px",
+                          height: "32px",
+                          borderRadius: "50%",
+                          cursor: isConfirmed ? "not-allowed" : "pointer",
+                          backgroundColor: isConfirmed 
+                            ? "rgba(255, 0, 0, 0.3)" 
+                            : isSelected 
+                              ? "rgba(0, 123, 255, 0.7)" 
+                              : "rgba(255, 255, 255, 0.1)",
+                          color: "#fff",
+                          fontSize: "14px",
+                          fontWeight: isSelected ? "bold" : "normal",
+                          transition: "all 0.2s ease",
+                        }}
                       >
                         {day}
                       </span>
@@ -312,9 +420,10 @@ function CalendarChalets({
                         <span
                           className="status-text"
                           style={{
-                            fontSize: "0.7rem",
-                            color: isPending ? "yellow" : "red",
+                            fontSize: "10px",
+                            color: isPending ? "#ffff00" : "#ff6666",
                             marginTop: "2px",
+                            fontWeight: "500",
                           }}
                         >
                           {lang === "ar" 
@@ -329,7 +438,9 @@ function CalendarChalets({
             </div>
           ))
         ) : (
-          <p>{lang === "ar" ? "لا توجد أوقات متاحة..." : "No Times Available..."}</p>
+          <p style={{ color: "#fff", textAlign: "center", width: "100%", fontSize: "18px" }}>
+            {lang === "ar" ? "لا توجد أوقات متاحة..." : "No Times Available..."}
+          </p>
         )}
       </div>
 

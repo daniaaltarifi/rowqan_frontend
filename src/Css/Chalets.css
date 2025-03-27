@@ -335,3 +335,416 @@ padding-bottom: 5px;
 
 }
 
+:root {
+  --primary-color: #6da6ba;
+  --secondary-color: #afb7ab;
+  --accent-color: #f2c79d;
+  --text-color: #152C5B;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --transition-slow: 0.5s ease;
+  --transition-medium: 0.3s ease;
+  --transition-fast: 0.2s ease;
+}
+
+
+.container_big_img {
+  overflow: hidden;
+}
+
+.chalet_big_img {
+  width: 100%;
+  height: 80vh;
+  object-fit: cover;
+  filter: brightness(0.8);
+  transition: transform 8s var(--transition-slow);
+}
+
+.container_big_img:hover .chalet_big_img {
+  transform: scale(1.05);
+}
+
+
+
+
+
+
+.centered_big_img_chalets {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.centered_big_img_chalets h1 {
+  text-align: center;
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  padding: 0 15px;
+}
+
+.chalets_btn-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+
+@media (max-width: 768px) {
+  .centered_big_img_chalets h1 {
+    font-size: 2.5rem;
+  }
+}
+
+
+
+
+.chalets_btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: all 0.6s ease;
+}
+
+.chalets_btn:hover {
+  box-shadow: 0 10px 15px -3px rgba(109, 166, 186, 0.3);
+  transform: translateY(-5px);
+}
+
+.chalets_btn:hover::before {
+  left: 100%;
+}
+
+.chalets_btn:active {
+  transform: translateY(-2px);
+}
+
+.cont_card_chalets {
+  border-radius: 15px;
+  box-shadow: 12px 12px 4px 0px rgba(109, 166, 186, 0.5);
+  margin-bottom: 5vh;
+  min-height: 480px;
+  overflow: hidden;
+  transition: all 0.4s ease;
+  transform: translateY(30px);
+  opacity: 0;
+  animation: fadeInUp 0.6s forwards;
+  animation-delay: calc(0.1s * var(--card-index, 1));
+}
+
+.cont_card_chalets:hover {
+  box-shadow: 4px 4px 20px 0px var(--accent-color);
+  transform: translateY(-10px);
+}
+
+.cont_card_chalets .card-img-top {
+  transition: all 0.6s ease;
+  object-fit: cover;
+}
+
+.cont_card_chalets:hover .card-img-top {
+  transform: scale(1.1);
+}
+
+.title_chalets {
+  color: var(--text-color);
+  text-align: center;
+  font-family: Merriweather, serif;
+  font-size: 21.25px;
+  font-weight: 700;
+  line-height: 28.26px;
+  margin-top: 10px;
+  position: relative;
+}
+
+.title_chalets::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+  transition: width 0.3s ease;
+}
+
+.cont_card_chalets:hover .title_chalets::after {
+  width: 40%;
+}
+
+
+.cont_rating {
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.cont_rating svg {
+  transition: all 0.3s ease;
+}
+
+.cont_card_chalets:hover .cont_rating svg {
+  transform: rotate(360deg);
+  transition: transform 0.7s ease;
+}
+
+
+.booknow_button_events {
+  background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 50%, var(--accent-color) 100%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.booknow_button_events::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-color) 0%, var(--secondary-color) 50%, var(--primary-color) 100%);
+  transition: all 0.4s ease;
+  z-index: -1;
+}
+
+.booknow_button_events:hover::before {
+  width: 100%;
+}
+
+.booknow_button_events:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(109, 166, 186, 0.4);
+}
+
+.chat_now_link {
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.chat_now_link img {
+  transition: all 0.3s ease;
+}
+
+.chat_now_link:hover {
+  color: var(--primary-color);
+}
+
+.chat_now_link:hover img {
+  transform: scale(1.15);
+}
+
+
+.navbar__search {
+  position: relative;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.search_course {
+  width: 100%;
+  height: 45px;
+  background: #fff;
+  border: 2px solid #eee;
+  text-indent: 40px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  padding-right: 40px;
+}
+
+.search_course:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(109, 166, 186, 0.2);
+  outline: none;
+}
+
+.navbar__search span {
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  font-size: 18px;
+  color: var(--primary-color);
+  transition: all 0.3s ease;
+}
+
+.navbar__search:focus-within span {
+  color: var(--accent-color);
+}
+
+
+.language-toggle-container button {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.language-toggle-container button:hover {
+  transform: translateY(-5px) rotate(10deg);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+
+.filter_button_chalets {
+  background: linear-gradient(90deg, var(--accent-color) 24.5%, var(--secondary-color) 50%, var(--primary-color) 82%);
+  border-radius: 10px;
+  border: none;
+  height: 45px;
+  width: 100%;
+  font-weight: bold;
+  color: white;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.filter_button_chalets::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: all 0.6s ease;
+}
+
+.filter_button_chalets:hover::before {
+  left: 100%;
+}
+
+.filter_button_chalets:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 15px -3px rgba(242, 199, 157, 0.3);
+}
+
+
+.filter-popup {
+  right: -380px;
+  transition: right 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.filter-popup.open {
+  right: 0;
+  box-shadow: -5px 0 25px rgba(0, 0, 0, 0.1);
+}
+
+.close-popup-btn {
+  opacity: 0.7;
+  transition: all 0.3s ease;
+}
+
+.close-popup-btn:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) translate(-50%, -50%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) translate(-50%, -50%);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+
+@media (max-width: 992px) {
+  .centered_big_img_chalets h1 {
+    font-size: 2.5rem;
+  }
+  
+  .chalets_btn {
+    width: 180px;
+    height: 45px;
+    font-size: 16px;
+    margin: 10px;
+  }
+  
+  .imagegallery {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    overflow: hidden;
+  }
+  
+  .mobile_img {
+    transition: all 0.3s ease;
+    border-radius: 8px;
+  }
+  
+  .mobile_img:hover {
+    transform: scale(1.05);
+  }
+}
+
+
+[dir="rtl"] .navbar__search span {
+  left: 15px;
+  right: auto;
+}
+
+[dir="rtl"] .search_course {
+  text-indent: 15px;
+  padding-left: 40px;
+  padding-right: 15px;
+}
+
+[dir="rtl"] .title_chalets::after {
+  right: 50%;
+  left: auto;
+  transform: translateX(50%);
+}

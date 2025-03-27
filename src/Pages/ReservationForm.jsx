@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import "react-datepicker/dist/react-datepicker.css";
 import emailjs from "@emailjs/browser";
 import Swal from "sweetalert2";
+import { API_URL } from "../App";
 
 const translations = {
   ar: {
@@ -605,7 +606,7 @@ const RowqanSurpriseReservation = () => {
 
     try {
         
-        const apiResponse = await fetch('http://localhost:5000/RowqanChoose/createChoose', {
+        const apiResponse = await fetch(`${API_URL}/RowqanChoose/createChoose`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -146,7 +146,7 @@ const ReserveChalets = () => {
 
     try {
       const res = await axios.post(
-        `http://localhost:5000/ReservationsChalets/createReservationChalet`,
+        `${API_URL}/ReservationsChalets/createReservationChalet`,
         reservationData
       );
       const reservation_id = res.data.reservation.id;

@@ -21,11 +21,12 @@ const Header = () => {
   const getheader = useCallback(async () => {
     try {
       const [headerRes, logoRes] = await Promise.all([
-        axios.get(`${API_URL}/header/getAllHeaders/${lang}`),
-        axios.get(`${API_URL}/logos/getalllogos`),
+        axios.get(`${API_URL}/header/getAllHeaders?lang=${lang}`),
+        axios.get(`${API_URL}/logos/getalllogos`)
       ]);
       setHeaders(headerRes.data);
       setLogo(logoRes.data);
+      console.log("Headers data:", headerRes.data);
     } catch (error) {
       console.error("Error fetching header :", error);
     }
@@ -33,6 +34,7 @@ const Header = () => {
 
   useEffect(() => {
     getheader();
+    console.log("headers data:", headers);
   }, [lang]);
 
   const handleAuth = useCallback(async () => {
@@ -46,7 +48,7 @@ const Header = () => {
   return (
     <nav className={`nav`}>
       {logo.map((logos) => (
-        <div className={`logo ${lang === 'ar' ? 'ltr' : ''}`} key={logos.id}>
+        <div className={`logo ${lang === "ar" ? "ltr" : ""}`} key={logos.id}>
           <Link to={`/${lang}`}>
             <img
               src={`https://res.cloudinary.com/dqimsdiht/${logos.image}`}
@@ -69,7 +71,11 @@ const Header = () => {
         {headers.map((header) => (
           <li key={header.id}>
             <Link
-              to={header.url === null ? `/${lang}` : `/${lang}/${header.url}`}
+              to={
+                header.header_name.toLowerCase() === "home"
+                  ? `/${lang}`
+                  : `/${lang}/${header.header_name}`
+              }
             >
               {header.header_name}
             </Link>
@@ -78,7 +84,7 @@ const Header = () => {
         {userId && (
           <li>
             <Link to={`/${lang}/cashback`}>
-              {lang === "ar" ? "الرصيد" : "Profile"}
+              {lang === "ar" ? "البروفايل" : "Profile"}
             </Link>
           </li>
         )}

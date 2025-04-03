@@ -7,6 +7,10 @@ import React, { useCallback, useEffect, useState, useRef } from "react";
 import { API_URL } from "../App";
 import axios from "axios";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Globe2 } from "lucide-react";
+
+
 
 function Home() {
   const location = useLocation();
@@ -20,6 +24,19 @@ function Home() {
   const [isOffersVisible, setIsOffersVisible] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(false);
   
+ 
+
+  const toggleLanguage = () => {
+    const newLang = lang === "ar" ? "en" : "ar";
+    
+    navigate(`/${newLang}`);
+    
+    setLang(newLang);
+  };
+
+
+  
+
   // Refs for intersection observer
   const heroRef = useRef(null);
   const servicesRef = useRef(null);
@@ -27,12 +44,14 @@ function Home() {
 
   const getHero = useCallback(async () => {
     const [heroRes, servRes, offersRes] = await Promise.all([
-      axios.get(`${API_URL}/heroes/getAllHeroes/${lang}`),
-      axios.get(`${API_URL}/chalets/getallchalets/${lang}`),
+      axios.get(`${API_URL}/heroes/getAllHeroes?lang=${lang}`),
+      axios.get(`${API_URL}/chalets/getallchalets?lang=${lang}`),
       axios.get(
-        `${API_URL}/chalets/getChaletsByTypeOfTimeAndOffer/Morning/${lang}`
+        `${API_URL}/chalets/getChaletsByTypeOfTimeAndOffer/Morning?lang=${lang}`
       ),
     ]);
+
+    
     setHeroes(heroRes.data);
     const chalets = servRes.data.slice(-4);
     setServices(chalets);
@@ -104,7 +123,28 @@ function Home() {
 
   return (
     <div className="home-container">
+      
       <Container>
+      <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-end mb-4"
+        >
+          <button
+            onClick={toggleLanguage}
+            className="btn btn-outline-secondary rounded-circle p-2"
+            style={{
+              border: '1px solid #ddd',
+              background: 'white',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            }}
+          >
+            <Globe2 className="w-6 h-6" />
+            <span className="ms-2 visually-hidden">
+              {lang === "ar" ? "English" : "العربية"}
+            </span>
+          </button>
+        </motion.div>
         <Row className="justify-content-end py-3">
           {/* <Col xs="auto">
             <button

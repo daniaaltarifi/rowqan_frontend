@@ -6,42 +6,6 @@ import { API_URL } from "../App";
 import { Globe2 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
-const imageVariants = {
-  hidden: { 
-    opacity: 0, 
-    scale: 0.8,
-    y: 50 
-  },
-  visible: { 
-    opacity: 1, 
-    scale: 1,
-    y: 0,
-    transition: {
-      type: "spring", 
-      stiffness: 100, 
-      damping: 10,    
-      duration: 0.8   
-    }
-  }
-};
-
-const textVariants = {
-  hidden: { 
-    opacity: 0, 
-    x: -50 
-  },
-  visible: { 
-    opacity: 1, 
-    x: 0,
-    transition: {
-      type: "spring",
-      stiffness: 100,
-      damping: 10,
-      delay: 0.3 
-    }
-  }
-};
-
 function About() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -49,9 +13,6 @@ function About() {
   const [heroes, setHeroes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-
-
-
 
   const toggleLanguage = () => {
     const newLang = lang === "ar" ? "en" : "ar";
@@ -62,7 +23,7 @@ function About() {
   const getHero = useCallback(async () => {
     try {
       setIsLoading(true);
-      const heroRes = await axios.get(`${API_URL}/aboutUs/getabout/${lang}`);
+      const heroRes = await axios.get(`${API_URL}/aboutUs/getabout?lang=${lang}`);
       setHeroes(heroRes.data);
       setError(null);
     } catch (err) {
@@ -78,10 +39,46 @@ function About() {
     getHero();
   }, [getHero]);
 
+  const imageVariants = {
+    hidden: { 
+      opacity: 0, 
+      scale: 0.8,
+      y: 50 
+    },
+    visible: { 
+      opacity: 1, 
+      scale: 1,
+      y: 0,
+      transition: {
+        type: "spring", 
+        stiffness: 100, 
+        damping: 10,    
+        duration: 0.8   
+      }
+    }
+  };
+
+  const textVariants = {
+    hidden: { 
+      opacity: 0, 
+      x: -50 
+    },
+    visible: { 
+      opacity: 1, 
+      x: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 10,
+        delay: 0.3 
+      }
+    }
+  };
+
   return (
     <div className="about-page py-5" style={{ minHeight: '80vh' }}>
       <Container>
-        <motion.div
+      <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-end mb-4"
@@ -101,7 +98,6 @@ function About() {
             </span>
           </button>
         </motion.div>
-
         {isLoading ? (
           <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
             <div className="spinner-border text-primary" role="status">

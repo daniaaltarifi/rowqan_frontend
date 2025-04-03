@@ -414,7 +414,7 @@ const handleDirectCall = () => {
   }
 };
 
-const RowqanSurpriseReservation = () => {
+const LetRowqanChoose = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionStatus, setSubmissionStatus] = useState(null);
 
@@ -1862,4 +1862,4 @@ const RowqanSurpriseReservation = () => {
   );
 };
 
-export default RowqanSurpriseReservation;
+export default LetRowqanChoose;

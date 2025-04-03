@@ -14,6 +14,7 @@ import "../Css/Events.css";
 import { Globe2 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
+import { motion } from "framer-motion";
 function Chalets() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -39,7 +40,7 @@ function Chalets() {
 
   const colors = {
     orange: "#F2C265",
-    grey: "#a9a9a9",
+    grey: "#a9a9a9"
   };
 
   const StarIcon = ({ filled }) => (
@@ -64,7 +65,7 @@ function Chalets() {
           ? axios.get(
               `${API_URL}/chalets/getallchaletsbystatus/${statusId}/${lang}`
             )
-          : axios.get(`${API_URL}/chalets/getallchalets/${lang}`),
+          : axios.get(`${API_URL}/chalets/getallchalets?lang=${lang}`)
       ]);
 
       if (statueRes.data.statuses !== statusChalets) {
@@ -139,12 +140,12 @@ function Chalets() {
             `${API_URL}/chalets/filterByAreaOrCity/${lang}`,
             {
               city: city || null,
-              area: area || null,
+              area: area || null
             }
           );
         } else if (key && value) {
           response = await axios.get(
-            `${API_URL}/chalets/getAllChaletsByType/${lang}?key=${queryKey}&value=${queryValue}`
+            `${API_URL}/chalets/getAllChaletsByType?lang=${lang}?key=${queryKey}&value=${queryValue}`
           );
         } else if (features.length > 0 || additionalFeatures.length > 0) {
           const params = new URLSearchParams();
@@ -184,7 +185,7 @@ function Chalets() {
   useEffect(() => {
     fetchChaletData({
       features: selectedFeatures,
-      additionalFeatures: selectedAdditionalFeatures,
+      additionalFeatures: selectedAdditionalFeatures
     });
   }, [selectedFeatures, selectedAdditionalFeatures]);
 
@@ -217,32 +218,31 @@ function Chalets() {
   );
 
   Chalets.propTypes = {
-    filled: PropTypes.string.isRequired,
+    filled: PropTypes.string.isRequired
   };
 
   return (
     <>
-      <div
-        className="language-toggle-container"
-        style={{
-          position: "absolute",
-          top: "20px",
-          right: "20px",
-          zIndex: 1000,
-        }}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-end mb-4"
       >
         <button
           onClick={toggleLanguage}
-          className="btn btn-light rounded-circle p-2"
+          className="btn btn-outline-secondary rounded-circle p-2"
           style={{
-            backgroundColor: "white",
             border: "1px solid #ddd",
-            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+            background: "white",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
           }}
         >
           <Globe2 className="w-6 h-6" />
+          <span className="ms-2 visually-hidden">
+            {lang === "ar" ? "English" : "العربية"}
+          </span>
         </button>
-      </div>
+      </motion.div>
       <div className="container_big_img">
         <img
           src={chalets}
@@ -303,13 +303,23 @@ function Chalets() {
         <Row>
           {dataToDisplay.length > 0 ? (
             dataToDisplay.map((chal) => {
-              const typeChalets = JSON.parse(
-                chal.type.replace(/\\/g, "").replace(/^"|"$/g, "")
-              );
+              // معالجة حالة تنسيق JSON غير صالح
+              let typeChalets = {};
+              try {
+                typeChalets = JSON.parse(
+                  chal.type.replace(/\\/g, "").replace(/^"|"$/g, "")
+                );
+              } catch (error) {
+                console.error("Error parsing JSON:", error);
+                // استخدام كائن فارغ كقيمة افتراضية
+              }
 
-              const eveningTime = chal.RightTimeModels.find(
-                (time) => time.type_of_time === "Evening"
-              );
+              // التحقق من وجود RightTimeModels قبل استخدام find
+              const eveningTime =
+                chal.RightTimeModels &&
+                chal.RightTimeModels.find(
+                  (time) => time.type_of_time === "Evening"
+                );
               const eveningPrice = eveningTime ? eveningTime.price : 0;
 
               return (
@@ -327,6 +337,7 @@ function Chalets() {
                           "Number of Visitors",
                           typeChalets["Number of Visitors"] ||
                             typeChalets["عدد الغرف"] ||
+                            typeChalets["عدد الزوار"] ||
                             null
                         );
                       } catch (error) {
@@ -366,8 +377,9 @@ function Chalets() {
                               .filter(
                                 ([key]) =>
                                   key === "Number of Visitors" ||
-                                  key === "عدد الغرف"
-                              ) // Only keep the "Number_of_Visitors" key
+                                  key === "عدد الغرف" ||
+                                  key === "عدد الزوار"
+                              )
                               .map(([key, value], index) => (
                                 <Card.Text key={index} className="type_chalets">
                                   {key.replace(/_/g, " ")}: {value}
@@ -380,7 +392,7 @@ function Chalets() {
                                 key={index}
                                 style={{
                                   display: "inline-block",
-                                  marginRight: "5px",
+                                  marginRight: "5px"
                                 }}
                               >
                                 <StarIcon filled={chal.Rating > index} />

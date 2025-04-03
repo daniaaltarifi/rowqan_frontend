@@ -8,15 +8,12 @@ import chalets from "../assets/outdoor-swimming-pool.jpeg";
 import chat from "../assets/chat.png";
 import { useUser } from "../Component/UserContext";
 import Form from "react-bootstrap/Form";
-// import BestRated from "../Component/BestRated";
-import '../Css/Events.css'
-
-import { Globe2 } from "lucide-react";
+import "../Css/Events.css";
+import { motion } from "framer-motion";
+import { Globe2 } from "lucide-react";  
 import { useNavigate, useLocation } from "react-router-dom";
 
-
 function Offers() {
-
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -26,61 +23,66 @@ function Offers() {
   const [type_of_time, setType_of_time] = useState("Evening");
   const [message, setMessage] = useState("");
 
-
-
   const toggleLanguage = () => {
     const newLang = lang === "ar" ? "en" : "ar";
     const currentPath = location.pathname.split("/").slice(2).join("/");
-    navigate(`/${newLang}${currentPath ? "/" + currentPath : "/chalets"}`);
+    navigate(`/${newLang}${currentPath ? "/" + currentPath : "/offers"}`);
   };
 
-const fetchData = useCallback(async () => {
-  try {
-    const response = await axios.get(
-      `${API_URL}/chalets/getChaletsByTypeOfTimeAndOffer/${type_of_time}/${lang}`
-    );
+  const fetchData = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/chalets/getChaletsByTypeOfTimeAndOffer/${type_of_time}?lang=${lang}`
+      );
 
-    if (response.data.success === true) {
-      setChaletOffersData(response.data.data);
-      setMessage(""); 
-    } 
-    else{
-      setMessage(response.data.message);
+      if (response.data.success === true) {
+        setChaletOffersData(response.data.data);
+        setMessage("");
+      } else {
+        setMessage(response.data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching chalets:", error);
+      setMessage(error.response?.data?.message || "Failed to fetch data.");
     }
-  } catch (error) {
-    console.error("Error fetching chalets:", error);
-    setMessage(error.response?.data?.message || "Failed to fetch data.");
-  }
-}, [type_of_time, lang]);
-
+  }, [type_of_time, lang]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
+  
+  const fixArabicJSON = (jsonString) => {
+    if (!jsonString) return "{}";
+    
+    
+    let fixed = jsonString.replace(/،/g, ',');
+     
+    return fixed;
+  };
+
   return (
     <>
-      <div
-        className="language-toggle-container"
-        style={{
-          position: "absolute",
-          top: "20px",
-          right: "20px",
-          zIndex: 1000,
-        }}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-end mb-4"
       >
         <button
           onClick={toggleLanguage}
-          className="btn btn-light rounded-circle p-2"
+          className="btn btn-outline-secondary rounded-circle p-2"
           style={{
-            backgroundColor: "white",
             border: "1px solid #ddd",
-            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+            background: "white",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
           }}
         >
           <Globe2 className="w-6 h-6" />
+          <span className="ms-2 visually-hidden">
+            {lang === "ar" ? "English" : "العربية"}
+          </span>
         </button>
-      </div>
+      </motion.div>
       <div className="container_big_img">
         <img
           src={chalets}
@@ -99,104 +101,121 @@ const fetchData = useCallback(async () => {
             value={type_of_time ?? ""}
             onChange={(e) => setType_of_time(e.target.value)}
           >
-            <option value="">Select type of time</option>
-            <option value="Morning">Morning</option>
-            <option value="Evening">Evening</option>
-            <option value="FullDay">Full Day</option>
+            <option value="">
+              {lang === "ar" ? "اختر وقت الحجز" : "Select type of time"}
+            </option>
+            <option value="Morning">{lang === "ar" ? "صباحاً" : "Morning"}</option>
+            <option value="Evening">{lang === "ar" ? "مساءً" : "Evening"}</option>
+            <option value="FullDay">{lang === "ar" ? "يوم كامل" : "Full Day"}</option>
           </Form.Select>
         </Row>
         <Row>
-  {message ? (
-    <div className="text-center">
-      <h6 >{message}</h6>
-    </div>
-  ) : chaletOffersData.length > 0 ? (
-    chaletOffersData.map((chal) => {
-      const typeChalets = JSON.parse(
-        chal.type.replace(/\\/g, "").replace(/^"|"$/g, "")
-      );
+          {message ? (
+            <div className="text-center">
+              <h6>{message}</h6>
+            </div>
+          ) : chaletOffersData.length > 0 ? (
+            chaletOffersData.map((chal) => {
+              let typeChalets = {};
+              try {
+                
+                const fixedJSON = fixArabicJSON(
+                  chal.type.replace(/\\/g, "").replace(/^"|"$/g, "")
+                );
+                typeChalets = JSON.parse(fixedJSON);
+              } catch (error) {
+                console.error("Error parsing JSON:", error);
+                console.log("Original string:", chal.type);
+               
+              }
 
-      return (
-        <Col xl={4} md={6} sm={12} key={chal.id}>
-          <Link
-            to={`/${lang}/chaletdetails/${chal.id}`}
-            onClick={() => {
-              localStorage.setItem("intial_Amount", chal.intial_Amount);
-              localStorage.setItem("price", chal.after_offer);
-            }}
-            style={{ textDecoration: "none" }}
-          >
-            <Card className="cont_card_chalets">
-              <Card.Img
-                variant="top"
-                height={"200px"}
-                className="object-fit-cover"
-                srcSet={chal.image}
-                sizes="(max-width: 768px) 100vw, 50vw"
-                alt="chal img"
-                decoding="async"
-                loading="lazy"
-              />
-              <Card.Body className="d-flex flex-column">
-                <Card.Title className="title_chalets">{chal.title}</Card.Title>
-
-                <Row className="mt-5 ">
-                  <div className="d-flex justify-content-evenly flex-wrap">
-                    {Object.entries(typeChalets)
-                      .slice(0, 4)
-                      .map(([key, value], index) => (
-                        <Card.Text key={index} className="type_chalets">
-                          {key.replace(/_/g, " ")}: {value},
-                        </Card.Text>
-                      ))}
-                  </div>
-                  <div className="d-flex justify-content-evenly mt-5">
-                    <Card.Text className="text_card_det">
-                      {lang === "ar"
-                        ? "يبدأ السعر من "
-                        : "Starting Price :"}{" "}
-                      {chal.after_offer} JD
-                    </Card.Text>
-                  </div>
-                </Row>
-
-                <div className="d-flex justify-content-evenly mt-3 mt-auto">
-                  <button className="booknow_button_events">
-                    {lang === "ar" ? "شاهد المزيد" : "View More"}
-                  </button>
-
+              return (
+                <Col xl={4} md={6} sm={12} key={chal.id}>
                   <Link
-                    to={userId ? `/${lang}/chatbot` : `/${lang}/login`}
-                    className="chat_now_link"
+                    to={`/${lang}/chaletdetails/${chal.id}`}
+                    onClick={() => {
+                      localStorage.setItem("intial_Amount", chal.intial_Amount);
+                      localStorage.setItem("price", chal.after_offer);
+                    }}
+                    style={{ textDecoration: "none" }}
                   >
-                    <h6>
-                      <img
-                        src={chat}
-                        height={"40px"}
-                        width={"40px"}
-                        alt="chat"
+                    <Card className="cont_card_chalets">
+                      <Card.Img
+                        variant="top"
+                        height={"200px"}
+                        className="object-fit-cover"
+                        srcSet={chal.image}
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        alt="chal img"
+                        decoding="async"
+                        loading="lazy"
                       />
-                      {lang === "ar" ? "دردش الأن" : "Chat Now"}
-                    </h6>
-                  </Link>
-                </div>
-              </Card.Body>
-            </Card>
-          </Link>
-        </Col>
-      );
-    })
-  ) : (
-    <h6 className="text-center">No offers available</h6>
-  )}
-</Row>
+                      <Card.Body className="d-flex flex-column">
+                        <Card.Title className="title_chalets">
+                          {chal.title}
+                        </Card.Title>
 
-{/* 
-        <h4 style={{ color: "#152C5B", marginTop: "10vh" }}>
-          Treasure to Choose
-        </h4> */}
+                        <Row className="mt-5 ">
+                          <div className="d-flex justify-content-evenly flex-wrap">
+                            {Object.entries(typeChalets)
+                              .slice(0, 4)
+                              .map(([key, value], index) => (
+                                <Card.Text key={index} className="type_chalets">
+                                  {key.replace(/_/g, " ")}: {value}
+                                  {index < Math.min(Object.keys(typeChalets).length, 4) - 1 ? "," : ""}
+                                </Card.Text>
+                              ))}
+                              
+                           
+                            {Object.keys(typeChalets).length === 0 && (
+                              <Card.Text className="type_chalets">
+                                {lang === "ar" ? "تفاصيل الشاليه غير متوفرة" : "Chalet details not available"}
+                              </Card.Text>
+                            )}
+                          </div>
+                          <div className="d-flex justify-content-evenly mt-5">
+                            <Card.Text className="text_card_det">
+                              {lang === "ar"
+                                ? "يبدأ السعر من "
+                                : "Starting Price :"}{" "}
+                              {chal.after_offer} JD
+                            </Card.Text>
+                          </div>
+                        </Row>
+
+                        <div className="d-flex justify-content-evenly mt-3 mt-auto">
+                          <button className="booknow_button_events">
+                            {lang === "ar" ? "شاهد المزيد" : "View More"}
+                          </button>
+
+                          <Link
+                            to={userId ? `/${lang}/chatbot/${chal.id}` : `/${lang}/login`}
+                            className="chat_now_link"
+                          >
+                            <h6>
+                              <img
+                                src={chat}
+                                height={"40px"}
+                                width={"40px"}
+                                alt="chat"
+                              />
+                              {lang === "ar" ? "دردش الأن" : "Chat Now"}
+                            </h6>
+                          </Link>
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  </Link>
+                </Col>
+              );
+            })
+          ) : (
+            <h6 className="text-center">
+              {lang === "ar" ? "لا يوجد عروض متاحة" : "No offers available"}
+            </h6>
+          )}
+        </Row>
       </Container>
-      {/* <BestRated /> */}
     </>
   );
 }

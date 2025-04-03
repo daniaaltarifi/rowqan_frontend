@@ -156,7 +156,7 @@ function CalendarChalets({
   
   useEffect(() => {
     fetch(
-      `http://localhost:5000/ReservationsChalets/reservationsDatesByChaletId/${id}/${lang}`
+      `${API_URL}/ReservationsChalets/reservationsDatesByChaletId/${id}?lang=${lang}`
     )
       .then((response) => response.json())
       .then((data) => {

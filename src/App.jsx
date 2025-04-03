@@ -23,7 +23,7 @@ const Blogs=React.lazy(()=>import('./Pages/Blogs.jsx'))
 const BlogDetails=React.lazy(()=>import('./Pages/BlogDetails.jsx'))
 const Contact=React.lazy(()=>import('./Pages/Contact.jsx'))
 const Offers=React.lazy(()=>import('./Pages/Offers.jsx'))
-const ReservationForm=React.lazy(()=>import('./Pages/ReservationForm.jsx'))
+const LetRowqanChoose = React.lazy(()=>import('./Pages/LetRowqanChoose.jsx'))
 
 import { UserProvider } from './Component/UserContext.jsx';
 
@@ -37,8 +37,8 @@ import { UserProvider } from './Component/UserContext.jsx';
 // import LandsDetails from './Pages/LandsDetails';
 // import BookingLand from './Pages/BookingLand';
 // import Playgrounds from './Pages/Playgrounds';
-// export const API_URL="http://localhost:5000";
-export const API_URL="https://rowqanbackend.rowqan.com";
+//  export const API_URL="http://localhost:5000";
+ export const API_URL="https://rowqanbackend.rowqan.com";
 const DirectionHandler = () => {
   const location = useLocation();
   const lang = location.pathname.split("/")[1] || "en";
@@ -76,7 +76,7 @@ function App() {
       <Route path="/:lang/blogs" element={ <Blogs/>} />
       <Route path="/:lang/blogdetails/:id" element={ <BlogDetails/>} />
       <Route path="/:lang/contact" element={ <Contact/>} />
-      <Route path="/:lang/ReservationForm" element={ <ReservationForm/>} />
+      <Route path="/:lang/LetRowqanChoose" element={ <LetRowqanChoose/>} />
       {/* CHALETS ROUTES */}
       <Route path="/:lang/chalets" element={ <Chalets/>} />
       <Route path="/:lang/chaletdetails/:id" element={ <ChaletsDetails/>} />

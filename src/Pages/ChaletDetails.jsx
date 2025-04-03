@@ -7,7 +7,7 @@ import ChatNowHeader from "../Component/ChatNowHeader";
 import { useUser } from "../Component/UserContext";
 import Carousel from "react-bootstrap/Carousel";
 import PropTypes from "prop-types";
-import '../Css/Events.css'
+import '../Css/Events.css';
 
 import { Globe2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -22,154 +22,12 @@ function ChaletsDetails() {
   const [chaletsImages, setChaletsImages] = useState([]);
   const [dataChalets, setdataChalets] = useState([]);
   const [ratingUser, setRatingUser] = useState("");
-  const [translatedData, setTranslatedData] = useState(null);
 
-  // Toggle language and navigate to the corresponding route
+  
   const toggleLanguage = () => {
     const newLang = lang === "ar" ? "en" : "ar";
     const currentPath = location.pathname.split("/").slice(2).join("/");
     navigate(`/${newLang}${currentPath ? "/" + currentPath : "/chalets"}`);
-  };
-
-  // Translations for UI elements
-  const translations = {
-    en: {
-      detailsTitle: "Details for this chalets",
-      chatNow: "Chat Now",
-      price: "Price :",
-      features: "Features :",
-      reserveNow: "Reserve Now"
-    },
-    ar: {
-      detailsTitle: "تفاصيل هذا الشاليه",
-      chatNow: "دردش الأن",
-      price: "السعر :",
-      features: "المميزات :",
-      reserveNow: "احجز الان"
-    }
-  };
-
-  // Function to translate field labels
-  const translateFieldLabel = (key) => {
-    // Translation mapping for property types
-    const fieldTranslations = {
-      en: {
-        bedrooms: "bedrooms",
-        bathrooms: "bathrooms",
-        location: "location",
-        pool_size: "pool size",
-        capacity: "capacity",
-        number_of_rooms: "Number of Rooms",
-        number_of_bathrooms: "Number of Bathrooms",
-        building_area: "Building Area",
-        number_of_visitors: "Number of Visitors",
-        number_of_kitchen: "Number of Kitchen",
-        number_of_swimming_pools: "Number of swimming pools",
-        maids_room: "maids-room",
-        laundry_room: "laundry-room",
-        double_glazed_windows: "double-glazed-windows",
-        electric_lampshade: "electric-lampshade",
-        underfloor_heating: "underfloor-heating",
-        microwave: "microwave",
-        oven: "oven",
-        // Add more field translations as needed
-      },
-      ar: {
-        bedrooms: "غرف النوم",
-        bathrooms: "الحمامات",
-        location: "الموقع",
-        pool_size: "حجم المسبح",
-        capacity: "السعة",
-        number_of_rooms: "عدد الغرف",
-        number_of_bathrooms: "عدد الحمامات",
-        building_area: "مساحة البناء",
-        number_of_visitors: "عدد الزوار",
-        number_of_kitchen: "عدد المطابخ",
-        number_of_swimming_pools: "عدد المسابح",
-        maids_room: "غرفة الخادمة",
-        laundry_room: "غرفة الغسيل",
-        double_glazed_windows: "نوافذ زجاج مزدوج",
-        electric_lampshade: "مظلة كهربائية",
-        underfloor_heating: "تدفئة تحت الأرضية",
-        microwave: "ميكروويف",
-        oven: "فرن",
-        // Add more field translations as needed
-      }
-    };
-
-    // Convert to lowercase and remove spaces and hyphens for matching
-    const normalizedKey = key.toLowerCase().replace(/ /g, '_').replace(/-/g, '_');
-    
-    // Try to find a direct match first
-    if (fieldTranslations[lang][normalizedKey]) {
-      return fieldTranslations[lang][normalizedKey];
-    }
-    
-    // Then try to find a partial match (for handling variations)
-    for (const translationKey in fieldTranslations[lang]) {
-      if (normalizedKey.includes(translationKey) || translationKey.includes(normalizedKey)) {
-        return fieldTranslations[lang][translationKey];
-      }
-    }
-    
-    // Fallback to just formatting the key
-    return lang === "ar" 
-      ? key // Keep as is for Arabic if no translation found
-      : key.replace(/_/g, " ").replace(/-/g, " "); // Format for English
-  };
-
-  // Function to translate feature content
-  const translateFeature = (feature) => {
-    // Dictionary of feature translations
-    const featureTranslations = {
-      en: {
-        "Swimming Pool": "Swimming Pool",
-        "Garden": "Garden",
-        "Jacuzzi": "Jacuzzi",
-        "BBQ Area": "BBQ Area",
-        "WiFi": "WiFi",
-        "Parking": "Parking",
-        "maids-room": "maids-room",
-        "laundry-room": "laundry-room",
-        "double-glazed-windows": "double-glazed-windows",
-        "electric-lampshade": "electric-lampshade",
-        "underfloor-heating": "underfloor-heating",
-        "microwave": "microwave",
-        "oven": "oven",
-      },
-      ar: {
-        "Swimming Pool": "مسبح",
-        "Garden": "حديقة",
-        "Jacuzzi": "جاكوزي",
-        "BBQ Area": "منطقة شواء",
-        "WiFi": "واي فاي",
-        "Parking": "موقف سيارات",
-        "maids-room": "غرفة الخادمة",
-        "laundry-room": "غرفة الغسيل",
-        "double-glazed-windows": "نوافذ زجاج مزدوج",
-        "electric-lampshade": "مظلة كهربائية",
-        "underfloor-heating": "تدفئة تحت الأرضية",
-        "microwave": "ميكروويف",
-        "oven": "فرن",
-      }
-    };
-
-    // Check if we have a direct translation for this feature
-    const trimmedFeature = feature.trim();
-    if (featureTranslations[lang][trimmedFeature]) {
-      return featureTranslations[lang][trimmedFeature];
-    }
-    
-    // If no direct match, try to find a partial match
-    for (const key in featureTranslations[lang]) {
-      if (trimmedFeature.toLowerCase().includes(key.toLowerCase()) || 
-          key.toLowerCase().includes(trimmedFeature.toLowerCase())) {
-        return featureTranslations[lang][key];
-      }
-    }
-    
-    // Return the original if no translation found
-    return trimmedFeature;
   };
 
   const isImage = (fileName) => {
@@ -180,114 +38,43 @@ function ChaletsDetails() {
     return /\.(mp4|mov|avi|mkv)$/i.test(fileName);
   };
 
-  // Process data after fetching to handle translations
-  const processData = (data) => {
-    if (!data) return null;
-    
-    // Create a deep copy to avoid modifying the original data
-    let processed = JSON.parse(JSON.stringify(data));
-    
-    // Always process the data regardless of language
-    try {
-      let typeObj = {};
-      
-      if (processed.type) {
-        typeObj = typeof processed.type === 'string' 
-          ? JSON.parse(processed.type) 
-          : processed.type;
-      }
-      
-      // For Arabic, create translated version
-      if (lang === "ar") {
-        // Translate both keys and values
-        const translatedType = {};
-        Object.entries(typeObj).forEach(([key, value]) => {
-          // Normalize the key by removing hyphens for matching
-          const normalizedKey = key.replace(/-/g, '_');
-          
-          // Translate property names (keys)
-          const translatedKey = translateFieldLabel(normalizedKey);
-          
-          // Translate values where needed
-          let translatedValue = value;
-          
-          // Translate yes/no values
-          if (typeof value === 'string') {
-            if (value.toLowerCase() === 'yes') translatedValue = 'نعم';
-            else if (value.toLowerCase() === 'no') translatedValue = 'لا';
-            else if (value.toLowerCase() === 'available') translatedValue = 'متوفر';
-            else if (value.toLowerCase() === 'not available') translatedValue = 'غير متوفر';
-          }
-          
-          // Add translated key-value pair
-          translatedType[translatedKey] = translatedValue;
-        });
-        
-        processed.translatedType = translatedType;
-        
-        // Debug output
-        console.log("Original keys:", Object.keys(typeObj));
-        console.log("Translated keys:", Object.keys(translatedType));
-      }
-    } catch (error) {
-      console.error("Error processing type data:", error);
-    }
-    
-    return processed;
-  };
-
   const fetchData = useCallback(async () => {
     try {
+     
       const [imgchaletRes, chaletsRes, ratingRes] = await Promise.all([
         axios.get(`${API_URL}/chaletsimages/chaletgetChaletImage/${id}`),
-        axios.get(`${API_URL}/chalets/getchaletbyid/${id}`),
+        axios.get(`${API_URL}/chalets/getchaletbyid/${id}?lang=${lang}`), 
         axios.get(`${API_URL}/NOstars/getAvergaestars/${id}`),
       ]);
 
-      // Update images
+     
       setChaletsImages(imgchaletRes.data);
       
-      // Update chalet data
-      setdataChalets(chaletsRes.data);
       
-      // Process data for translations
-      setTranslatedData(processData(chaletsRes.data));
+      const chaletData = Array.isArray(chaletsRes.data) && chaletsRes.data.length > 0 
+        ? chaletsRes.data[0]  
+        : chaletsRes.data;    
       
-      // Update rating
+      setdataChalets(chaletData);
+      
+     
       setRatingUser(ratingRes.data.averageStars);
     } catch (error) {
       console.error("Error fetching chalet data:", error);
     }
-  }, [id, lang]);
+  }, [id, lang]); 
 
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchData();
-  }, [fetchData, id]);
-
-  // Separate effect to manually process features when language changes
-  useEffect(() => {
-    if (dataChalets && dataChalets.features) {
-      console.log("Processing features for language:", lang);
-      
-      // Force UI update by creating a new translatedData object
-      setTranslatedData(prev => {
-        if (!prev) return processData(dataChalets);
-        
-        const newData = {...prev};
-        // Keep the original features string for rendering,
-        // the translation happens in the render function via translateFeature
-        return newData;
-      });
-    }
-  }, [lang, dataChalets]);
+  }, [fetchData, id, lang]); 
 
   const colors = {
     orange: "#F2C265",
     grey: "#a9a9a9",
   };
 
-  // Star icon SVG component
+ 
   const StarIcon = ({ filled }) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -304,6 +91,15 @@ function ChaletsDetails() {
 
   StarIcon.propTypes = {
     filled: PropTypes.bool.isRequired,
+  };
+
+ 
+  const uiText = {
+    detailsTitle: lang === "ar" ? "تفاصيل هذا الشاليه" : "Details for this chalets",
+    chatNow: lang === "ar" ? "دردش الأن" : "Chat Now",
+    price: lang === "ar" ? "السعر :" : "Price :",
+    features: lang === "ar" ? "المميزات :" : "Features :",
+    reserveNow: lang === "ar" ? "احجز الان" : "Reserve Now"
   };
 
   return (
@@ -329,23 +125,13 @@ function ChaletsDetails() {
           <Globe2 className="w-6 h-6" />
         </button>
       </div>
-      <ChatNowHeader dataChalets={dataChalets} chalet_id={id} price={price} />
+      <ChatNowHeader 
+        dataChalets={dataChalets || {}} 
+        chalet_id={id} 
+        price={price} 
+      />
       <Container className="mt-5">
-        <h1>{translations[lang].detailsTitle}</h1>
-        {/* Debug info - remove in production */}
-        {/* <div>
-          <small>Current language: {lang}</small>
-          <br />
-          <small>Data processed: {translatedData ? 'Yes' : 'No'}</small>
-          {translatedData && translatedData.translatedType && (
-            <>
-              <br />
-              <small>Translation applied: Yes</small>
-              <br />
-              <small>Translated keys: {Object.keys(translatedData.translatedType).join(', ')}</small>
-            </>
-          )}
-        </div> */}
+        <h1>{uiText.detailsTitle}</h1>
         <Row>
           <Col sm={12} md={12} lg={7}>
             <Carousel>
@@ -373,21 +159,85 @@ function ChaletsDetails() {
           </Col>
 
           <Col sm={12} md={12} lg={5}>
-            {translatedData && (
+            {dataChalets && dataChalets.type && (
               <div className="box_Brief_characteristics">
                 <div>
                   <div className="mt-3">
                     <ul dir={lang === "ar" ? "rtl" : "ltr"} style={{textAlign: lang === "ar" ? "right" : "left"}}>
-                      {translatedData.type &&
-                        Object.entries(
-                          lang === "ar" && translatedData.translatedType
-                            ? translatedData.translatedType
-                            : JSON.parse(translatedData.type)
-                        ).map(([key, value], index) => (
-                          <li key={index} className="py-2">
-                            <b>{lang === "en" ? key.replace(/_/g, " ") : key}:</b> {value}
-                          </li>
-                        ))}
+                      {(() => {
+                        try {
+                         
+                          let typeEntries = [];
+                          
+                          if (typeof dataChalets.type === 'string') {
+                           
+                            let typeStr = dataChalets.type.trim();
+                            if (typeStr.startsWith('"') && typeStr.endsWith('"')) {
+                              typeStr = typeStr.substring(1, typeStr.length - 1);
+                            }
+                            
+                          
+                            if ((typeStr.startsWith('{') && typeStr.endsWith('}')) || 
+                                typeStr.includes(':') || typeStr.includes('"')) {
+                              try {
+                                
+                                const cleanStr = typeStr
+                                  .replace(/\\/g, '')
+                                  .replace(/"{/g, '{')
+                                  .replace(/}"/g, '}')
+                                  .replace(/،/g, ',') 
+                                  .replace(/\s+/g, ' ');
+                                
+                                const typeData = JSON.parse(cleanStr);
+                                typeEntries = Object.entries(typeData);
+                              } catch (jsonError) {
+                                console.log("JSON parse failed, trying manual parse", jsonError);
+                                
+                                
+                                if (typeStr.startsWith('{')) typeStr = typeStr.substring(1);
+                                if (typeStr.endsWith('}')) typeStr = typeStr.substring(0, typeStr.length - 1);
+                                
+                                
+                                const pairs = typeStr.split(/[,،]+/);
+                                
+                                typeEntries = pairs.map(pair => {
+                                  const keyValue = pair.split(/:|：/);
+                                  if (keyValue.length >= 2) {
+                                    let key = keyValue[0].trim();
+                                    let value = keyValue[1].trim();
+                                    
+                                    
+                                    if (key.startsWith('"') && key.endsWith('"')) {
+                                      key = key.substring(1, key.length - 1);
+                                    }
+                                    if (value.startsWith('"') && value.endsWith('"')) {
+                                      value = value.substring(1, value.length - 1);
+                                    }
+                                    
+                                    return [key, value];
+                                  }
+                                  return ['', '']; 
+                                }).filter(([key]) => key !== ''); 
+                              }
+                            } else {
+                             
+                              typeEntries = [["Value", typeStr]];
+                            }
+                          } else if (typeof dataChalets.type === 'object') {
+                            
+                            typeEntries = Object.entries(dataChalets.type);
+                          }
+                          
+                          return typeEntries.map(([key, value], index) => (
+                            <li key={index} className="py-2">
+                              <b>{key.replace(/_/g, " ").replace(/-/g, " ")}:</b> {value}
+                            </li>
+                          ));
+                        } catch (error) {
+                          console.error("Error parsing type data:", error, dataChalets.type);
+                          return <li>Error loading characteristics</li>;
+                        }
+                      })()}
                     </ul>
 
                     <div className="cont_rating">
@@ -407,7 +257,7 @@ function ChaletsDetails() {
                 </div>
                 <Link to={userId ? `/${lang}/chatbot/${id}` : `/${lang}/login`}>
                   <Button variant="outline-warning" className="mt-3">
-                    {translations[lang].chatNow}
+                    {uiText.chatNow}
                   </Button>
                 </Link>
               </div>
@@ -421,28 +271,57 @@ function ChaletsDetails() {
                 style={{ color: "#152C5B", fontWeight: "600" }}
                 className="px-3"
               >
-                {translations[lang].price}
+                {uiText.price}
               </h4>
               <h5>{price} JD</h5>
             </div>
             <>
-              <h4>{translations[lang].features}</h4>
+              <h4>{uiText.features}</h4>
               <h6>
                 <ul dir={lang === "ar" ? "rtl" : "ltr"} style={{textAlign: lang === "ar" ? "right" : "left"}}>
-                  {translatedData && translatedData.features
-                    ? translatedData.features
-                        .replace(/"/g, "")
-                        .split(",")
-                        .map((feature, index) => (
-                          <li
-                            key={index}
-                            style={{ fontSize: "18px" }}
-                            className="py-1"
-                          >
-                            {lang === "ar" ? translateFeature(feature) : feature.trim()}
-                          </li>
-                        ))
-                    : null}
+                  {(() => {
+                    try {
+                      if (!dataChalets || !dataChalets.features) return null;
+                      
+                      
+                      let featuresArray = [];
+                      if (typeof dataChalets.features === 'string') {
+                      
+                        if (dataChalets.features.includes('"')) {
+                          try {
+                            const cleanedFeatures = dataChalets.features
+                              .replace(/\\/g, '')
+                              .replace(/^"/, '')
+                              .replace(/"$/, '');
+                            
+                           
+                            featuresArray = cleanedFeatures.split(/[,،]+/);
+                          } catch (e) {
+                            featuresArray = dataChalets.features.replace(/"/g, "").split(/[,،]+/);
+                            console.log(`The Error is :${e}`)
+                          }
+                        } else {
+                          
+                          featuresArray = dataChalets.features.replace(/"/g, "").split(/[,،]+/);
+                        }
+                      } else if (Array.isArray(dataChalets.features)) {
+                        featuresArray = dataChalets.features;
+                      }
+                      
+                      return featuresArray.map((feature, index) => (
+                        <li
+                          key={index}
+                          style={{ fontSize: "18px" }}
+                          className="py-1"
+                        >
+                          {feature.trim()}
+                        </li>
+                      ));
+                    } catch (error) {
+                      console.error("Error parsing features:", error, dataChalets.features);
+                      return <li>Error loading features</li>;
+                    }
+                  })()}
                 </ul>
               </h6>
             </>
@@ -454,7 +333,7 @@ function ChaletsDetails() {
               }}
             >
               <button className="booknow_button_events mt-4">
-                {translations[lang].reserveNow}
+                {uiText.reserveNow}
               </button>
             </Link>
           </Col>

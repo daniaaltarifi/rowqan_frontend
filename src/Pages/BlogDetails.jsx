@@ -5,7 +5,7 @@ import axios from "axios";
 import { API_URL } from "../App";
 import { Globe2 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-
+import { motion } from "framer-motion";
 
 function BlogDetails() {
 
@@ -18,14 +18,14 @@ function BlogDetails() {
 
   const toggleLanguage = () => {
     const newLang = lang === "ar" ? "en" : "ar";
-    const currentPath = location.pathname.split("/").slice(2).join("/");
-    navigate(`/${newLang}${currentPath ? "/" + currentPath : "/chalets"}`);
+    const currentPath = location.pathname.split('/').slice(2).join('/');
+    navigate(`/${newLang}${currentPath ? '/' + currentPath : '/blogdetails'}`);
   };
 
   const fetchData = useCallback(async () => {
     try {
       const blogRes = await axios.get(
-        `${API_URL}/Blogs/getBlogById/${id}/${lang}`
+        `${API_URL}/Blogs/getBlogById/${id}?lang=${lang}`
       );
       if (blogRes.data !== blogs) {
         setBlogs(blogRes.data);
@@ -42,27 +42,26 @@ function BlogDetails() {
 
   return (
     <div>
-        <div
-        className="language-toggle-container"
-        style={{
-          position: "absolute",
-          top: "20px",
-          right: "20px",
-          zIndex: 1000,
-        }}
-      >
-        <button
-          onClick={toggleLanguage}
-          className="btn btn-light rounded-circle p-2"
-          style={{
-            backgroundColor: "white",
-            border: "1px solid #ddd",
-            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-          }}
+         <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-end mb-4"
         >
-          <Globe2 className="w-6 h-6" />
-        </button>
-      </div>
+          <button
+            onClick={toggleLanguage}
+            className="btn btn-outline-secondary rounded-circle p-2"
+            style={{
+              border: '1px solid #ddd',
+              background: 'white',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            }}
+          >
+            <Globe2 className="w-6 h-6" />
+            <span className="ms-2 visually-hidden">
+              {lang === "ar" ? "English" : "العربية"}
+            </span>
+          </button>
+        </motion.div>
       <Container>
         {blogs.map((blog) => (
           <Row key={blog.id}>

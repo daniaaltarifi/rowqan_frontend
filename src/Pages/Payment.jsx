@@ -138,7 +138,7 @@ function Payment() {
         UserName: formData.name,
         Phone_Number: formData.phoneNumber,
         initialAmount: initial_amount,
-        Status: 'Pending',
+        status: 'Pending',
         payment_status: 'Pending'
       };
   
@@ -165,7 +165,7 @@ function Payment() {
   
       try {
         await axios.post(`${API_URL}/reservations/${reservation_id}`, {
-          Status: 'Pending',
+          status: 'Pending',
           payment_status: 'Pending'
         });
       } catch (updateError) {

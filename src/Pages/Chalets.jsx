@@ -15,6 +15,7 @@ import { Globe2 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import { motion } from "framer-motion";
+import SocialMediaButtons from "../Component/SocialMediaButtons";
 function Chalets() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -223,6 +224,7 @@ function Chalets() {
 
   return (
     <>
+    <SocialMediaButtons/>
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}

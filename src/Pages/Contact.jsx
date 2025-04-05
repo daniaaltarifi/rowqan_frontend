@@ -6,6 +6,7 @@ import axios from "axios";
 import '../Css/Contact.css'
 import { Globe2 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import SocialMediaButtons from "../Component/SocialMediaButtons";
 
 
 function Contact() {
@@ -73,6 +74,7 @@ function Contact() {
 
   return (
     <>
+    <SocialMediaButtons/>
       <div
             className="language-toggle-container"
             style={{

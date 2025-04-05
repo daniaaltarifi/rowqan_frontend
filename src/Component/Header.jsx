@@ -45,6 +45,33 @@ const Header = () => {
     }
   }, [userId, logout, navigate, lang]);
 
+  
+  const getRoutePath = (headerName) => {
+    if (headerName.toLowerCase() === "home" || headerName === "الرئيسية") {
+      return `/${lang}`;
+    }
+
+   
+    const routeMappings = {
+      "الرئيسية": "",
+      "حول": "about",
+      "شاليهات": "chalets",
+      "مدونات": "blogs",
+      "اتصل بنا": "contact",
+      "عروض": "offers",
+      "دع صفان يختار":"Let Rowqan Choose"
+      
+    };
+
+    
+    if (lang === "ar" && routeMappings[headerName]) {
+      return `/${lang}/${routeMappings[headerName]}`;
+    }
+
+    
+    return `/${lang}/${headerName.replace(/\s+/g, '')}`;
+  };
+
   return (
     <nav className={`nav`}>
       {logo.map((logos) => (
@@ -70,13 +97,7 @@ const Header = () => {
       <ul className={`nav-links ${isOpen ? "open" : ""}`} onClick={toggleMenu}>
         {headers.map((header) => (
           <li key={header.id}>
-            <Link
-              to={
-                header.header_name.toLowerCase() === "home"
-                  ? `/${lang}`
-                  : `/${lang}/${header.header_name}`
-              }
-            >
+            <Link to={getRoutePath(header.header_name)}>
               {header.header_name}
             </Link>
           </li>

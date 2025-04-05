@@ -13,6 +13,7 @@ import '../Css/Payment.css';
 
 import checked from "../assets/checked.png";
 import failed from "../assets/cross.png";
+import SocialMediaButtons from "../Component/SocialMediaButtons";
 
 const PaymentOption = ({ type, icon, text, selectedPayment, onPaymentTypeChange }) => (
   <div 
@@ -195,6 +196,7 @@ function Payment() {
   
   const renderPaymentMethods = () => (
     <div className="payment-type">
+      <SocialMediaButtons/>
       <h4>{lang === "ar" ? "اختر طريقة الدفع" : "Select Payment Method"}</h4>
       <div className="types flex_display justify-space-between">
         <PaymentOption 

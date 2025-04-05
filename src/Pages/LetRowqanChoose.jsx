@@ -6,6 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import emailjs from "@emailjs/browser";
 import Swal from "sweetalert2";
 import { API_URL } from "../App";
+import SocialMediaButtons from "../Component/SocialMediaButtons";
 
 const translations = {
   ar: {
@@ -1008,6 +1009,7 @@ const LetRowqanChoose = () => {
     className={`min-vh-100 bg-light ${lang === "ar" ? "rtl" : "ltr"}`} 
   >
       <div className="container py-4">
+        <SocialMediaButtons/>
         {/* Header */}
         <div className="d-flex justify-content-between align-items-center py-4">
           <div>

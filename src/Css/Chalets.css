@@ -748,3 +748,46 @@ padding-bottom: 5px;
   left: auto;
   transform: translateX(50%);
 }
+
+
+.btn:hover,
+.btn-outline-secondary:hover,
+.btn-primary:hover,
+.btn-secondary:hover {
+  background-color: transparent !important;
+  color: inherit !important;
+  border-color: #ddd !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+
+.btn-outline-secondary.rounded-circle:hover {
+  background-color: #f8f9fa !important;
+  color: #833988 !important;
+  border-color: #833988 !important;
+  transform: translateY(-5px) rotate(10deg);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+
+.chalets_btn:hover {
+  background: linear-gradient(90deg, #6da6ba 0%, #afb7ab 50%, #f2c79d 100%) !important;
+  box-shadow: 8px 8px 4px 0px #6da6ba !important;
+  color: white !important;
+  transition: all ease-in-out 450ms !important;
+}
+
+
+.booknow_button_events:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 5px 15px rgba(109, 166, 186, 0.4) !important;
+  color: white !important;
+}
+
+
+button:focus,
+.btn:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}

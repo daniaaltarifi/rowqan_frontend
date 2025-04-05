@@ -12,6 +12,7 @@ import "../Css/Events.css";
 import { motion } from "framer-motion";
 import { Globe2 } from "lucide-react";  
 import { useNavigate, useLocation } from "react-router-dom";
+import SocialMediaButtons from "../Component/SocialMediaButtons";
 
 function Offers() {
   const navigate = useNavigate();
@@ -63,6 +64,7 @@ function Offers() {
 
   return (
     <>
+    <SocialMediaButtons/>
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}

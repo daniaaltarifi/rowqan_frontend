@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { API_URL } from "../App";
 import { Globe2 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import SocialMediaButtons from "../Component/SocialMediaButtons";
 
 function About() {
   const location = useLocation();
@@ -77,6 +78,7 @@ function About() {
 
   return (
     <div className="about-page py-5" style={{ minHeight: '80vh' }}>
+      <SocialMediaButtons/>
       <Container>
       <motion.div
           initial={{ opacity: 0, y: -20 }}

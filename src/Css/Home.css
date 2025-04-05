@@ -1,52 +1,76 @@
-:root{
-  --white-color:#fff;
-  --beige-color:#F2C79D;
+:root {
+  --white-color: #fff;
+  --beige-color: #F2C79D;
   --blue-color: #6DA6BA;
-
+  --dark-blue: #152C5B;
+  --gray-color: #B0B0B0;
+  --shadow-blue: rgba(109, 166, 186, 1);
+  --trans-blue: #d5e6f685;
 }
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  overflow-x: hidden;
+}
+
 .home-container {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-.hero_cont{
-  height: 70vh;
   width: 100%;
+  padding: 0 15px;
 }
+
+.hero_cont {
+  width: 100%;
+  padding: 5vh 0;
+}
+
 .margin_section {
-  margin-top: 15vh;
-  /* min-height: 300px; */
+  margin-top: 10vh;
 }
+
 .mainHome_img {
   width: 100%;
   max-width: 600px;
-  height: 465px;
+  height: auto;
+  aspect-ratio: 600/465;
   border-radius: 40px;
-  box-shadow: 16px 16px 4px 0px rgba(109, 166, 186, 1);
+  box-shadow: 16px 16px 4px 0px var(--shadow-blue);
   object-fit: cover;
 }
 
 .maintext_home {
-  font-family: Poppins;
-  font-size: 42px;
+  font-size: clamp(28px, 5vw, 42px);
   font-weight: bold;
-  line-height: 63px;
-  color: #152c5b;
+  line-height: 1.5;
+  color: var(--dark-blue);
 }
+
 .text_home {
-  font-size: 16px;
+  font-size: clamp(14px, 2vw, 16px);
   font-weight: 300;
-  line-height: 30px;
-  color: #b0b0b0;
+  line-height: 1.8;
+  color: var(--gray-color);
+  margin-bottom: 20px;
 }
-/* FILTRATION BOX */
+
+
 .cont_search {
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 20px;
-  background-color: #d5e6f685;
-  height: 100px;
+  background-color: var(--trans-blue);
+  min-height: 100px;
+  width: 100%;
+  padding: 20px 10px;
 }
 
 .col_cont_search {
@@ -54,127 +78,237 @@
   justify-content: space-evenly;
   width: 100%;
   flex-wrap: wrap;
+  gap: 15px;
 }
 
 .filter_home {
-  width: 160px;
+  width: clamp(140px, 20vw, 160px);
   height: 50px;
-  box-shadow: 10px 5px 5px 0px #f2c79d;
-  margin: 5px;
+  box-shadow: 10px 5px 5px 0px var(--beige-color);
   transition: all 0.3s ease;
 }
 
 .btn_text_filter {
-  font-size: 15px;
+  font-size: clamp(12px, 1.5vw, 15px);
   padding-left: 5px;
 }
+
 .search_btn_home {
   margin-top: 2vh;
-}
-/* SERVICES SECTION */
-.cont_chalets_home{
-  /* height: 40vh; */
   width: 100%;
+  display: flex;
+  justify-content: center;
 }
+
+/* SERVICES SECTION */
+.cont_chalets_home {
+  width: 100%;
+  padding: 2vh 0;
+}
+
 .cont_img_home_serv {
   position: relative;
+  margin-bottom: 5vh;
+  overflow: hidden;
 }
 
 .bottom-right {
-  font-display: swap;
   position: absolute;
   bottom: 55px;
   right: 36px;
-  font-size: 20px;
+  font-size: clamp(16px, 2.5vw, 20px);
   font-weight: 400;
-  line-height: 54px;
-  color: #fff;
+  line-height: 1.5;
+  color: var(--white-color);
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .img_services_home {
   border-radius: 15px;
   width: 100%;
   height: 200px;
-  margin-bottom: 5vh;
-  transition: transform 0.3s ease; 
+  object-fit: cover;
+  transition: transform 0.3s ease;
 }
 
 .img_services_home:hover,
 .toppicks_home_img:hover {
-  box-shadow: 3px 6px 2px 0px #6da6ba;
-  transform: scale(1.1); 
+  box-shadow: 3px 6px 2px 0px var(--blue-color);
+  transform: scale(1.05);
   transition: all ease-in-out 350ms;
 }
 
 .service_home_overlay {
-  color: #fff;
-  background: linear-gradient(180deg, #f2c79d 0%, #6da6ba 100%);
-  font-size: 14px;
+  color: var(--white-color);
+  background: linear-gradient(180deg, var(--beige-color) 0%, var(--blue-color) 100%);
+  font-size: clamp(12px, 1.5vw, 14px);
   font-weight: 500;
-  width: 150px;
+  width: clamp(120px, 20vw, 150px);
   height: 41px;
   border-top-right-radius: 15px;
   border-bottom-left-radius: 15px;
   border: none;
-  margin-left: 8vh;
-  
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: pointer;
 }
-.services_btn_home {
-  font-size: 20px;
-  font-weight: 600;
 
+.services_btn_home {
+  font-size: clamp(16px, 2.5vw, 20px);
+  font-weight: 600;
+  margin-bottom: 20px;
 }
-/* TOP PICKS SECTION */
-.toppicks_home_img{
+
+.toppicks_home_img {
   border-radius: 15px;
   width: 100%;
   height: 200px;
-  box-shadow: 12px 12px 4px 0px #F2C79D;
+  box-shadow: 12px 12px 4px 0px var(--beige-color);
   object-fit: cover;
   margin-bottom: 20px;
-
 }
 
-.title_of_toppick{
-color: #152C5B;
+.title_of_toppick {
+  color: var(--dark-blue);
+  font-size: clamp(16px, 2vw, 18px);
+  margin-bottom: 10px;
 }
-.parg_of_toppicks{
-font-size: 15px;
-font-weight: 300;
-line-height: 15.5px;
-color: #B0B0B0;
+
+.parg_of_toppicks {
+  font-size: clamp(13px, 1.5vw, 15px);
+  font-weight: 300;
+  line-height: 1.5;
+  color: var(--gray-color);
 }
-@media screen and (max-width: 2300px) {
-  .hero_cont{
-    height: auto;
+
+
+
+
+@media screen and (min-width: 1400px) {
+  .container {
+    max-width: 1320px;
+    margin: 0 auto;
+  }
+  
+  .mainHome_img {
+    max-height: 500px;
+  }
+  
+  .cont_img_home_serv {
+    height: 250px;
+  }
+  
+  .img_services_home, 
+  .toppicks_home_img {
+    height: 250px;
   }
 }
-@media screen and (max-width: 768px) {
+
+
+@media screen and (min-width: 992px) and (max-width: 1399px) {
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+}
+
+
+@media screen and (min-width: 768px) and (max-width: 991px) {
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  
+  .margin_section {
+    margin-top: 8vh;
+  }
+  
+  .mainHome_img {
+    max-height: 400px;
+  }
+}
+
+
+@media screen and (max-width: 767px) {
   .home-container {
     margin-top: 8vh;
     text-align: center;
+    flex-direction: column;
   }
 
   .mainHome_img {
     margin-top: 4vh;
-    height:300px
+    max-height: 350px;
+    box-shadow: 10px 10px 3px 0px var(--shadow-blue);
   }
 
   .col_cont_search {
     flex-direction: column;
     align-items: center;
   }
+  
   .cont_search {
     height: auto;
     width: 100%;
     padding: 15px;
   }
-  .service_home_overlay {
-    margin-left: 0;
+  
+  .filter_home {
+    width: 80%;
+    max-width: 300px;
+    margin: 5px 0;
   }
-  .services_btn_home {
+  
+  .margin_section {
+    margin-top: 5vh;
+  }
+  
+  .img_services_home, 
+  .toppicks_home_img {
+    height: 180px;
+  }
+}
+
+
+@media screen and (max-width: 576px) {
+  .mainHome_img {
+    max-height: 300px;
+    box-shadow: 8px 8px 3px 0px var(--shadow-blue);
+  }
+  
+  .maintext_home {
+    font-size: 24px;
+    line-height: 1.4;
+  }
+  
+  .text_home {
     font-size: 14px;
-
+    line-height: 1.6;
   }
-
+  
+  .bottom-right {
+    bottom: 30px;
+    right: 20px;
+    font-size: 16px;
+  }
+  
+  .service_home_overlay {
+    height: 35px;
+    font-size: 12px;
+  }
+  
+  .img_services_home, 
+  .toppicks_home_img {
+    height: 160px;
+  }
+  
+  .title_of_toppick {
+    font-size: 16px;
+  }
+  
+  .parg_of_toppicks {
+    font-size: 12px;
+    line-height: 1.4;
+  }
 }

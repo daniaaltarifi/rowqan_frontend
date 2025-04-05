@@ -2,7 +2,7 @@
     position: relative;
     background-color: #f6ede5;
     padding-bottom: 150px;
-    overflow: hidden; /* To make sure the pseudo-elements stay within bounds */
+    overflow: hidden; 
     height: 80vh;
    display: flex;
 flex-direction: column;
@@ -26,13 +26,13 @@ align-items: center;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-/* للدعم العربي */
+
 [dir="rtl"] .language-toggle-container {
   left: 20px;
   right: auto;
 }
 
-/* تعديلات إضافية للنسخة العربية */
+
 [dir="rtl"] .navbar__search {
   direction: rtl;
 }
@@ -68,6 +68,7 @@ align-items: center;
 .cont_card_blogs {
     box-shadow: 12px 12px 4px 0px #6da6ba;
     margin-bottom: 5vh;
+    margin-top: 20px;
     height: 550px !important;
     overflow: hidden;
     }

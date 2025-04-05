@@ -9,6 +9,7 @@ import axios from "axios";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Globe2 } from "lucide-react";
+import SocialMediaButtons from "../Component/SocialMediaButtons";
 
 
 
@@ -37,7 +38,7 @@ function Home() {
 
   
 
-  // Refs for intersection observer
+
   const heroRef = useRef(null);
   const servicesRef = useRef(null);
   const offersRef = useRef(null);
@@ -66,9 +67,9 @@ function Home() {
     getHero();
   }, [getHero, lang]);
 
-  // Set up intersection observers with more advanced triggers
+ 
   useEffect(() => {
-    // Auto-trigger hero animation on page load
+   
     setTimeout(() => {
       setHasAnimated(true);
     }, 300);
@@ -123,7 +124,7 @@ function Home() {
 
   return (
     <div className="home-container">
-      
+        <SocialMediaButtons/>
       <Container>
       <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -637,6 +638,7 @@ function Home() {
           }
         `}
       </style>
+    
     </div>
   );
 }

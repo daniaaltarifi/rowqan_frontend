@@ -5,7 +5,6 @@ import axios from "axios";
 import { API_URL } from "../App";
 import PropTypes from "prop-types";
 import clock from "../assets/clock.png";
-// Import Globe icon
 import { Globe2 } from "lucide-react";
 
 function CalendarChalets({
@@ -18,34 +17,35 @@ function CalendarChalets({
   const navigate = useNavigate();
   const lang = location.pathname.split("/")[1] || "en";
   const [currentDate, setCurrentDate] = useState(new Date());
-  // eslint-disable-next-line no-unused-vars
-  const [error, setError] = useState("");
+  
+  const [error,] = useState("");
   const [reservedDates, setReservedDates] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
-  // State for the selected date from either calendar
+ 
   const [selectedDateAndTime, setSelectedDateAndTime] = useState({});
   const [rightTimes, setRightTimes] = useState([]);
   const [loading, setLoading] = useState(true);
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
   
+ 
+  const formatNumber = (number) => {
+    if (lang === "ar") {
+      
+      return number.toString().replace(/\d/g, (d) => {
+        return ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'][d];
+      });
+    }
+    return number;
+  };
   
   const toggleLanguage = () => {
     const newLang = lang === "ar" ? "en" : "ar";
-    
-    
-    const pathParts = location.pathname.split("/");
-    pathParts[1] = newLang;
-    const newPath = pathParts.join("/");
-    
-    
-    navigate(newPath, { 
-      state: location.state 
-    });
+    const currentPath = location.pathname.split('/').slice(2).join('/');
+    navigate(`/${newLang}${currentPath ? '/' + currentPath : '/about'}`);
   };
-
 
   const handleSelectDate = (day, time_id, priceForDaily) => {
     const newDate = new Date(
@@ -116,7 +116,7 @@ function CalendarChalets({
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     const daysInMonth = lastDay.getDate();
-    const startDay = firstDay.getDay(); // day of week of the 1st of the month
+    const startDay = firstDay.getDay(); 
     return { daysInMonth, startDay };
   };
 
@@ -135,28 +135,24 @@ function CalendarChalets({
     try {
       setLoading(true);
       const res = await axios.get(
-        `${API_URL}/RightTimes/getallrighttimesbyChaletId/${id}/${lang}`
+        `${API_URL}/RightTimes/getallrighttimesbyChaletId/${id}`
       );
       setRightTimes(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
       console.error("Error fetching available times:", error);
-      alert(
-        lang === "ar"
-          ? "حدث خطأ في جلب الأوقات المتاحة. يرجى المحاولة مرة أخرى لاحقًا."
-          : "There was an error fetching the available times. Please try again later."
-      );
+      alert("There was an error fetching the available times. Please try again later.");
     } finally {
       setLoading(false);
     }
-  }, [lang, id]);
+  }, [id]);
 
   useEffect(() => {
     getTimesBychaletsId();
-  }, [getTimesBychaletsId, id, lang]);
+  }, [getTimesBychaletsId, id]);
   
   useEffect(() => {
     fetch(
-      `${API_URL}/ReservationsChalets/reservationsDatesByChaletId/${id}?lang=${lang}`
+      `${API_URL}/ReservationsChalets/reservationsDatesByChaletId/${id}`
     )
       .then((response) => response.json())
       .then((data) => {
@@ -170,7 +166,7 @@ function CalendarChalets({
       .catch((error) => console.error("Error fetching reservations:", error));
   }, [id, lang]);
 
-  // Get translated day names
+  
   const getDayNames = () => {
     if (lang === "ar") {
       return ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
@@ -241,7 +237,10 @@ function CalendarChalets({
                   {lang === "ar" ? "تواريخ " + time.type_of_time : time.type_of_time + " Dates"}
                 </h4>
                 <h5 style={{ color: "#fff", margin: "0", fontSize: "16px" }}>
-                  {time.from_time} - {time.to_time}
+                  {lang === "ar" 
+                    ? `${formatNumber(time.from_time)} - ${formatNumber(time.to_time)}`
+                    : `${time.from_time} - ${time.to_time}`
+                  }
                 </h5>
               </div>
               <div 
@@ -414,7 +413,7 @@ function CalendarChalets({
                           transition: "all 0.2s ease",
                         }}
                       >
-                        {day}
+                        {formatNumber(day)}
                       </span>
                       {(isPending || isConfirmed) && (
                         <span

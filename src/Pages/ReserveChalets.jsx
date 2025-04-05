@@ -20,6 +20,7 @@ import "../Css/Chalets.css";
 import "../Css/Events.css";
 // Import Globe icon
 import { Globe2 } from "lucide-react";
+import SocialMediaButtons from "../Component/SocialMediaButtons";
 
 const ReserveChalets = () => {
   const { userId } = useUser();
@@ -183,12 +184,13 @@ const ReserveChalets = () => {
       const newIsOpen = true;
       return newIsOpen;
     });
-    setError(""); // Reset error on successful selection
+    setError(""); 
   };
 
   return (
     <>
-      {/* Language Switcher Button */}
+    <SocialMediaButtons/>
+     
       <div
         className="language-toggle-container"
         style={{

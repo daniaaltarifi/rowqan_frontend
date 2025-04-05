@@ -6,6 +6,7 @@ import { API_URL } from "../App";
 import { Globe2 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
+import SocialMediaButtons from "../Component/SocialMediaButtons";
 
 function BlogDetails() {
 
@@ -42,6 +43,7 @@ function BlogDetails() {
 
   return (
     <div>
+      <SocialMediaButtons/>
          <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -92,7 +94,6 @@ function BlogDetails() {
                               __html: blog.description,
                             }}
                           ></p>
-                {/* <p className="mt-5">{blog.description}</p> */}
               </div>
             </Col>
           </Row>

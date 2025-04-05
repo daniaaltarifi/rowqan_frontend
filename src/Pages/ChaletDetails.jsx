@@ -11,6 +11,7 @@ import '../Css/Events.css';
 
 import { Globe2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import SocialMediaButtons from "../Component/SocialMediaButtons";
 
 function ChaletsDetails() {
   const navigate = useNavigate();
@@ -104,6 +105,7 @@ function ChaletsDetails() {
 
   return (
     <div>
+      <SocialMediaButtons/>
       <div
         className="language-toggle-container"
         style={{

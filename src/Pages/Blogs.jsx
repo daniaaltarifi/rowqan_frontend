@@ -10,6 +10,7 @@ import "../Css/Chalets.css";
 import { Globe2 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
+import SocialMediaButtons from "../Component/SocialMediaButtons";
 function Blogs() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -42,6 +43,7 @@ function Blogs() {
 
   return (
     <div>
+      <SocialMediaButtons/>
       <Container fluid>
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -50,7 +52,7 @@ function Blogs() {
         >
           <button
             onClick={toggleLanguage}
-            className="btn btn-outline-secondary rounded-circle p-2"
+            className="btn"
             style={{
               border: "1px solid #ddd",
               background: "white",
@@ -77,7 +79,7 @@ function Blogs() {
             <svg
               className="wave"
               xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 1440 160" // Adjusted viewBox height
+              viewBox="0 0 1440 160" 
             >
               <path
                 fill="var(--blue-color)"

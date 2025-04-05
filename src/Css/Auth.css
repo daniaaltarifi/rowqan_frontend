@@ -3,7 +3,8 @@
   display: inline-block;
   width: 100%;
   max-width: 100%;
-  z-index: -1;
+  z-index: 0; 
+  overflow: hidden;
 }
 
 .text-overlay {
@@ -17,11 +18,14 @@
   color: white;
   z-index: 2;
   box-shadow: 12px 12px 4px 0px #f2c79d;
-  background: #ffffff3b;
+  background: rgba(255, 255, 255, 0.23);
   height: 90vh;
   width: 80%;
+  max-width: 1200px;
+  max-height: 800px;
   border-radius: 15px;
-  border: 1px solid #e5e5e5a6;
+  border: 1px solid rgba(229, 229, 229, 0.65);
+  padding: 20px;
 }
 
 .auth_img {
@@ -33,13 +37,15 @@
 }
 
 .create_acc_title {
-  font-size: 40px;
+  font-size: clamp(24px, 5vw, 40px); 
   font-weight: 500;
-  line-height: 60px;
+  line-height: 1.5;
   text-align: center;
   background: linear-gradient(90deg, #d1bfa4 38.5%, #afb7ab 100%);
   -webkit-background-clip: text;
+  background-clip: text; 
   color: transparent;
+  margin-bottom: 20px;
 }
 
 .cont_form {
@@ -47,53 +53,102 @@
   place-items: center;
   height: 100%;
   width: 100%;
+  padding: 15px;
+  box-sizing: border-box;
 }
+
 .form_input_auth {
   border: 3px solid #d1bfa4;
   margin-bottom: 1vh;
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
 }
+
 .link_auth {
   font-size: 16px;
   color: #6da6ba;
+  text-decoration: none;
+  margin: 10px 0;
+  transition: color 0.3s ease;
 }
+
+.link_auth:hover {
+  color: #f2c79d;
+  text-decoration: underline;
+}
+
 /* LOGIN */
 .cont_auth {
   display: grid;
   place-items: center;
+  width: 100%;
 }
+
 .login_auth_img {
   height: 80vh;
+  max-height: 100%;
+  width: 100%;
+  object-fit: cover;
 }
+
 .text-overlay_img {
   height: 70vh;
+  max-height: 700px;
+  width: 90%;
+  max-width: 1000px;
 }
+
 .cont_social {
   display: flex;
   justify-content: space-evenly;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 15px 0;
 }
+
 .forget_password {
   color: #d1bfa4;
   font-size: 13px;
+  margin: 10px 0;
+  text-decoration: none;
+  transition: color 0.3s ease;
 }
-/* FORGET PASSWORD */
+
+.forget_password:hover {
+  color: #b9a588;
+  text-decoration: underline;
+}
+
+
 .title_forgetpass {
   background: linear-gradient(90deg, #6da6ba 0%, #f2c79d 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   color: transparent;
-  font-size: 40px;
+  font-size: clamp(24px, 5vw, 40px);
   font-weight: 600;
+  margin-bottom: 10px;
 }
+
 .parg_forgetpass {
   color: #686767;
-  font-size: 16px;
+  font-size: clamp(14px, 3vw, 16px);
   font-weight: 400;
   margin-bottom: 5vh;
   margin-top: 3vh;
+  max-width: 500px;
+  text-align: center;
 }
-/* EYE ICON FOR DISPLAY PASSWORD */
+
+
 .password-input-wrapper {
   position: relative;
-  /* z-index: -1; */
+  width: 100%;
+  max-width: 400px;
 }
 
 .password-visibility-toggle {
@@ -105,15 +160,25 @@
   border: none;
   cursor: pointer;
   font-size: 1.2em;
+  color: #6da6ba;
+  z-index: 3;
 }
+
 .main_cont_cashback {
   display: flex;
   justify-content: center;
   margin-top: 35px;
+  padding: 0 15px;
+  width: 100%;
+  box-sizing: border-box;
 }
+
 .cont_balance {
   width: 100%;
-  height: 399px;
+  max-width: 1000px;
+  height: auto;
+  min-height: 300px;
+  padding: 30px 20px;
   background: linear-gradient(110.18deg, #6da6ba 4.2%, #f2c79d 96.78%);
   border-radius: 25px;
   display: flex;
@@ -122,19 +187,23 @@
   align-items: center;
   color: #fff;
   margin-top: 15px;
-
+  box-sizing: border-box;
 }
+
 ::-webkit-scrollbar {
   height: 8px;
   width: 9px;
 }
+
 ::-webkit-scrollbar-thumb {
   background-color: #f2c79d;
   border-radius: 4px;
 }
+
 ::-webkit-scrollbar-track {
   background-color: #f1f1f1;
 }
+
 .input_profile {
   background: none;
   border-top: none;
@@ -142,51 +211,211 @@
   border-left: none;
   border-bottom: 2px solid #e5e5e5;
   margin-bottom: 18px;
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 5px;
+  font-size: 16px;
+  color: inherit;
 }
 
 .profile-bg {
-  width: 300px;
-  height: 100%;
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  min-height: 350px;
   background-color: #7ea9b8;
   border-radius: 15px;
   text-align: center;
   margin: 0 auto;
-  padding: 0px;
+  padding: 20px;
   color: #fff;
+  box-sizing: border-box;
 }
 
 .profile-bg img {
   width: 80px;
+  height: 80px;
   overflow: hidden;
   border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 15px;
+  display: block;
 }
 
 .content {
-  padding: 30px;
+  padding: clamp(15px, 3vw, 30px);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .content p {
   margin-top: 30px;
+  line-height: 1.6;
 }
 
 .profile_data {
   text-transform: uppercase;
-  font-size: 14px;
+  font-size: clamp(12px, 2vw, 14px);
   letter-spacing: 0.2em;
   font-weight: bold;
+  margin: 10px 0;
 }
 
 .error_message {
   color: red;
   font-size: 0.9em;
   margin-top: 5px;
+  text-align: left;
+  width: 100%;
+  max-width: 400px;
 }
 
-@media screen and (max-width: 768px) {
-  .auth_img {
-    height: 50vh;
-  }
+
+@media screen and (max-width: 480px) {
   .text-overlay {
-    height: 40vh;
+    width: 95%;
+    height: 85vh;
+    padding: 15px;
+    box-shadow: 8px 8px 3px 0px #f2c79d;
+  }
+  
+  .auth_img {
+    height: 100vh;
+  }
+  
+  .cont_social {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .profile-bg {
+    max-width: 250px;
+  }
+}
+
+
+@media screen and (max-width: 768px) {
+  .text-overlay {
+    width: 90%;
+    height: 80vh;
+  }
+  
+  .auth_img {
+    height: 100vh;
+  }
+  
+  .login_auth_img {
+    height: 60vh;
+  }
+  
+  .text-overlay_img {
+    height: 60vh;
+  }
+  
+  .cont_balance {
+    padding: 20px 15px;
+  }
+}
+
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+  .text-overlay {
+    width: 85%;
+    height: 85vh;
+  }
+  
+  .profile-bg {
+    max-width: 280px;
+  }
+}
+
+
+@media screen and (min-width: 1920px) {
+  .text-overlay {
+    max-width: 1400px;
+    max-height: 900px;
+  }
+  
+  .form_input_auth, .input_profile, .password-input-wrapper {
+    max-width: 500px;
+    font-size: 18px;
+  }
+  
+  .profile-bg {
+    max-width: 350px;
+  }
+}
+
+
+@media screen and (max-height: 600px) {
+  .text-overlay {
+    height: 95vh;
+    overflow-y: auto;
+  }
+  
+  .cont_form {
+    padding: 10px 0;
+  }
+  
+  .create_acc_title {
+    margin-bottom: 10px;
+    font-size: clamp(20px, 4vw, 32px);
+  }
+}
+
+
+@media screen and (max-width: 320px) {
+  .text-overlay {
+    width: 98%;
+    padding: 10px;
+    box-shadow: 5px 5px 2px 0px #f2c79d;
+  }
+  
+  .create_acc_title {
+    font-size: 20px;
+  }
+  
+  .form_input_auth, .input_profile {
+    padding: 8px;
+  }
+}
+
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .text-overlay {
+    height: 90vh;
+    overflow-y: auto;
+  }
+  
+  .auth_img {
+    height: 100vh;
+  }
+}
+
+
+@media screen and (min-width: 2560px) {
+  .text-overlay {
+    max-width: 1800px;
+    max-height: 1200px;
+  }
+  
+  .create_acc_title {
+    font-size: 50px;
+  }
+  
+  .profile-bg {
+    max-width: 400px;
+  }
+}
+
+
+@media (prefers-color-scheme: dark) {
+  .error_message {
+    color: #ff6b6b;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background-color: #333;
   }
 }

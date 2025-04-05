@@ -37,8 +37,8 @@ import { UserProvider } from './Component/UserContext.jsx';
 // import LandsDetails from './Pages/LandsDetails';
 // import BookingLand from './Pages/BookingLand';
 // import Playgrounds from './Pages/Playgrounds';
-//  export const API_URL="http://localhost:5000";
- export const API_URL="https://rowqanbackend.rowqan.com";
+  export const API_URL="http://localhost:5000";
+//  export const API_URL="https://rowqanbackend.rowqan.com";
 const DirectionHandler = () => {
   const location = useLocation();
   const lang = location.pathname.split("/")[1] || "en";
@@ -56,7 +56,8 @@ function App() {
     currency: "USD",
     intent: "capture",
   };
-  
+
+
   return (
     <>
     <Router>
@@ -70,13 +71,14 @@ function App() {
 
       <Route path="/" element={ <Home/>} />
       <Route path="/:lang" element={ <Home/>} />
+      <Route path="/:lang/LetRowqanChoose" element={ <LetRowqanChoose/>} />
       <Route path="/:lang/signup" element={ <SignUp/>} />
       <Route path="/:lang/login" element={ <Login/>} />
       <Route path="/:lang/about" element={ <About/>} />
       <Route path="/:lang/blogs" element={ <Blogs/>} />
       <Route path="/:lang/blogdetails/:id" element={ <BlogDetails/>} />
       <Route path="/:lang/contact" element={ <Contact/>} />
-      <Route path="/:lang/LetRowqanChoose" element={ <LetRowqanChoose/>} />
+     
       {/* CHALETS ROUTES */}
       <Route path="/:lang/chalets" element={ <Chalets/>} />
       <Route path="/:lang/chaletdetails/:id" element={ <ChaletsDetails/>} />
@@ -101,6 +103,18 @@ function App() {
       {/* <Route path="/:lang/playgrounds" element={ <Playgrounds/>} /> */}
 
       <Route path="/:lang/cashback" element={ <CashBack/>} />
+      <Route path="/:lang/بيت" element={<Home />} />
+              <Route path="/:lang/تسجيل" element={<SignUp />} />
+              <Route path="/:lang/دخول" element={<Login />} />
+              <Route path="/:lang/عن" element={<About />} />
+              <Route path="/:lang/الشاليهات" element={<Chalets />} />
+              <Route path="/:lang/المدونات" element={<Blogs />} />
+              <Route path="/:lang/يتصل" element={<Contact />} />
+              <Route path="/:lang/العروض" element={<Offers />} />
+              <Route path="/:lang/Let Rowqan Choose" element={<LetRowqanChoose />} />
+          
+
+
 
     </Routes>
     </Suspense>

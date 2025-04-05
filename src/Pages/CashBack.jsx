@@ -7,10 +7,11 @@ import "../Css/Auth.css";
 import { Col, Container, Row } from "react-bootstrap";
 import userprofile from "../assets/account.png";
 import RatingForm from "../Component/RatingForm";
+import SocialMediaButtons from "../Component/SocialMediaButtons";
 function CashBack() {
   const lang = location.pathname.split("/")[1] || "en";
   const { userId } = useUser();
-  const [system, setSystem] = useState("chalets"); // Default system to "chalets"
+  const [system, setSystem] = useState("chalets");
   const [wallet, setwallet] = useState([]);
   const [user, setUser] = useState({
     name: "",
@@ -19,9 +20,9 @@ function CashBack() {
     country: "",
     password: "",
   });
-  const [reservations, setReservations] = useState([]); // Store reservations data dynamically
-  const [confirmPassword, setConfirmPassword] = useState(user.password); // Store reservations data dynamically
-  const [message, setMessage] = useState({ messageValue: "", color: "" }); // Store reservations data dynamically
+  const [reservations, setReservations] = useState([]); 
+  const [confirmPassword, setConfirmPassword] = useState(user.password); 
+  const [message, setMessage] = useState({ messageValue: "", color: "" }); 
 
   const getwallet = useCallback(async () => {
     try {
@@ -49,7 +50,7 @@ function CashBack() {
       console.error("Error fetching wallet:", error);
     }
   }, [lang, userId]);
-  // Fetch data dynamically based on the selected system
+  
   const getReservations = useCallback(async () => {
     let apiUrl;
     switch (system) {
@@ -62,7 +63,7 @@ function CashBack() {
 
     try {
       const res = await axios.get(apiUrl);
-      setReservations(res.data || []); // Dynamically set reservations based on the response
+      setReservations(res.data || []); 
     } catch (error) {
       console.error("Error fetching reservations:", error);
     }
@@ -87,24 +88,24 @@ function CashBack() {
     "Reservations_Chalet.cashback",
   ];
 
-  // Filter out unwanted columns and their values, including nested fields
+ 
   const filterColumns = (reserve) => {
     const filteredReserve = { ...reserve };
-    // Iterate over each key in the excludedColumns array
+    
     excludedColumns.forEach((col) => {
-      const keys = col.split("."); // Split by '.' to handle nested fields (e.g., "chalets.reserve_price")
+      const keys = col.split("."); 
       if (keys.length === 1) {
-        // Handle flat fields (e.g., "id")
+        
         delete filteredReserve[keys[0]];
       } else if (keys.length === 2) {
-        // Handle nested fields (e.g., "chalets.reserve_price")
+        
         const parentKey = keys[0];
         const nestedKey = keys[1];
         if (
           filteredReserve[parentKey] &&
           filteredReserve[parentKey][nestedKey] !== undefined
         ) {
-          delete filteredReserve[parentKey][nestedKey]; // Remove the nested field
+          delete filteredReserve[parentKey][nestedKey]; 
         }
       }
     });
@@ -114,13 +115,13 @@ function CashBack() {
   const handleUpdateUser = async (e) => {
     e.preventDefault();
 
-    // Check if password and confirm password match
+    
     if (user.password && confirmPassword && user.password !== confirmPassword) {
       setMessage({
         messageValue: "Passwords do not match",
         color: "red",
       });
-      return; // Prevent form submission
+      return; 
     }
 
     try {
@@ -140,6 +141,7 @@ function CashBack() {
   return (
     <>
       <div className="main_cont_cashback">
+        <SocialMediaButtons/>
         <Container>
           <Row>
             <Col lg={5} md={12} sm={12}>
@@ -294,7 +296,7 @@ function CashBack() {
                   (col, index) => (
                     <th style={{ backgroundColor: "#F2C79D" }} key={index}>
                       {col}
-                    </th> // Dynamically render columns based on filtered data
+                    </th> 
                   )
                 )}
             </tr>
@@ -302,7 +304,7 @@ function CashBack() {
           <tbody>
             {reservations.length > 0 ? (
               reservations.map((reserve, index) => {
-                const filteredReserve = filterColumns(reserve); // Filter out unwanted columns and values
+                const filteredReserve = filterColumns(reserve); 
                 return (
                   <tr key={reserve.id} >
                     <td >{index + 1}</td>

@@ -10,6 +10,7 @@ import { API_URL } from "../App.jsx";
 import ChatNowHeader from "../Component/ChatNowHeader.jsx";
 // import BestRated from "../Component/BestRated.jsx";
 import { useUser } from "../Component/UserContext";
+import SocialMediaButtons from "../Component/SocialMediaButtons.jsx";
 
 
 function BookingChalets() {
@@ -67,17 +68,18 @@ function BookingChalets() {
   }, [lang, getContact]);
   
   const isImage = (fileName) => {
-    return /\.(jpg|jpeg|png|gif|webp)$/i.test(fileName); // Checks if the file is an image
+    return /\.(jpg|jpeg|png|gif|webp)$/i.test(fileName);
   };
 
   const isVideo = (fileName) => {
-    return /\.(mp4|mov|avi|mkv)$/i.test(fileName); // Checks if the file is a video
+    return /\.(mp4|mov|avi|mkv)$/i.test(fileName); 
   };
   
   const descriptionList = dataChalets.description?.split("\n") || [];
 
   return (
     <div>
+      <SocialMediaButtons/>
       <ChatNowHeader dataChalets={dataChalets} chalet_id={id} price={price} />
 
       <Container>

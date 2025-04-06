@@ -37,8 +37,8 @@ import { UserProvider } from './Component/UserContext.jsx';
 // import LandsDetails from './Pages/LandsDetails';
 // import BookingLand from './Pages/BookingLand';
 // import Playgrounds from './Pages/Playgrounds';
-  // export const API_URL="http://localhost:5000";
-  export const API_URL="https://rowqanbackend.rowqan.com";
+  //  export const API_URL="http://localhost:5000";
+   export const API_URL="https://rowqanbackend.rowqan.com";
 const DirectionHandler = () => {
   const location = useLocation();
   const lang = location.pathname.split("/")[1] || "en";

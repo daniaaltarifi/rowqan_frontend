@@ -2,29 +2,65 @@ import { useState, useEffect } from 'react';
 import { Instagram, Facebook, MessageCircle, MessageSquare, Send } from 'lucide-react';
 import axios from 'axios';
 import socketIOClient from 'socket.io-client';
-import PropTypes from 'prop-types'; 
 
+import { useUser } from "../Component/UserContext"; 
 
-const SocialMediaButtons = ({ userIdProp }) => {
+const SocialMediaButtons = () => {
+  const { userId } = useUser(); 
   const [isVisible, setIsVisible] = useState(true);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [language, setLanguage] = useState('en'); 
   const [messages, setMessages] = useState([]);
-  const [, setSocket] = useState(null);
+  const [socket, setSocket] = useState(null);
   const [messagesLoaded, setMessagesLoaded] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false); 
+  const [unreadMessages, setUnreadMessages] = useState(0); 
+  const [lastReadTime, setLastReadTime] = useState(Date.now()); 
+  
+  
+  useEffect(() => {
+    const path = window.location.pathname;
+    const lang = path.split('/')[1] || 'en';
+    setLanguage(lang === 'ar' ? 'ar' : 'en');
+  }, []);
+  
+  
+  const isLoggedIn = !!userId;
   
   const mainColor = "#F2C79D"; 
   const secondaryColor = "#6DA6BA";
   
-  
-  const userId = userIdProp ? "2" : null;
-  
-  const API_URL = "http://localhost:5000"; 
-  
+  const API_URL = "https://rowqanbackend.rowqan.com"; 
   const chaletId = null; 
-  
-  
   const receiverId = "4";
+
+ 
+  useEffect(() => {
+    if (showLoginPrompt) {
+      const timer = setTimeout(() => {
+        setShowLoginPrompt(false);
+      }, 5000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [showLoginPrompt]);
+
+ 
+  useEffect(() => {
+    console.log("User authentication status:", {
+      userId,
+      isLoggedIn
+    });
+  }, [userId, isLoggedIn]);
+
+ 
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
 
   useEffect(() => {
     const toggleVisibility = () => {
@@ -39,13 +75,14 @@ const SocialMediaButtons = ({ userIdProp }) => {
     return () => window.removeEventListener('scroll', toggleVisibility);
   }, []);
 
- 
+  
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        
         if (userId) {
-          const res = await axios.get(`${API_URL}/messages/getMessagesBySenderIdRecieverId/${userId}/${receiverId}/${chaletId || ''}`);
+          
+          const res = await axios.get(`${API_URL}/messages/betweenMessage/${userId}/${receiverId}`);
+          
           if (res.data && Array.isArray(res.data)) {
             const newMessages = res.data.map((messageObj) => {
               const formattedTime = new Intl.DateTimeFormat(language === 'en' ? "en-US" : "ar-SA", {
@@ -53,21 +90,32 @@ const SocialMediaButtons = ({ userIdProp }) => {
                 minute: "2-digit",
               }).format(new Date(messageObj.updatedAt));
 
+            
+              const messageType = messageObj.senderId.toString() === userId.toString() ? "sent" : "received";
+
               return {
                 text: messageObj.message,
-                type: messageObj.status === "sent" ? "sent" : "received",
+                type: messageType,
                 timestamp: formattedTime,
+                time: new Date(messageObj.updatedAt).getTime()
               };
             });
+            
             setMessages(newMessages);
+            
+           
+            const unread = newMessages.filter(msg => 
+              msg.type === "received" && msg.time > lastReadTime
+            ).length;
+            
+            setUnreadMessages(unread);
             setMessagesLoaded(true);
           }
         } else {
-         
           setDefaultWelcomeMessage();
         }
       } catch (error) {
-        console.error("Error fetching data", error);
+        console.error("Error fetching data:", error);
         setDefaultWelcomeMessage();
       }
     };
@@ -81,37 +129,45 @@ const SocialMediaButtons = ({ userIdProp }) => {
             hour: "2-digit",
             minute: "2-digit",
           }),
+          time: Date.now()
         }
       ]);
       setMessagesLoaded(true);
     };
     
-    if (!messagesLoaded) {
+    if (!messagesLoaded && isLoggedIn) {
       fetchMessages();
+    } else if (!messagesLoaded) {
+      setDefaultWelcomeMessage();
     }
-  }, [API_URL, userId, chaletId, receiverId, language, messagesLoaded]);
+  }, [API_URL, userId, receiverId, language, messagesLoaded, lastReadTime, isLoggedIn]);
 
-  
+ 
   useEffect(() => {
-    if (isChatOpen) {
+    if (isLoggedIn) {
       try {
         const socketInstance = socketIOClient(API_URL);
         setSocket(socketInstance);
 
         socketInstance.on("receive_message", (messageData) => {
-          
-          if (messageData.senderId === receiverId && (!userId || messageData.senderId !== userId)) {
-            setMessages((prevMessages) => [
-              ...prevMessages,
-              {
-                text: messageData.message,
-                type: "received",
-                timestamp: new Date().toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                }),
-              },
-            ]);
+         
+          if (messageData.senderId === receiverId && messageData.receiverId === userId) {
+            const newMessage = {
+              text: messageData.message,
+              type: "received",
+              timestamp: new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+              time: Date.now()
+            };
+            
+            setMessages((prevMessages) => [...prevMessages, newMessage]);
+            
+            
+            if (!isChatOpen) {
+              setUnreadMessages(prev => prev + 1);
+            }
           }
         });
 
@@ -122,7 +178,13 @@ const SocialMediaButtons = ({ userIdProp }) => {
         console.error("Socket connection error:", error);
       }
     }
-  }, [isChatOpen, API_URL, userId, receiverId]);
+    
+    return () => {
+      if (socket) {
+        socket.disconnect();
+      }
+    };
+  }, [API_URL, userId, receiverId, isLoggedIn, socket, isChatOpen]);
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -131,17 +193,48 @@ const SocialMediaButtons = ({ userIdProp }) => {
     });
   };
 
+ 
   const toggleChat = () => {
-    setIsChatOpen(!isChatOpen);
+    console.log("Toggle chat clicked, isLoggedIn:", isLoggedIn);
+    
+    if (isLoggedIn) {
+     
+      if (!isChatOpen) {
+        setUnreadMessages(0);
+        setLastReadTime(Date.now());
+      }
+      
+      setIsChatOpen(!isChatOpen);
+    } else {
+      
+      setShowLoginPrompt(true);
+    }
+  };
+  
+ 
+  const goToLogin = () => {
+    window.location.href = `/${language}/login`;
   };
   
   const toggleLanguage = () => {
-    setLanguage(language === 'en' ? 'ar' : 'en');
+    
+    const newLanguage = language === 'en' ? 'ar' : 'en';
+    setLanguage(newLanguage);
+    
+   
+    const currentPath = window.location.pathname;
+    const pathParts = currentPath.split('/');
+    
+    if (pathParts[1] === 'en' || pathParts[1] === 'ar') {
+      pathParts[1] = newLanguage;
+      const newPath = pathParts.join('/');
+      window.history.pushState({}, '', newPath);
+    }
   };
 
   const sendMessage = async () => {
     const messageInput = document.getElementById("messageInput");
-    if (!messageInput) return;
+    if (!messageInput || !isLoggedIn) return;
     
     const message = messageInput.value.trim();
   
@@ -151,14 +244,16 @@ const SocialMediaButtons = ({ userIdProp }) => {
         minute: "2-digit",
       });
   
-     
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { text: message, type: "sent", timestamp },
-      ]);
+      const newMessage = {
+        text: message,
+        type: "sent",
+        timestamp,
+        time: Date.now()
+      };
+      
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
   
       try {
-        
         await axios.post(`${API_URL}/messages/SendMessage`, {
           senderId: userId,           
           message,                    
@@ -182,19 +277,32 @@ const SocialMediaButtons = ({ userIdProp }) => {
     }
   };
 
+
+  const isMobile = windowWidth <= 768;
+  const buttonSize = isMobile ? "40px" : "48px";
+  const iconSize = isMobile ? 20 : 24;
+  const buttonMargin = isMobile ? "5px 0" : "8px 0";
+  const chatBoxWidth = windowWidth < 400 ? (windowWidth - 40) + "px" : (windowWidth < 768 ? "280px" : "320px");
+  const chatBoxHeight = isMobile ? "70vh" : "450px";
+  const bottomPosition = isMobile ? "16px" : "24px";
+  const rightPosition = isMobile ? "16px" : "24px";
+
+ 
   const buttonStyle = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: mainColor,
-    width: "48px",
-    height: "48px",
+    width: buttonSize,
+    height: buttonSize,
     borderRadius: "50%",
     color: "#333",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
     transition: "all 0.3s ease",
-    margin: "8px 0",
+    margin: buttonMargin,
     border: "2px solid #fff",
+    cursor: "pointer",
+    position: "relative"
   };
 
   const liveChatButtonStyle = {
@@ -202,14 +310,33 @@ const SocialMediaButtons = ({ userIdProp }) => {
     backgroundColor: secondaryColor,
   };
 
+  const notificationBadgeStyle = {
+    position: "absolute",
+    top: "-5px",
+    right: "-5px",
+    backgroundColor: "#FF3B30",
+    color: "white",
+    minWidth: "18px",
+    height: "18px",
+    borderRadius: "50%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "12px",
+    fontWeight: "bold",
+    padding: "0 4px",
+    border: "2px solid #fff",
+    boxSizing: "border-box"
+  };
+
   const containerStyle = {
     position: "fixed",
-    right: "24px",
-    bottom: "24px",
+    right: rightPosition,
+    bottom: bottomPosition,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    zIndex: 1000,
+    zIndex: 998, 
     transform: isVisible ? "translateY(0)" : "translateY(100px)",
     opacity: isVisible ? 1 : 0,
     transition: "all 0.5s ease"
@@ -217,10 +344,11 @@ const SocialMediaButtons = ({ userIdProp }) => {
 
   const chatBoxStyle = {
     position: "fixed",
-    right: "88px",
-    bottom: "24px",
-    width: "320px",
-    height: "450px",
+    right: rightPosition,
+    bottom: isMobile ? "80px" : "100px", 
+    width: chatBoxWidth,
+    height: chatBoxHeight,
+    maxHeight: isMobile ? "60vh" : "450px",
     backgroundColor: "#fff",
     borderRadius: "10px",
     boxShadow: "0 6px 18px rgba(0, 0, 0, 0.15)",
@@ -231,9 +359,51 @@ const SocialMediaButtons = ({ userIdProp }) => {
     fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
   };
 
+  
+  const loginPromptStyle = {
+    position: "fixed",
+    right: rightPosition,
+    bottom: isMobile ? "85px" : "105px",
+    padding: "15px",
+    backgroundColor: "#fff",
+    borderRadius: "10px",
+    boxShadow: "0 6px 18px rgba(0, 0, 0, 0.15)",
+    display: showLoginPrompt ? "flex" : "none",
+    flexDirection: "column",
+    maxWidth: "250px",
+    zIndex: 999,
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+    direction: language === 'ar' ? 'rtl' : 'ltr',
+  };
+
+  const loginPromptButtonStyle = {
+    backgroundColor: secondaryColor,
+    color: "#fff",
+    border: "none",
+    borderRadius: "5px",
+    padding: "8px 15px",
+    marginTop: "10px",
+    cursor: "pointer",
+    fontWeight: "bold",
+    fontSize: "14px",
+    alignSelf: "center"
+  };
+
+  
+  const mobileChatBoxStyle = {
+    ...chatBoxStyle,
+    ...(windowWidth < 400 ? {
+      left: "5%",
+      right: "5%",
+      width: "90%",
+      height: "60vh",
+      bottom: "90px" 
+    } : {})
+  };
+
   const chatHeaderStyle = {
     display: "flex",
-    padding: "10px 15px",
+    padding: isMobile ? "8px 12px" : "10px 15px",
     backgroundColor: secondaryColor,
     color: "#fff",
     borderBottom: "1px solid #ddd",
@@ -243,14 +413,14 @@ const SocialMediaButtons = ({ userIdProp }) => {
   };
 
   const headerInfoStyle = {
-    marginLeft: language === 'ar' ? "0" : "15px",
-    marginRight: language === 'ar' ? "15px" : "0",
+    marginLeft: language === 'ar' ? "0" : (isMobile ? "10px" : "15px"),
+    marginRight: language === 'ar' ? (isMobile ? "10px" : "15px") : "0",
     flex: 1,
   };
 
   const chatBodyStyle = {
     flex: 1,
-    padding: "15px",
+    padding: isMobile ? "10px" : "15px",
     overflowY: "auto",
     backgroundColor: "#f5f5f5",
     direction: language === 'ar' ? 'rtl' : 'ltr',
@@ -258,7 +428,7 @@ const SocialMediaButtons = ({ userIdProp }) => {
 
   const chatInputStyle = {
     display: "flex",
-    padding: "10px",
+    padding: isMobile ? "8px" : "10px",
     borderTop: "1px solid #ddd",
     backgroundColor: "#fff",
     direction: language === 'ar' ? 'rtl' : 'ltr',
@@ -272,14 +442,15 @@ const SocialMediaButtons = ({ userIdProp }) => {
     outline: "none",
     fontFamily: language === 'ar' ? 'Arial, sans-serif' : 'inherit',
     direction: language === 'ar' ? 'rtl' : 'ltr',
+    fontSize: isMobile ? "14px" : "16px",
   };
 
   const sendButtonStyle = {
     backgroundColor: secondaryColor,
     border: "none",
     borderRadius: "50%",
-    width: "36px",
-    height: "36px",
+    width: isMobile ? "32px" : "36px",
+    height: isMobile ? "32px" : "36px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -288,100 +459,123 @@ const SocialMediaButtons = ({ userIdProp }) => {
     marginRight: language === 'ar' ? "10px" : "0",
   };
 
- 
-
   return (
     <>
-      <div style={chatBoxStyle}>
-        <div style={chatHeaderStyle}>
-          <div style={headerInfoStyle}>
-            <h4 style={{ margin: 0 }}>
-              {language === 'en' ? 'Chalets Owner' : 'مالك الشاليه'}
-            </h4>
-          </div>
-          <button
-            onClick={toggleLanguage}
-            style={{
-              background: "none",
-              border: "none",
-              color: "#fff",
-              cursor: "pointer",
-              marginRight: "10px",
-            }}
-          >
-            {language === 'en' ? 'عربي' : 'EN'}
-          </button>
-          <button
-            onClick={toggleChat}
-            style={{
-              background: "none",
-              border: "none",
-              color: "#fff",
-              cursor: "pointer",
-              fontSize: "18px",
-            }}
-          >
-            ×
-          </button>
-        </div>
-
-        <div style={chatBodyStyle}>
-          {messages.map((message, index) => (
-            <div
-              key={index}
+     
+      {isLoggedIn && isChatOpen && (
+        <div style={isMobile && windowWidth < 400 ? mobileChatBoxStyle : chatBoxStyle}>
+          <div style={chatHeaderStyle}>
+            <div style={headerInfoStyle}>
+              <h4 style={{ margin: 0, fontSize: isMobile ? "14px" : "16px" }}>
+                {language === 'en' ? 'Chalets Owner' : 'مالك الشاليه'}
+              </h4>
+            </div>
+            <button
+              onClick={toggleLanguage}
               style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: message.type === "sent" 
-                  ? (language === 'ar' ? "flex-start" : "flex-end") 
-                  : (language === 'ar' ? "flex-end" : "flex-start"),
-                marginBottom: "10px",
+                background: "none",
+                border: "none",
+                color: "#fff",
+                cursor: "pointer",
+                marginRight: "10px",
+                fontSize: isMobile ? "12px" : "14px",
               }}
             >
+              {language === 'en' ? 'عربي' : 'EN'}
+            </button>
+            <button
+              onClick={toggleChat}
+              style={{
+                background: "none",
+                border: "none",
+                color: "#fff",
+                cursor: "pointer",
+                fontSize: isMobile ? "16px" : "18px",
+              }}
+            >
+              ×
+            </button>
+          </div>
+
+          <div style={chatBodyStyle}>
+            {messages.map((message, index) => (
               <div
+                key={index}
                 style={{
-                  backgroundColor: message.type === "sent" ? "#e1ffc7" : "#fff",
-                  borderRadius: "18px",
-                  padding: "8px 12px",
-                  maxWidth: "70%",
-                  boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.1)",
-                  wordBreak: "break-word",
-                }}
-              >
-                {message.text}
-              </div>
-              <div
-                style={{
-                  fontSize: "12px",
-                  color: "#999",
-                  marginTop: "4px",
-                  alignSelf: message.type === "sent" 
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: message.type === "sent" 
                     ? (language === 'ar' ? "flex-start" : "flex-end") 
                     : (language === 'ar' ? "flex-end" : "flex-start"),
+                  marginBottom: "10px",
                 }}
               >
-                {message.timestamp}
+                <div
+                  style={{
+                    backgroundColor: message.type === "sent" ? "#e1ffc7" : "#fff",
+                    borderRadius: "18px",
+                    padding: isMobile ? "6px 10px" : "8px 12px",
+                    maxWidth: "70%",
+                    boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.1)",
+                    wordBreak: "break-word",
+                    fontSize: isMobile ? "14px" : "16px",
+                  }}
+                >
+                  {message.text}
+                </div>
+                <div
+                  style={{
+                    fontSize: isMobile ? "10px" : "12px",
+                    color: "#999",
+                    marginTop: "4px",
+                    alignSelf: message.type === "sent" 
+                      ? (language === 'ar' ? "flex-start" : "flex-end") 
+                      : (language === 'ar' ? "flex-end" : "flex-start"),
+                  }}
+                >
+                  {message.timestamp}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        <div style={chatInputStyle}>
-          <input
-            type="text"
-            placeholder={language === 'en' ? "Type a message..." : "اكتب رسالة..."}
-            id="messageInput"
-            style={messageInputStyle}
-            onKeyDown={handleKeyPress}
-          />
-          <button 
-            style={sendButtonStyle} 
-            onClick={sendMessage}
-            aria-label={language === 'en' ? "Send" : "إرسال"}
-          >
-            <Send size={20} color="white" />
-          </button>
+          <div style={chatInputStyle}>
+            <input
+              type="text"
+              placeholder={language === 'en' ? "Type a message..." : "اكتب رسالة..."}
+              id="messageInput"
+              style={messageInputStyle}
+              onKeyDown={handleKeyPress}
+            />
+            <button 
+              style={sendButtonStyle} 
+              onClick={sendMessage}
+              aria-label={language === 'en' ? "Send" : "إرسال"}
+            >
+              <Send size={isMobile ? 16 : 20} color="white" />
+            </button>
+          </div>
         </div>
+      )}
+
+      
+      <div style={loginPromptStyle}>
+        <div style={{ fontWeight: "bold", marginBottom: "8px" }}>
+          {language === 'en' 
+            ? 'Please login to start chatting' 
+            : 'يرجى تسجيل الدخول لبدء المحادثة'}
+        </div>
+        <div style={{ fontSize: "14px", marginBottom: "10px" }}>
+          {language === 'en' 
+            ? 'You need to be logged in to use the chat feature' 
+            : 'يجب أن تكون مسجل دخول لاستخدام ميزة الدردشة'}
+        </div>
+        <button 
+          style={loginPromptButtonStyle}
+          onClick={goToLogin}
+        >
+          {language === 'en' ? 'Login' : 'تسجيل الدخول'}
+        </button>
       </div>
 
       <div style={containerStyle}>
@@ -390,15 +584,25 @@ const SocialMediaButtons = ({ userIdProp }) => {
           style={liveChatButtonStyle}
           aria-label={language === 'en' ? "Live Chat" : "المحادثة المباشرة"}
           onMouseOver={(e) => {
-            e.currentTarget.style.transform = "translateY(-5px)";
-            e.currentTarget.style.boxShadow = "0 6px 12px rgba(0, 0, 0, 0.15)";
+            if (!isMobile) {
+              e.currentTarget.style.transform = "translateY(-5px)";
+              e.currentTarget.style.boxShadow = "0 6px 12px rgba(0, 0, 0, 0.15)";
+            }
           }}
           onMouseOut={(e) => {
-            e.currentTarget.style.transform = "translateY(0)";
-            e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
+            if (!isMobile) {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
+            }
           }}
         >
-          <MessageSquare size={24} />
+          <MessageSquare size={iconSize} />
+          
+          {unreadMessages > 0 && (
+            <div style={notificationBadgeStyle}>
+              {unreadMessages}
+            </div>
+          )}
         </button>
         
         <a 
@@ -408,15 +612,19 @@ const SocialMediaButtons = ({ userIdProp }) => {
           style={buttonStyle}
           aria-label="Facebook"
           onMouseOver={(e) => {
-            e.currentTarget.style.transform = "translateY(-5px)";
-            e.currentTarget.style.boxShadow = "0 6px 12px rgba(0, 0, 0, 0.15)";
+            if (!isMobile) {
+              e.currentTarget.style.transform = "translateY(-5px)";
+              e.currentTarget.style.boxShadow = "0 6px 12px rgba(0, 0, 0, 0.15)";
+            }
           }}
           onMouseOut={(e) => {
-            e.currentTarget.style.transform = "translateY(0)";
-            e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
+            if (!isMobile) {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
+            }
           }}
         >
-          <Facebook size={24} />
+          <Facebook size={iconSize} />
         </a>
 
         <a 
@@ -426,15 +634,19 @@ const SocialMediaButtons = ({ userIdProp }) => {
           style={buttonStyle}
           aria-label="Instagram"
           onMouseOver={(e) => {
-            e.currentTarget.style.transform = "translateY(-5px)";
-            e.currentTarget.style.boxShadow = "0 6px 12px rgba(0, 0, 0, 0.15)";
+            if (!isMobile) {
+              e.currentTarget.style.transform = "translateY(-5px)";
+              e.currentTarget.style.boxShadow = "0 6px 12px rgba(0, 0, 0, 0.15)";
+            }
           }}
           onMouseOut={(e) => {
-            e.currentTarget.style.transform = "translateY(0)";
-            e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
+            if (!isMobile) {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
+            }
           }}
         >
-          <Instagram size={24} />
+          <Instagram size={iconSize} />
         </a>
 
         <a 
@@ -444,15 +656,19 @@ const SocialMediaButtons = ({ userIdProp }) => {
           style={buttonStyle}
           aria-label="WhatsApp"
           onMouseOver={(e) => {
-            e.currentTarget.style.transform = "translateY(-5px)";
-            e.currentTarget.style.boxShadow = "0 6px 12px rgba(0, 0, 0, 0.15)";
+            if (!isMobile) {
+              e.currentTarget.style.transform = "translateY(-5px)";
+              e.currentTarget.style.boxShadow = "0 6px 12px rgba(0, 0, 0, 0.15)";
+            }
           }}
           onMouseOut={(e) => {
-            e.currentTarget.style.transform = "translateY(0)";
-            e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
+            if (!isMobile) {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
+            }
           }}
         >
-          <MessageCircle size={24} />
+          <MessageCircle size={iconSize} />
         </a>
 
         <button
@@ -460,18 +676,22 @@ const SocialMediaButtons = ({ userIdProp }) => {
           style={buttonStyle}
           aria-label={language === 'en' ? "Back to top" : "العودة إلى الأعلى"}
           onMouseOver={(e) => {
-            e.currentTarget.style.transform = "translateY(-5px)";
-            e.currentTarget.style.boxShadow = "0 6px 12px rgba(0, 0, 0, 0.15)";
+            if (!isMobile) {
+              e.currentTarget.style.transform = "translateY(-5px)";
+              e.currentTarget.style.boxShadow = "0 6px 12px rgba(0, 0, 0, 0.15)";
+            }
           }}
           onMouseOut={(e) => {
-            e.currentTarget.style.transform = "translateY(0)";
-            e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
+            if (!isMobile) {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
+            }
           }}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
+            width={iconSize}
+            height={iconSize}
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -485,16 +705,6 @@ const SocialMediaButtons = ({ userIdProp }) => {
       </div>
     </>
   );
-};
-
-
-SocialMediaButtons.propTypes = {
-  userIdProp: PropTypes.bool
-};
-
-
-SocialMediaButtons.defaultProps = {
-  userIdProp: false 
 };
 
 export default SocialMediaButtons;

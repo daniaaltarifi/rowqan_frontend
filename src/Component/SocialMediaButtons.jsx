@@ -11,7 +11,6 @@ const SocialMediaButtons = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [language, setLanguage] = useState('en'); 
   const [messages, setMessages] = useState([]);
-  const [socket, setSocket] = useState(null);
   const [messagesLoaded, setMessagesLoaded] = useState(false);
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false); 
@@ -143,48 +142,384 @@ const SocialMediaButtons = () => {
   }, [API_URL, userId, receiverId, language, messagesLoaded, lastReadTime, isLoggedIn]);
 
  
-  useEffect(() => {
-    if (isLoggedIn) {
-      try {
-        const socketInstance = socketIOClient(API_URL);
-        setSocket(socketInstance);
 
-        socketInstance.on("receive_message", (messageData) => {
-         
-          if (messageData.senderId === receiverId && messageData.receiverId === userId) {
-            const newMessage = {
-              text: messageData.message,
-              type: "received",
-              timestamp: new Date().toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              }),
-              time: Date.now()
-            };
-            
-            setMessages((prevMessages) => [...prevMessages, newMessage]);
-            
-            
-            if (!isChatOpen) {
-              setUnreadMessages(prev => prev + 1);
-            }
-          }
-        });
+const createSocketConnection = (userId, receiverId, onMessageReceived) => {
 
-        return () => {
+  let connectionAttempts = 0;
+  let socketInstance = null;
+  let reconnectTimer = null;
+  let isConnecting = false;
+  
+  
+  const stopReconnecting = () => {
+    if (reconnectTimer) {
+      clearTimeout(reconnectTimer);
+      reconnectTimer = null;
+    }
+  };
+  
+
+  const connect = () => {
+    if (isConnecting || (socketInstance && socketInstance.connected)) return;
+    
+    stopReconnecting();
+    isConnecting = true;
+    
+    
+    connectionAttempts++;
+    
+    
+    console.log(`Attempting socket connection (${connectionAttempts}/5)...`);
+    
+    try {
+      
+      const socketOptions = {
+        reconnection: false, 
+        timeout: 8000,
+        transports: ['websocket'],
+        forceNew: true,
+        query: {
+          userId: userId,
+          clientId: `user_${userId}_${Date.now()}` 
+        }
+      };
+      
+     
+      if (socketInstance) {
+        try {
           socketInstance.disconnect();
-        };
-      } catch (error) {
-        console.error("Socket connection error:", error);
+          socketInstance.close();
+        } catch (e) {
+          console.log('Error while cleaning up previous socket:', e);
+        }
       }
+      
+     
+      socketInstance = socketIOClient(API_URL, socketOptions);
+      
+     
+      socketInstance.on('connect', () => {
+        console.log('Socket connected successfully!');
+        isConnecting = false;
+        connectionAttempts = 0; 
+        
+        
+        socketInstance.emit('register_user', { userId: userId });
+      });
+      
+     
+      socketInstance.on('connect_error', (error) => {
+        console.error('Socket connection error:', error);
+        handleConnectionFailure();
+      });
+      
+      
+      socketInstance.on('disconnect', (reason) => {
+        console.log('Socket disconnected:', reason);
+        isConnecting = false;
+        
+      
+        if (reason === 'io server disconnect' || reason === 'transport close') {
+          handleConnectionFailure();
+        }
+      });
+      
+     
+      socketInstance.on("receive_message", (messageData) => {
+        if (messageData.senderId === receiverId && messageData.receiverId === userId) {
+          onMessageReceived(messageData);
+        }
+      });
+      
+    } catch (error) {
+      console.error("Socket initialization error:", error);
+      handleConnectionFailure();
+    }
+  };
+  
+  
+  const handleConnectionFailure = () => {
+    isConnecting = false;
+    
+   
+    if (connectionAttempts >= 5) {
+      console.log('Maximum connection attempts reached. Switching to polling mode.');
+      enablePollingMode();
+      return;
     }
     
-    return () => {
-      if (socket) {
-        socket.disconnect();
+   
+    const delay = Math.min(30000, 2000 * Math.pow(2, connectionAttempts - 1));
+    console.log(`Will try to reconnect in ${delay/1000} seconds...`);
+    
+    
+    stopReconnecting();
+    reconnectTimer = setTimeout(connect, delay);
+  };
+  
+ 
+  const enablePollingMode = () => {
+    console.log('Polling mode activated');
+    
+    stopReconnecting();
+    
+  
+    if (socketInstance) {
+      try {
+        socketInstance.disconnect();
+        socketInstance.close();
+      } catch (e) {
+        console.log('Error while cleaning up socket in polling mode:', e);
+      }
+      socketInstance = null;
+    }
+    
+   
+    startMessagePolling();
+  };
+  
+  
+  let pollingInterval = null;
+  const startMessagePolling = () => {
+    
+    if (pollingInterval) {
+      clearInterval(pollingInterval);
+    }
+    
+    
+    window.usingPollingMode = true;
+    
+   
+    pollingInterval = setInterval(async () => {
+      try {
+        
+        const lastMessageTime = window.lastMessageTime || 0;
+        
+     
+        const response = await axios.get(
+          `${API_URL}/messages/getNewMessages/${userId}/${receiverId}/${lastMessageTime}`,
+          { timeout: 5000 }
+        );
+        
+        if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+         
+          response.data.forEach(messageData => {
+            onMessageReceived(messageData);
+            
+            const messageTime = new Date(messageData.createdAt).getTime();
+            if (messageTime > (window.lastMessageTime || 0)) {
+              window.lastMessageTime = messageTime;
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error in polling messages:', error);
+      }
+    }, 10000); 
+  };
+  
+
+  const cleanup = () => {
+    stopReconnecting();
+    
+    if (pollingInterval) {
+      clearInterval(pollingInterval);
+      pollingInterval = null;
+    }
+    
+    if (socketInstance) {
+      try {
+        socketInstance.disconnect();
+        socketInstance.close();
+      } catch (e) {
+        console.log('Error during socket cleanup:', e);
+      }
+      socketInstance = null;
+    }
+    
+    connectionAttempts = 0;
+    isConnecting = false;
+  };
+  
+
+  connect();
+  
+ 
+  return {
+    reconnect: connect,
+    disconnect: cleanup,
+    isConnected: () => socketInstance && socketInstance.connected
+  };
+};
+
+
+useEffect(() => {
+  let socketController = null;
+  
+  if (isLoggedIn) {
+
+    const handleMessageReceived = (messageData) => {
+      const newMessage = {
+        text: messageData.message,
+        type: "received",
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        time: Date.now()
+      };
+      
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      
+      if (!isChatOpen) {
+        setUnreadMessages(prev => prev + 1);
       }
     };
-  }, [API_URL, userId, receiverId, isLoggedIn, socket, isChatOpen]);
+    
+
+    socketController = createSocketConnection(userId, receiverId, handleMessageReceived);
+    
+
+    window.lastMessageTime = Date.now();
+  }
+  
+
+  return () => {
+    if (socketController) {
+      socketController.disconnect();
+    }
+  };
+}, [API_URL, userId, receiverId, isLoggedIn, isChatOpen]);
+
+
+const sendMessage = async () => {
+  const messageInput = document.getElementById("messageInput");
+  if (!messageInput || !isLoggedIn) return;
+  
+  const message = messageInput.value.trim();
+
+  if (message) {
+    const timestamp = new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    
+    const currentTime = Date.now();
+    
+
+    const newMessage = {
+      text: message,
+      type: "sent",
+      timestamp,
+      time: currentTime
+    };
+    
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
+    messageInput.value = "";
+    
+
+    const localMessageId = `msg_${currentTime}`;
+
+    const pendingMessage = {
+      id: localMessageId,
+      message,
+      senderId: userId,
+      receiverId,
+      chaletId,
+      status: "pending",
+      timestamp: currentTime
+    };
+    
+
+    const pendingMessages = JSON.parse(localStorage.getItem('pendingMessages') || '[]');
+    pendingMessages.push(pendingMessage);
+    localStorage.setItem('pendingMessages', JSON.stringify(pendingMessages));
+    
+    try {
+
+      const response = await axios.post(`${API_URL}/messages/SendMessage`, {
+        senderId: userId,
+        message,
+        status: "sent",
+        lang: language,
+        chaletId: chaletId,
+        receiverId: receiverId,
+        localMessageId 
+      }, {
+        timeout: 8000
+      });
+      
+  
+      const updatedPendingMessages = JSON.parse(localStorage.getItem('pendingMessages') || '[]')
+        .filter(msg => msg.id !== localMessageId);
+      localStorage.setItem('pendingMessages', JSON.stringify(updatedPendingMessages));
+      
+
+      window.lastMessageTime = Date.now();
+      
+      console.log('Message sent successfully:', response.data);
+      
+    } catch (error) {
+      console.error("Error sending message:", error);
+      
+
+      const updatedPendingMessages = JSON.parse(localStorage.getItem('pendingMessages') || '[]');
+      const messageIndex = updatedPendingMessages.findIndex(msg => msg.id === localMessageId);
+      
+      if (messageIndex !== -1) {
+        updatedPendingMessages[messageIndex].status = "failed";
+        localStorage.setItem('pendingMessages', JSON.stringify(updatedPendingMessages));
+      }
+      
+    }
+  }
+};
+
+
+const retrySendingPendingMessages = async () => {
+  const pendingMessages = JSON.parse(localStorage.getItem('pendingMessages') || '[]');
+  const failedMessages = pendingMessages.filter(msg => msg.status === "failed" || msg.status === "pending");
+  
+  if (failedMessages.length === 0) return;
+  
+  for (const message of failedMessages) {
+    try {
+      await axios.post(`${API_URL}/messages/SendMessage`, {
+        senderId: message.senderId,
+        message: message.message,
+        status: "sent",
+        lang: language,
+        chaletId: message.chaletId,
+        receiverId: message.receiverId,
+        localMessageId: message.id
+      }, {
+        timeout: 8000
+      });
+      
+
+      const updatedMessages = JSON.parse(localStorage.getItem('pendingMessages') || '[]')
+        .filter(msg => msg.id !== message.id);
+      localStorage.setItem('pendingMessages', JSON.stringify(updatedMessages));
+      
+    } catch (error) {
+      console.error(`Failed to resend message ${message.id}:`, error);
+    }
+  }
+};
+
+
+useEffect(() => {
+  const handleOnline = () => {
+    console.log('Internet connection restored');
+    retrySendingPendingMessages();
+  };
+  
+  window.addEventListener('online', handleOnline);
+  
+  return () => {
+    window.removeEventListener('online', handleOnline);
+  };
+}, []);
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -232,43 +567,43 @@ const SocialMediaButtons = () => {
     }
   };
 
-  const sendMessage = async () => {
-    const messageInput = document.getElementById("messageInput");
-    if (!messageInput || !isLoggedIn) return;
+  // const sendMessage = async () => {
+  //   const messageInput = document.getElementById("messageInput");
+  //   if (!messageInput || !isLoggedIn) return;
     
-    const message = messageInput.value.trim();
+  //   const message = messageInput.value.trim();
   
-    if (message) {
-      const timestamp = new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
+  //   if (message) {
+  //     const timestamp = new Date().toLocaleTimeString([], {
+  //       hour: "2-digit",
+  //       minute: "2-digit",
+  //     });
   
-      const newMessage = {
-        text: message,
-        type: "sent",
-        timestamp,
-        time: Date.now()
-      };
+  //     const newMessage = {
+  //       text: message,
+  //       type: "sent",
+  //       timestamp,
+  //       time: Date.now()
+  //     };
       
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
+  //     setMessages((prevMessages) => [...prevMessages, newMessage]);
   
-      try {
-        await axios.post(`${API_URL}/messages/SendMessage`, {
-          senderId: userId,           
-          message,                    
-          status: "sent",             
-          lang: language,             
-          chaletId: chaletId,         
-          receiverId: receiverId      
-        });
-      } catch (error) {
-        console.error("Error sending message:", error);
-      }
+  //     try {
+  //       await axios.post(`${API_URL}/messages/SendMessage`, {
+  //         senderId: userId,           
+  //         message,                    
+  //         status: "sent",             
+  //         lang: language,             
+  //         chaletId: chaletId,         
+  //         receiverId: receiverId      
+  //       });
+  //     } catch (error) {
+  //       console.error("Error sending message:", error);
+  //     }
       
-      messageInput.value = "";
-    }
-  };
+  //     messageInput.value = "";
+  //   }
+  // };
 
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {

@@ -1,145 +1,222 @@
 import { useCallback, useEffect, useState } from "react";
 import { API_URL } from "../App";
 import axios from "axios";
-import "../Css/BLogs.css";
-import { Container, Card, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { Globe2, Clock, ArrowRight, ArrowLeft } from "lucide-react";
+import SocialMediaButtons from "../Component/SocialMediaButtons";
+
+import "../Css/BLogs.css";
 import "../Css/Events.css";
 import "../Css/Home.css";
 import "../Css/Chalets.css";
-import { Globe2 } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
-import SocialMediaButtons from "../Component/SocialMediaButtons";
+
 function Blogs() {
   const navigate = useNavigate();
   const location = useLocation();
   const lang = location.pathname.split("/")[1] || "en";
   const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  
   const toggleLanguage = () => {
     const newLang = lang === "ar" ? "en" : "ar";
     const currentPath = location.pathname.split("/").slice(2).join("/");
     navigate(`/${newLang}${currentPath ? "/" + currentPath : "/about"}`);
   };
 
+  
   const fetchData = useCallback(async () => {
+    setLoading(true);
     try {
       const blogRes = await axios.get(
         `${API_URL}/Blogs/getAllBlogs?lang=${lang}`
       );
-      if (blogRes.data !== blogs) {
-        setBlogs(blogRes.data);
-      }
+      setBlogs(blogRes.data);
     } catch (error) {
-      console.error("Error fetching blogets:", error);
+      console.error("Error fetching blogs:", error);
+    } finally {
+      setLoading(false);
     }
-  }, [lang, blogs]);
+  }, [lang]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchData();
-  }, [lang]);
+  }, [lang, fetchData]);
+
+  
+  const cardVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: i * 0.1,
+        duration: 0.5,
+      },
+    }),
+  };
+
+
+  const textVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut",
+      },
+    },
+  };
+
+  
+  const truncateText = (text, maxLength = 100) => {
+   
+    const strippedText = text.replace(/<[^>]*>?/gm, '');
+    if (strippedText.length <= maxLength) return text;
+    return strippedText.substring(0, maxLength) + '...';
+  };
 
   return (
-    <div>
-      <SocialMediaButtons/>
-      <Container fluid>
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-end mb-4"
-        >
-          <button
-            onClick={toggleLanguage}
-            className="btn"
-            style={{
-              border: "1px solid #ddd",
-              background: "white",
-              boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
-            }}
+    <div className="blogs-page">
+      <SocialMediaButtons />
+      
+      
+      <div className="blog-header position-relative">
+        <Container fluid>
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-end mb-4 pt-3"
           >
-            <Globe2 className="w-6 h-6" />
-            <span className="ms-2 visually-hidden">
-              {lang === "ar" ? "English" : "العربية"}
-            </span>
-          </button>
-        </motion.div>
-
-        <Row className="text-center">
-          <Col className="background_blogs">
-            <h1 className="title_blogs">
-              {lang === "ar" ? "الموارد والمدونات" : "Resources And Blogs"}
-            </h1>
-            <h5 className="subtitle_blog">
-              {lang === "ar"
-                ? "تقدم مدوناتنا محتوى مفيدًا لمساعدتك في التخطيط لرحلتك القادمة التي لا تنسى. انغمس في اكتشاف سحر وراحة الحياة في مدوناتنا."
-                : "our blogs offer insightful content to help you plan your next memorable escape. Dive in and discover the charm and comfort ofbloget living."}
-            </h5>
-            <svg
-              className="wave"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 1440 160" 
+            <button
+              onClick={toggleLanguage}
+              className="language-toggle btn"
+              aria-label={lang === "ar" ? "Switch to English" : "التبديل للعربية"}
             >
-              <path
-                fill="var(--blue-color)"
-                fillOpacity="1"
-                d="M0,96L48,85.3C96,75,192,53,288,69.3C384,85,480,139,576,154.7C672,171,768,149,864,160C960,171,1056,213,1152,208C1248,203,1344,149,1392,122.7L1440,96L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"
-              ></path>
-              <path
-                fill="var(--beige-color)"
-                fillOpacity="1"
-                d="M0,48L48,42.7C96,37,192,27,288,34.7C384,43,480,69,576,77.3C672,85,768,74,864,80C960,86,1056,106,1152,104C1248,101,1344,75,1392,61.3L1440,48L1440,160L1392,160C1344,160,1248,160,1152,160C1056,160,960,160,864,160C768,160,672,160,576,160C480,160,384,160,288,160C192,160,96,160,48,160L0,160Z"
-              ></path>
-            </svg>
-          </Col>
-        </Row>
-      </Container>
-      <Container className="margin_section">
-        <Row>
-          {blogs.map((blog) => (
-            <Col xl={4} md={6} sm={12} key={blog.id}>
-              <Link
-                to={`/${lang}/blogdetails/${blog.id}`}
-                style={{ textDecoration: "none" }}
-              >
-                <Card className="cont_card_blogs">
-                  <Card.Img
-                    variant="top"
-                    height={"200px"}
-                    className="object-fit-cover"
-                    srcSet={`https://res.cloudinary.com/dqimsdiht/${blog.image}?w=400&f_auto&q_auto:eco 400w`}
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    alt="blog img"
-                    decoding="async"
-                    loading="lazy"
-                  />
-                  <Card.Body className="d-flex flex-column">
-                    <Card.Title className="title_chalets mt-3">
-                      {blog.title}
-                    </Card.Title>
+              <Globe2 className="w-6 h-6" />
+              <span className="ms-2">
+                {lang === "ar" ? "English" : "العربية"}
+              </span>
+            </button>
+          </motion.div>
 
-                    <Row>
-                      <div className="d-flex justify-content-evenly mt-3">
-                        <Card.Text
-                          className="column-title"
-                          dangerouslySetInnerHTML={{
-                            __html: blog.description
-                          }}
-                        ></Card.Text>
-                      </div>
-                    </Row>
-                    <div className="d-flex justify-content-evenly mt-3 mt-auto ">
-                      <button className="booknow_button_events ">
-                        {lang === "ar" ? "شاهد المزيد" : "View More"}
-                      </button>
-                    </div>
-                  </Card.Body>
-                </Card>
-              </Link>
+          <Row className="text-center">
+            <Col className="header-content py-5">
+              <motion.div
+                variants={textVariants}
+                initial="hidden"
+                animate="visible"
+              >
+                <h1 className="blog-main-title mb-3">
+                  {lang === "ar" ? "الموارد والمدونات" : "Resources And Blogs"}
+                </h1>
+                <h5 className="blog-subtitle mb-4 mx-auto">
+                  {lang === "ar"
+                    ? "تقدم مدوناتنا محتوى مفيدًا لمساعدتك في التخطيط لرحلتك القادمة التي لا تنسى. انغمس في اكتشاف سحر وراحة الحياة في مدوناتنا."
+                    : "Our blogs offer insightful content to help you plan your next memorable escape. Dive in and discover the charm and comfort of chalet living."}
+                </h5>
+              </motion.div>
             </Col>
-          ))}
-        </Row>
+          </Row>
+        </Container>
+        
+        
+        <div className="header-bottom-shape">
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            viewBox="0 0 1440 100" 
+            preserveAspectRatio="none"
+          >
+            <path 
+              fill="#ffffff"
+              d="M0,64L80,58.7C160,53,320,43,480,48C640,53,800,75,960,74.7C1120,75,1280,53,1360,42.7L1440,32L1440,100L1360,100C1280,100,1120,100,960,100C800,100,640,100,480,100C320,100,160,100,80,100L0,100Z"
+            ></path>
+          </svg>
+        </div>
+      </div>
+
+      {/* قسم المحتوى الرئيسي */}
+      <Container className="blogs-container py-5">
+        {loading ? (
+          <div className="text-center py-5">
+            <div className="spinner-border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        ) : (
+          <AnimatePresence>
+            <Row className="g-4">
+              {blogs.map((blog, index) => (
+                <Col lg={4} md={6} sm={12} key={blog.id}>
+                  <motion.div
+                    custom={index}
+                    variants={cardVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit={{ opacity: 0, y: 20 }}
+                    whileHover={{ y: -10, transition: { duration: 0.3 } }}
+                  >
+                    <Link
+                      to={`/${lang}/blogdetails/${blog.id}`}
+                      className="blog-card-link"
+                    >
+                      <Card className="blog-card h-100 shadow-sm">
+                        <div className="card-img-wrapper">
+                          <Card.Img
+                            variant="top"
+                            className="blog-card-img"
+                            srcSet={`https://res.cloudinary.com/dqimsdiht/${blog.image}?w=400&f_auto&q_auto:eco 400w, https://res.cloudinary.com/dqimsdiht/${blog.image}?w=800&f_auto&q_auto:eco 800w`}
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            alt={blog.title}
+                            decoding="async"
+                            loading="lazy"
+                          />
+                          <div className="card-img-overlay-gradient"></div>
+                        </div>
+                        <Card.Body className="d-flex flex-column">
+                          <div className="blog-meta d-flex align-items-center mb-2">
+                            <Clock size={16} className="me-1" />
+                            <small className="text-muted">
+                              {new Date().toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US")}
+                            </small>
+                          </div>
+                          <Card.Title className="blog-card-title mb-3">
+                            {blog.title}
+                          </Card.Title>
+
+                          <Card.Text
+                            className="blog-card-description mb-3"
+                            dangerouslySetInnerHTML={{
+                              __html: truncateText(blog.description, 120)
+                            }}
+                          ></Card.Text>
+                          
+                          <div className="mt-auto">
+                            <button className="blog-read-more-btn d-flex align-items-center justify-content-center">
+                              {lang === "ar" ? "شاهد المزيد" : "View More"}
+                              {lang === "ar" ? <ArrowLeft size={16} className="ms-1" /> : <ArrowRight size={16} className="ms-1" />}
+                            </button>
+                          </div>
+                        </Card.Body>
+                      </Card>
+                    </Link>
+                  </motion.div>
+                </Col>
+              ))}
+            </Row>
+          </AnimatePresence>
+        )}
+        
+        {blogs.length === 0 && !loading && (
+          <div className="text-center py-5">
+            <h3>{lang === "ar" ? "لا توجد مدونات متاحة حاليًا" : "No blogs available at the moment"}</h3>
+          </div>
+        )}
       </Container>
     </div>
   );

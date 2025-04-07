@@ -1,5 +1,5 @@
 
-   /* APPLY FORM POSITION */
+
  
    .cont_form_apply {
     height: 100%; 
@@ -31,13 +31,21 @@
     align-items: center;
   }
   .btn_apply_now{
-    background-color: var(--beige-color);
+    background-color: #6DA6BA; 
     width: 50%;
     color: #000;
     text-align: center;
     border: none;
     padding: 10px;
   }
+
+
+  .btn_apply_now:hover {
+    background-color: #F2C79D; 
+    transition: all 0.3s ease;
+  }
+
+
   .cv_file{
     width: 50%;
   }

@@ -59,6 +59,9 @@ function Footer() {
               </button>
             </Col>
             <Col xl={8} md={12} sm={12} className="cont_icons_footer">
+            <h6 className="text_copyright">
+                Copyright 2024 • All rights reserved • KasselSoft
+              </h6>
               {iconfooter.map((icons) => (
                 <Link target="blank" to={icons.link_to} key={icons.id}>
                   <img
@@ -71,9 +74,7 @@ function Footer() {
                 </Link>
               ))}
 
-              <h6 className="text_copyright">
-                Copyright 2024 • All rights reserved • Rowqan
-              </h6>
+              
             </Col>
           </Row>
         </Container>

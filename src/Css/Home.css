@@ -28,12 +28,12 @@ body {
 }
 
 .hero_cont {
-  width: 100%;
-  padding: 5vh 0;
+  padding-top: 5px;
+  padding-bottom: 2vh;
 }
 
 .margin_section {
-  margin-top: 10vh;
+  margin-top: 3vh;
 }
 
 .mainHome_img {
@@ -232,13 +232,15 @@ body {
 
 @media screen and (max-width: 767px) {
   .home-container {
-    margin-top: 8vh;
+    margin-top: 0;
+    padding-top: 0;
     text-align: center;
     flex-direction: column;
+    
   }
 
   .mainHome_img {
-    margin-top: 4vh;
+    margin-top: 10px;
     max-height: 350px;
     box-shadow: 10px 10px 3px 0px var(--shadow-blue);
   }
@@ -274,12 +276,26 @@ body {
 @media screen and (max-width: 576px) {
   .mainHome_img {
     max-height: 300px;
+    margin-top: 5px;
     box-shadow: 8px 8px 3px 0px var(--shadow-blue);
   }
+
+  .home-container {
+    margin-top: 0;
+    padding-top: 5px;
+  }
   
+  .margin_section {
+    margin-top: 2vh;
+  }
+  .hero_cont {
+    padding-top: 0;
+    padding-bottom: 1vh;
+  }
   .maintext_home {
     font-size: 24px;
     line-height: 1.4;
+    margin-bottom: 5px;
   }
   
   .text_home {
@@ -312,3 +328,6 @@ body {
     line-height: 1.4;
   }
 }
+
+
+

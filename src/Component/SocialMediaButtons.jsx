@@ -4,8 +4,10 @@ import axios from 'axios';
 import socketIOClient from 'socket.io-client';
 
 import { useUser } from "../Component/UserContext"; 
+import { API_URL } from '../App';
 
 const SocialMediaButtons = () => {
+  const [showButtons, setShowButtons] = useState(true);
   const { userId } = useUser(); 
   const [isVisible, setIsVisible] = useState(true);
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -24,16 +26,63 @@ const SocialMediaButtons = () => {
     setLanguage(lang === 'ar' ? 'ar' : 'en');
   }, []);
   
+
+
+
+  const [buttonsAnimation, setButtonsAnimation] = useState({
+    chat: { visible: true, order: 0 },
+    facebook: { visible: true, order: 1 },
+    instagram: { visible: true, order: 2 },
+    whatsapp: { visible: true, order: 3 }
+  });
+  
+  const toggleButtons = () => {
+    if (showButtons) {
+      
+      setTimeout(() => setButtonsAnimation(prev => ({...prev, whatsapp: {...prev.whatsapp, visible: false}})), 0);
+      setTimeout(() => setButtonsAnimation(prev => ({...prev, instagram: {...prev.instagram, visible: false}})), 100);
+      setTimeout(() => setButtonsAnimation(prev => ({...prev, facebook: {...prev.facebook, visible: false}})), 200);
+      setTimeout(() => setButtonsAnimation(prev => ({...prev, chat: {...prev.chat, visible: false}})), 300);
+      
+      
+      setTimeout(() => setShowButtons(false), 400);
+    } else {
+      
+      setShowButtons(true);
+      
+      
+      setTimeout(() => {
+        setButtonsAnimation(prev => ({...prev, chat: {...prev.chat, visible: true}}));
+        setTimeout(() => setButtonsAnimation(prev => ({...prev, facebook: {...prev.facebook, visible: true}})), 100);
+        setTimeout(() => setButtonsAnimation(prev => ({...prev, instagram: {...prev.instagram, visible: true}})), 200);
+        setTimeout(() => setButtonsAnimation(prev => ({...prev, whatsapp: {...prev.whatsapp, visible: true}})), 300);
+      }, 50);
+    }
+  };
+
+  const getButtonAnimationStyle = (buttonType) => {
+    const baseTransition = "transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease";
+    const isVisible = buttonsAnimation[buttonType]?.visible;
+    
+    return {
+      transition: baseTransition,
+      transform: isVisible ? "scale(1) translateY(0)" : "scale(0) translateY(20px)",
+      opacity: isVisible ? 1 : 0,
+      position: "relative",
+      zIndex: 1
+    };
+  };
+  
   
   const isLoggedIn = !!userId;
   
   const mainColor = "#F2C79D"; 
   const secondaryColor = "#6DA6BA";
   
-  const API_URL = "https://rowqanbackend.rowqan.com"; 
   const chaletId = null; 
   const receiverId = "4";
 
+  const senderId = userId
  
   useEffect(() => {
     if (showLoginPrompt) {
@@ -74,6 +123,67 @@ const SocialMediaButtons = () => {
     return () => window.removeEventListener('scroll', toggleVisibility);
   }, []);
 
+
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/messages/betweenMessage/${senderId}/4`);
+        
+        if (res.data && Array.isArray(res.data)) {
+          const newMessages = res.data.map((messageObj) => {
+            const formattedTime = new Intl.DateTimeFormat(language === 'en' ? "en-US" : "ar-SA", {
+              hour: "2-digit",
+              minute: "2-digit",
+            }).format(new Date(messageObj.updatedAt));
+
+            
+            const messageType = messageObj.senderId.toString() === "3" ? "sent" : "received";
+
+            return {
+              text: messageObj.message,
+              type: messageType,
+              timestamp: formattedTime,
+              time: new Date(messageObj.updatedAt).getTime()
+            };
+          });
+          
+          setMessages(newMessages);
+          
+          
+          const unread = newMessages.filter(msg => 
+            msg.type === "received" && msg.time > lastReadTime
+          ).length;
+          
+          setUnreadMessages(unread);
+          setMessagesLoaded(true);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setDefaultWelcomeMessage();
+      }
+    };
+    
+    const setDefaultWelcomeMessage = () => {
+      setMessages([
+        {
+          text: language === 'en' ? 'Hello! How can I help you today?' : 'مرحباً بك! كيف يمكنني مساعدتك اليوم؟',
+          type: 'received',
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          time: Date.now()
+        }
+      ]);
+      setMessagesLoaded(true);
+    };
+    
+    
+    if (!messagesLoaded) {
+      fetchMessages();
+    }
+  }, [API_URL, language, messagesLoaded, lastReadTime]);
   
   useEffect(() => {
     const fetchMessages = async () => {
@@ -520,14 +630,6 @@ useEffect(() => {
     window.removeEventListener('online', handleOnline);
   };
 }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  };
-
  
   const toggleChat = () => {
     console.log("Toggle chat clicked, isLoggedIn:", isLoggedIn);
@@ -663,6 +765,7 @@ useEffect(() => {
     border: "2px solid #fff",
     boxSizing: "border-box"
   };
+
 
   const containerStyle = {
     position: "fixed",
@@ -832,47 +935,44 @@ useEffect(() => {
             </button>
           </div>
 
+       
           <div style={chatBodyStyle}>
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: message.type === "sent" 
-                    ? (language === 'ar' ? "flex-start" : "flex-end") 
-                    : (language === 'ar' ? "flex-end" : "flex-start"),
-                  marginBottom: "10px",
-                }}
-              >
-                <div
-                  style={{
-                    backgroundColor: message.type === "sent" ? "#e1ffc7" : "#fff",
-                    borderRadius: "18px",
-                    padding: isMobile ? "6px 10px" : "8px 12px",
-                    maxWidth: "70%",
-                    boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.1)",
-                    wordBreak: "break-word",
-                    fontSize: isMobile ? "14px" : "16px",
-                  }}
-                >
-                  {message.text}
-                </div>
-                <div
-                  style={{
-                    fontSize: isMobile ? "10px" : "12px",
-                    color: "#999",
-                    marginTop: "4px",
-                    alignSelf: message.type === "sent" 
-                      ? (language === 'ar' ? "flex-start" : "flex-end") 
-                      : (language === 'ar' ? "flex-end" : "flex-start"),
-                  }}
-                >
-                  {message.timestamp}
-                </div>
-              </div>
-            ))}
-          </div>
+  {messages.map((message, index) => (
+    <div
+      key={index}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: message.type === "sent" ? "flex-end" : "flex-start",
+        marginBottom: "10px",
+      }}
+    >
+      <div
+        style={{
+          backgroundColor: message.type === "sent" ? "#e1ffc7" : "#fff",
+          borderRadius: "18px",
+          padding: isMobile ? "6px 10px" : "8px 12px",
+          maxWidth: "70%",
+          boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.1)",
+          wordBreak: "break-word",
+          fontSize: isMobile ? "14px" : "16px",
+        }}
+      >
+        {message.text}
+      </div>
+      <div
+        style={{
+          fontSize: isMobile ? "10px" : "12px",
+          color: "#999",
+          marginTop: "4px",
+          alignSelf: message.type === "sent" ? "flex-end" : "flex-start",
+        }}
+      >
+        {message.timestamp}
+      </div>
+    </div>
+  ))}
+</div>
 
           <div style={chatInputStyle}>
             <input
@@ -912,132 +1012,159 @@ useEffect(() => {
           {language === 'en' ? 'Login' : 'تسجيل الدخول'}
         </button>
       </div>
-
       <div style={containerStyle}>
-        <button 
-          onClick={toggleChat}
-          style={liveChatButtonStyle}
-          aria-label={language === 'en' ? "Live Chat" : "المحادثة المباشرة"}
-          onMouseOver={(e) => {
-            if (!isMobile) {
-              e.currentTarget.style.transform = "translateY(-5px)";
-              e.currentTarget.style.boxShadow = "0 6px 12px rgba(0, 0, 0, 0.15)";
-            }
-          }}
-          onMouseOut={(e) => {
-            if (!isMobile) {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
-            }
-          }}
-        >
-          <MessageSquare size={iconSize} />
-          
-          {unreadMessages > 0 && (
-            <div style={notificationBadgeStyle}>
-              {unreadMessages}
-            </div>
-          )}
-        </button>
-        
-        <a 
-          href="https://www.facebook.com/people/Rowqanjo/61559952154129/?mibextid=wwXIfr&rdid=oOUwDhk6qNJ7B6u7&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1DtYhSXtFC%2F%3Fmibextid%3DwwXIfr" 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          style={buttonStyle}
-          aria-label="Facebook"
-          onMouseOver={(e) => {
-            if (!isMobile) {
-              e.currentTarget.style.transform = "translateY(-5px)";
-              e.currentTarget.style.boxShadow = "0 6px 12px rgba(0, 0, 0, 0.15)";
-            }
-          }}
-          onMouseOut={(e) => {
-            if (!isMobile) {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
-            }
-          }}
-        >
-          <Facebook size={iconSize} />
-        </a>
-
-        <a 
-          href="https://www.instagram.com/rowqan.jo?igsh=MW5sbXMxODFkbXlvdA%3D%3D&utm_source=qr" 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          style={buttonStyle}
-          aria-label="Instagram"
-          onMouseOver={(e) => {
-            if (!isMobile) {
-              e.currentTarget.style.transform = "translateY(-5px)";
-              e.currentTarget.style.boxShadow = "0 6px 12px rgba(0, 0, 0, 0.15)";
-            }
-          }}
-          onMouseOut={(e) => {
-            if (!isMobile) {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
-            }
-          }}
-        >
-          <Instagram size={iconSize} />
-        </a>
-
-        <a 
-          href="https://wa.me/962791532972" 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          style={buttonStyle}
-          aria-label="WhatsApp"
-          onMouseOver={(e) => {
-            if (!isMobile) {
-              e.currentTarget.style.transform = "translateY(-5px)";
-              e.currentTarget.style.boxShadow = "0 6px 12px rgba(0, 0, 0, 0.15)";
-            }
-          }}
-          onMouseOut={(e) => {
-            if (!isMobile) {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
-            }
-          }}
-        >
-          <MessageCircle size={iconSize} />
-        </a>
-
-        <button
-          onClick={scrollToTop}
-          style={buttonStyle}
-          aria-label={language === 'en' ? "Back to top" : "العودة إلى الأعلى"}
-          onMouseOver={(e) => {
-            if (!isMobile) {
-              e.currentTarget.style.transform = "translateY(-5px)";
-              e.currentTarget.style.boxShadow = "0 6px 12px rgba(0, 0, 0, 0.15)";
-            }
-          }}
-          onMouseOut={(e) => {
-            if (!isMobile) {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
-            }
-          }}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width={iconSize}
-            height={iconSize}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+      {showButtons && (
+        <>
+          <button 
+            onClick={toggleChat}
+            style={{
+              ...liveChatButtonStyle,
+              ...getButtonAnimationStyle('chat')
+            }}
+            aria-label={language === 'en' ? "Live Chat" : "المحادثة المباشرة"}
+            onMouseOver={(e) => {
+              if (!isMobile) {
+                e.currentTarget.style.transform = "scale(1) translateY(-5px)";
+                e.currentTarget.style.boxShadow = "0 6px 12px rgba(0, 0, 0, 0.15)";
+              }
+            }}
+            onMouseOut={(e) => {
+              if (!isMobile) {
+                e.currentTarget.style.transform = "scale(1) translateY(0)";
+                e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
+              }
+            }}
           >
+            <MessageSquare size={iconSize} />
+            
+            {unreadMessages > 0 && (
+              <div style={notificationBadgeStyle}>
+                {unreadMessages}
+              </div>
+            )}
+          </button>
+          
+          <a 
+            href="https://www.facebook.com/people/Rowqanjo/61559952154129/?mibextid=wwXIfr&rdid=oOUwDhk6qNJ7B6u7&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1DtYhSXtFC%2F%3Fmibextid%3DwwXIfr" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            style={{
+              ...buttonStyle,
+              ...getButtonAnimationStyle('facebook')
+            }}
+            aria-label="Facebook"
+            onMouseOver={(e) => {
+              if (!isMobile) {
+                e.currentTarget.style.transform = "scale(1) translateY(-5px)";
+                e.currentTarget.style.boxShadow = "0 6px 12px rgba(0, 0, 0, 0.15)";
+              }
+            }}
+            onMouseOut={(e) => {
+              if (!isMobile) {
+                e.currentTarget.style.transform = "scale(1) translateY(0)";
+                e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
+              }
+            }}
+          >
+            <Facebook size={iconSize} />
+          </a>
+
+          <a 
+            href="https://www.instagram.com/rowqan.jo?igsh=MW5sbXMxODFkbXlvdA%3D%3D&utm_source=qr" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            style={{
+              ...buttonStyle,
+              ...getButtonAnimationStyle('instagram')
+            }}
+            aria-label="Instagram"
+            onMouseOver={(e) => {
+              if (!isMobile) {
+                e.currentTarget.style.transform = "scale(1) translateY(-5px)";
+                e.currentTarget.style.boxShadow = "0 6px 12px rgba(0, 0, 0, 0.15)";
+              }
+            }}
+            onMouseOut={(e) => {
+              if (!isMobile) {
+                e.currentTarget.style.transform = "scale(1) translateY(0)";
+                e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
+              }
+            }}
+          >
+            <Instagram size={iconSize} />
+          </a>
+
+          <a 
+            href="https://wa.me/962791532972" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            style={{
+              ...buttonStyle,
+              ...getButtonAnimationStyle('whatsapp')
+            }}
+            aria-label="WhatsApp"
+            onMouseOver={(e) => {
+              if (!isMobile) {
+                e.currentTarget.style.transform = "scale(1) translateY(-5px)";
+                e.currentTarget.style.boxShadow = "0 6px 12px rgba(0, 0, 0, 0.15)";
+              }
+            }}
+            onMouseOut={(e) => {
+              if (!isMobile) {
+                e.currentTarget.style.transform = "scale(1) translateY(0)";
+                e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
+              }
+            }}
+          >
+            <MessageCircle size={iconSize} />
+          </a>
+        </>
+      )}
+      
+      <button
+        onClick={toggleButtons}
+        style={{
+          ...buttonStyle,
+          transition: "transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease",
+          backgroundColor: showButtons ? secondaryColor : mainColor,
+          zIndex: 2
+        }}
+        aria-label={language === 'en' ? "Toggle buttons" : "إظهار/إخفاء الأزرار"}
+        onMouseOver={(e) => {
+          if (!isMobile) {
+            e.currentTarget.style.transform = "translateY(-5px)";
+            e.currentTarget.style.boxShadow = "0 6px 12px rgba(0, 0, 0, 0.15)";
+          }
+        }}
+        onMouseOut={(e) => {
+          if (!isMobile) {
+            e.currentTarget.style.transform = "translateY(0)";
+            e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
+          }
+        }}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width={iconSize}
+          height={iconSize}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          style={{transition: "transform 0.3s ease"}}
+        >
+          {showButtons ? (
+            // Down arrow when buttons are shown
+            <path d="M6 9l6 6 6-6" />
+          ) : (
+            
             <path d="M18 15l-6-6-6 6" />
-          </svg>
-        </button>
-      </div>
+          )}
+        </svg>
+      </button>
+    </div>
     </>
   );
 };

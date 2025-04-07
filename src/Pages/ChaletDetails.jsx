@@ -1,17 +1,14 @@
-import { Container, Row, Col, Button } from "react-bootstrap";
 import { useState, useCallback, useEffect } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { Container, Row, Col, Button } from "react-bootstrap";
 import axios from "axios";
 import { API_URL } from "../App";
 import ChatNowHeader from "../Component/ChatNowHeader";
 import { useUser } from "../Component/UserContext";
-import Carousel from "react-bootstrap/Carousel";
-import PropTypes from "prop-types";
-import '../Css/Events.css';
-
-import { Globe2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import SocialMediaButtons from "../Component/SocialMediaButtons";
+import { Globe2, Star, Wifi, Home, Coffee, Users, Bath } from "lucide-react";
+import '../Css/ChaletDetails.css';
 
 function ChaletsDetails() {
   const navigate = useNavigate();
@@ -21,10 +18,13 @@ function ChaletsDetails() {
   const lang = location.pathname.split("/")[1] || "en";
   const price = localStorage.getItem("price") || 0;
   const [chaletsImages, setChaletsImages] = useState([]);
-  const [dataChalets, setdataChalets] = useState([]);
+  const [dataChalets, setDataChalets] = useState([]);
   const [ratingUser, setRatingUser] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [showImageGallery, setShowImageGallery] = useState(false);
+  const [hoverEffect, setHoverEffect] = useState(false);
 
-  
   const toggleLanguage = () => {
     const newLang = lang === "ar" ? "en" : "ar";
     const currentPath = location.pathname.split("/").slice(2).join("/");
@@ -40,28 +40,26 @@ function ChaletsDetails() {
   };
 
   const fetchData = useCallback(async () => {
+    setLoading(true);
     try {
-     
       const [imgchaletRes, chaletsRes, ratingRes] = await Promise.all([
         axios.get(`${API_URL}/chaletsimages/chaletgetChaletImage/${id}`),
         axios.get(`${API_URL}/chalets/getchaletbyid/${id}?lang=${lang}`), 
         axios.get(`${API_URL}/NOstars/getAvergaestars/${id}`),
       ]);
-
-     
-      setChaletsImages(imgchaletRes.data);
       
+      setChaletsImages(imgchaletRes.data);
       
       const chaletData = Array.isArray(chaletsRes.data) && chaletsRes.data.length > 0 
         ? chaletsRes.data[0]  
         : chaletsRes.data;    
       
-      setdataChalets(chaletData);
-      
-     
-      setRatingUser(ratingRes.data.averageStars);
+      setDataChalets(chaletData);
+      setRatingUser(ratingRes.data.averageStars || 0);
     } catch (error) {
       console.error("Error fetching chalet data:", error);
+    } finally {
+      setLoading(false);
     }
   }, [id, lang]); 
 
@@ -70,277 +68,409 @@ function ChaletsDetails() {
     fetchData();
   }, [fetchData, id, lang]); 
 
-  const colors = {
-    orange: "#F2C265",
-    grey: "#a9a9a9",
+  const openGallery = (index) => {
+    setActiveImageIndex(index);
+    setShowImageGallery(true);
+    document.body.style.overflow = 'hidden';
   };
 
- 
-  const StarIcon = ({ filled }) => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      width="24"
-      height="24"
-    >
-      <path
-        d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
-        fill={filled ? colors.orange : colors.grey} 
+  const closeGallery = () => {
+    setShowImageGallery(false);
+    document.body.style.overflow = 'auto';
+  };
+
+
+  const navigateGallery = (direction) => {
+    if (direction === 'next') {
+      setActiveImageIndex((prevIndex) => 
+        prevIndex === chaletsImages.length - 1 ? 0 : prevIndex + 1
+      );
+    } else {
+      setActiveImageIndex((prevIndex) => 
+        prevIndex === 0 ? chaletsImages.length - 1 : prevIndex - 1
+      );
+    }
+  };
+
+  const getRatingStars = (rating) => {
+    return Array(5).fill(0).map((_, index) => (
+      <Star 
+        key={index}
+        size={20}
+        className={`star-icon ${rating > index ? 'filled' : ''}`}
+        fill={rating > index ? '#F2C79D' : 'none'}
+        stroke={rating > index ? '#F2C79D' : '#a9a9a9'}
       />
-    </svg>
-  );
-
-  StarIcon.propTypes = {
-    filled: PropTypes.bool.isRequired,
+    ));
   };
 
- 
+  const parseFeatures = () => {
+    try {
+      if (!dataChalets || !dataChalets.features) return [];
+      
+      let featuresArray = [];
+      if (typeof dataChalets.features === 'string') {
+        if (dataChalets.features.includes('"')) {
+          try {
+            const cleanedFeatures = dataChalets.features
+              .replace(/\\/g, '')
+              .replace(/^"/, '')
+              .replace(/"$/, '');
+            
+            featuresArray = cleanedFeatures.split(/[,،]+/);
+          } catch (e) {
+            featuresArray = dataChalets.features.replace(/"/g, "").split(/[,،]+/);
+            console.log(`The Error is :${e}`);
+          }
+        } else {
+          featuresArray = dataChalets.features.replace(/"/g, "").split(/[,،]+/);
+        }
+      } else if (Array.isArray(dataChalets.features)) {
+        featuresArray = dataChalets.features;
+      }
+      
+      return featuresArray.map(feature => feature.trim()).filter(feature => feature);
+    } catch (error) {
+      console.error("Error parsing features:", error, dataChalets.features);
+      return [];
+    }
+  };
+
+  const parseTypeData = () => {
+    try {
+      if (!dataChalets || !dataChalets.type) return [];
+      
+      let typeEntries = [];
+      
+      if (typeof dataChalets.type === 'string') {
+        let typeStr = dataChalets.type.trim();
+        if (typeStr.startsWith('"') && typeStr.endsWith('"')) {
+          typeStr = typeStr.substring(1, typeStr.length - 1);
+        }
+        
+        if ((typeStr.startsWith('{') && typeStr.endsWith('}')) || 
+            typeStr.includes(':') || typeStr.includes('"')) {
+          try {
+            const cleanStr = typeStr
+              .replace(/\\/g, '')
+              .replace(/"{/g, '{')
+              .replace(/}"/g, '}')
+              .replace(/،/g, ',') 
+              .replace(/\s+/g, ' ');
+            
+            const typeData = JSON.parse(cleanStr);
+            typeEntries = Object.entries(typeData);
+          } catch (jsonError) {
+            console.log("JSON parse failed, trying manual parse", jsonError);
+            
+            if (typeStr.startsWith('{')) typeStr = typeStr.substring(1);
+            if (typeStr.endsWith('}')) typeStr = typeStr.substring(0, typeStr.length - 1);
+            
+            const pairs = typeStr.split(/[,،]+/);
+            
+            typeEntries = pairs.map(pair => {
+              const keyValue = pair.split(/:|：/);
+              if (keyValue.length >= 2) {
+                let key = keyValue[0].trim();
+                let value = keyValue[1].trim();
+                
+                if (key.startsWith('"') && key.endsWith('"')) {
+                  key = key.substring(1, key.length - 1);
+                }
+                if (value.startsWith('"') && value.endsWith('"')) {
+                  value = value.substring(1, value.length - 1);
+                }
+                
+                return [key, value];
+              }
+              return ['', '']; 
+            }).filter(([key]) => key !== ''); 
+          }
+        } else {
+          typeEntries = [["Value", typeStr]];
+        }
+      } else if (typeof dataChalets.type === 'object') {
+        typeEntries = Object.entries(dataChalets.type);
+      }
+      
+      return typeEntries;
+    } catch (error) {
+      console.error("Error parsing type data:", error, dataChalets.type);
+      return [];
+    }
+  };
+
+  // Get feature icon based on feature name
+  const getFeatureIcon = (feature) => {
+    const lowercaseFeature = feature.toLowerCase();
+    if (lowercaseFeature.includes('wifi') || lowercaseFeature.includes('انترنت')) {
+      return <Wifi size={20} />;
+    } else if (lowercaseFeature.includes('room') || lowercaseFeature.includes('غرفة')) {
+      return <Home size={20} />;
+    } else if (lowercaseFeature.includes('coffee') || lowercaseFeature.includes('قهوة')) {
+      return <Coffee size={20} />;
+    } else if (lowercaseFeature.includes('people') || lowercaseFeature.includes('أشخاص')) {
+      return <Users size={20} />;
+    } else if (lowercaseFeature.includes('bath') || lowercaseFeature.includes('حمام')) {
+      return <Bath size={20} />;
+    } else {
+      return <Star size={20} />;
+    }
+  };
+
   const uiText = {
-    detailsTitle: lang === "ar" ? "تفاصيل هذا الشاليه" : "Details for this chalets",
-    chatNow: lang === "ar" ? "دردش الأن" : "Chat Now",
-    price: lang === "ar" ? "السعر :" : "Price :",
-    features: lang === "ar" ? "المميزات :" : "Features :",
-    reserveNow: lang === "ar" ? "احجز الان" : "Reserve Now"
+    detailsTitle: lang === "ar" ? "تفاصيل الشاليه" : "Chalet Details",
+    chatNow: lang === "ar" ? "دردش الآن" : "Chat Now",
+    price: lang === "ar" ? "السعر" : "Price",
+    features: lang === "ar" ? "المميزات" : "Features",
+    overview: lang === "ar" ? "نظرة عامة" : "Overview",
+    reserveNow: lang === "ar" ? "احجز الآن" : "Reserve Now",
+    loading: lang === "ar" ? "جاري التحميل..." : "Loading...",
+    gallery: lang === "ar" ? "معرض الصور" : "Photo Gallery",
+    perNight: lang === "ar" ? "لليلة" : "per night",
+    viewMore: lang === "ar" ? "عرض المزيد" : "View more photos",
+    close: lang === "ar" ? "إغلاق" : "Close",
+    noImages: lang === "ar" ? "لا توجد صور متاحة" : "No images available",
+    nextImage: lang === "ar" ? "الصورة التالية" : "Next image",
+    prevImage: lang === "ar" ? "الصورة السابقة" : "Previous image"
   };
+
+  if (loading) {
+    return (
+      <div className="loading-screen">
+        <div className="loading-spinner"></div>
+        <div className="loading-text">{uiText.loading}</div>
+      </div>
+    );
+  }
+
+  const features = parseFeatures();
+  const typeData = parseTypeData();
 
   return (
-    <div>
-      <SocialMediaButtons/>
-      <div
-        className="language-toggle-container"
-        style={{
-          position: "absolute",
-          top: "20px",
-          right: "20px",
-          zIndex: 1000,
-        }}
+    <div className={`chalets-details-page ${lang === "ar" ? "rtl" : "ltr"}`}>
+      <SocialMediaButtons className="social-buttons" />
+      
+      <button
+        onClick={toggleLanguage}
+        className="language-toggle-btn"
+        aria-label={lang === "ar" ? "Switch to English" : "التبديل إلى العربية"}
       >
-        <button
-          onClick={toggleLanguage}
-          className="btn btn-light rounded-circle p-2"
-          style={{
-            backgroundColor: "white",
-            border: "1px solid #ddd",
-            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-          }}
-        >
-          <Globe2 className="w-6 h-6" />
-        </button>
-      </div>
+        <Globe2 />
+      </button>
+      
       <ChatNowHeader 
         dataChalets={dataChalets || {}} 
         chalet_id={id} 
         price={price} 
       />
-      <Container className="mt-5">
-        <h1>{uiText.detailsTitle}</h1>
-        <Row>
-          <Col sm={12} md={12} lg={7}>
-            <Carousel>
-              {chaletsImages.map((image, index) => (
-                <Carousel.Item key={index}>
-                  {isImage(image) ? (
+      
+      <Container className="main-container">
+        <section className="page-header">
+          <h1 className="main-title">{uiText.detailsTitle}</h1>
+          <div className="rating-row">
+            <div className="stars-container">
+              {getRatingStars(ratingUser)}
+              <span className="rating-value">{parseFloat(ratingUser).toFixed(1)}</span>
+            </div>
+          </div>
+        </section>
+        
+        <Row className="main-content-row">
+          <Col lg={8} md={12} className="gallery-section">
+            {chaletsImages.length > 0 ? (
+              <div className="images-container">
+                <div className="main-image-container" 
+                  onClick={() => openGallery(activeImageIndex)}
+                  onMouseEnter={() => setHoverEffect(true)}
+                  onMouseLeave={() => setHoverEffect(false)}
+                >
+                  {isImage(chaletsImages[activeImageIndex]) ? (
                     <img
-                      alt="image"
-                      className="slider_img rounded"
-                      style={{ height: "65vh" }}
-                      src={image}
+                      src={chaletsImages[activeImageIndex]}
+                      alt="Chalet"
+                      className={`main-image ${hoverEffect ? 'hover-effect' : ''}`}
                     />
-                  ) : isVideo(image) ? (
+                  ) : isVideo(chaletsImages[activeImageIndex]) ? (
                     <video
+                      src={chaletsImages[activeImageIndex]}
                       controls
-                      width="100%"
-                      height="455px"
-                      src={image}
-                      type="video/mp4"
+                      className="main-video"
                     ></video>
                   ) : null}
-                </Carousel.Item>
-              ))}
-            </Carousel>
-          </Col>
-
-          <Col sm={12} md={12} lg={5}>
-            {dataChalets && dataChalets.type && (
-              <div className="box_Brief_characteristics">
-                <div>
-                  <div className="mt-3">
-                    <ul dir={lang === "ar" ? "rtl" : "ltr"} style={{textAlign: lang === "ar" ? "right" : "left"}}>
-                      {(() => {
-                        try {
-                         
-                          let typeEntries = [];
-                          
-                          if (typeof dataChalets.type === 'string') {
-                           
-                            let typeStr = dataChalets.type.trim();
-                            if (typeStr.startsWith('"') && typeStr.endsWith('"')) {
-                              typeStr = typeStr.substring(1, typeStr.length - 1);
-                            }
-                            
-                          
-                            if ((typeStr.startsWith('{') && typeStr.endsWith('}')) || 
-                                typeStr.includes(':') || typeStr.includes('"')) {
-                              try {
-                                
-                                const cleanStr = typeStr
-                                  .replace(/\\/g, '')
-                                  .replace(/"{/g, '{')
-                                  .replace(/}"/g, '}')
-                                  .replace(/،/g, ',') 
-                                  .replace(/\s+/g, ' ');
-                                
-                                const typeData = JSON.parse(cleanStr);
-                                typeEntries = Object.entries(typeData);
-                              } catch (jsonError) {
-                                console.log("JSON parse failed, trying manual parse", jsonError);
-                                
-                                
-                                if (typeStr.startsWith('{')) typeStr = typeStr.substring(1);
-                                if (typeStr.endsWith('}')) typeStr = typeStr.substring(0, typeStr.length - 1);
-                                
-                                
-                                const pairs = typeStr.split(/[,،]+/);
-                                
-                                typeEntries = pairs.map(pair => {
-                                  const keyValue = pair.split(/:|：/);
-                                  if (keyValue.length >= 2) {
-                                    let key = keyValue[0].trim();
-                                    let value = keyValue[1].trim();
-                                    
-                                    
-                                    if (key.startsWith('"') && key.endsWith('"')) {
-                                      key = key.substring(1, key.length - 1);
-                                    }
-                                    if (value.startsWith('"') && value.endsWith('"')) {
-                                      value = value.substring(1, value.length - 1);
-                                    }
-                                    
-                                    return [key, value];
-                                  }
-                                  return ['', '']; 
-                                }).filter(([key]) => key !== ''); 
-                              }
-                            } else {
-                             
-                              typeEntries = [["Value", typeStr]];
-                            }
-                          } else if (typeof dataChalets.type === 'object') {
-                            
-                            typeEntries = Object.entries(dataChalets.type);
-                          }
-                          
-                          return typeEntries.map(([key, value], index) => (
-                            <li key={index} className="py-2">
-                              <b>{key.replace(/_/g, " ").replace(/-/g, " ")}:</b> {value}
-                            </li>
-                          ));
-                        } catch (error) {
-                          console.error("Error parsing type data:", error, dataChalets.type);
-                          return <li>Error loading characteristics</li>;
-                        }
-                      })()}
-                    </ul>
-
-                    <div className="cont_rating">
-                      {[...Array(5)].map((_, index) => (
-                        <span
-                          key={index}
-                          style={{
-                            display: "inline-block",
-                            marginRight: "5px",
-                          }}
-                        >
-                          <StarIcon filled={ratingUser > index} />
-                        </span>
-                      ))}
-                    </div>
+                  <div className={`overlay ${hoverEffect ? 'show' : ''}`}>
+                    <span className="view-text">{uiText.viewMore}</span>
                   </div>
                 </div>
-                <Link to={userId ? `/${lang}/chatbot/${id}` : `/${lang}/login`}>
-                  <Button variant="outline-warning" className="mt-3">
-                    {uiText.chatNow}
-                  </Button>
-                </Link>
+                
+                <div className="thumbnails-container">
+                  {chaletsImages.slice(0, 4).map((image, index) => (
+                    <div 
+                      key={index}
+                      className={`thumbnail ${activeImageIndex === index ? 'active' : ''}`}
+                      onClick={() => setActiveImageIndex(index)}
+                    >
+                      {isImage(image) ? (
+                        <img src={image} alt={`Thumbnail ${index + 1}`} />
+                      ) : isVideo(image) ? (
+                        <div className="video-thumbnail">
+                          <img src="/path-to-video-placeholder.jpg" alt="Video thumbnail" />
+                          <div className="video-icon">▶</div>
+                        </div>
+                      ) : null}
+                    </div>
+                  ))}
+                  {chaletsImages.length > 4 && (
+                    <div 
+                      className="thumbnail more-photos"
+                      onClick={() => openGallery(4)}
+                    >
+                      <div className="more-overlay">+{chaletsImages.length - 4}</div>
+                      {isImage(chaletsImages[4]) && <img src={chaletsImages[4]} alt="More photos" />}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="no-images-container">
+                <div className="no-images-message">
+                  {uiText.noImages}
+                </div>
               </div>
             )}
           </Col>
-        </Row>
-        <Row>
-          <Col sm={12} md={6} lg={6} className="mt-5">
-            <div className="box_price">
-              <h4
-                style={{ color: "#152C5B", fontWeight: "600" }}
-                className="px-3"
-              >
-                {uiText.price}
-              </h4>
-              <h5>{price} JD</h5>
-            </div>
-            <>
-              <h4>{uiText.features}</h4>
-              <h6>
-                <ul dir={lang === "ar" ? "rtl" : "ltr"} style={{textAlign: lang === "ar" ? "right" : "left"}}>
-                  {(() => {
-                    try {
-                      if (!dataChalets || !dataChalets.features) return null;
-                      
-                      
-                      let featuresArray = [];
-                      if (typeof dataChalets.features === 'string') {
-                      
-                        if (dataChalets.features.includes('"')) {
-                          try {
-                            const cleanedFeatures = dataChalets.features
-                              .replace(/\\/g, '')
-                              .replace(/^"/, '')
-                              .replace(/"$/, '');
-                            
-                           
-                            featuresArray = cleanedFeatures.split(/[,،]+/);
-                          } catch (e) {
-                            featuresArray = dataChalets.features.replace(/"/g, "").split(/[,،]+/);
-                            console.log(`The Error is :${e}`)
-                          }
-                        } else {
-                          
-                          featuresArray = dataChalets.features.replace(/"/g, "").split(/[,،]+/);
-                        }
-                      } else if (Array.isArray(dataChalets.features)) {
-                        featuresArray = dataChalets.features;
-                      }
-                      
-                      return featuresArray.map((feature, index) => (
-                        <li
-                          key={index}
-                          style={{ fontSize: "18px" }}
-                          className="py-1"
-                        >
-                          {feature.trim()}
-                        </li>
-                      ));
-                    } catch (error) {
-                      console.error("Error parsing features:", error, dataChalets.features);
-                      return <li>Error loading features</li>;
-                    }
-                  })()}
+          
+          <Col lg={4} md={12} className="details-section">
+            <div className="details-card">
+              <div className="price-section">
+                <div className="price-amount">
+                  <span className="amount">{price}</span>
+                  <span className="currency">JD</span>
+                  <span className="per-night">{uiText.perNight}</span>
+                </div>
+              </div>
+              
+              <div className="overview-section">
+                <h3 className="section-subtitle">{uiText.overview}</h3>
+                <ul className="details-list">
+                  {typeData.map(([key, value], index) => (
+                    <li key={index} className="detail-item">
+                      <div className="detail-label">{key.replace(/_/g, " ").replace(/-/g, " ")}</div>
+                      <div className="detail-value">{value}</div>
+                    </li>
+                  ))}
                 </ul>
-              </h6>
-            </>
-            <Link
-              to={`/${lang}/bookingchalet/${id}`}
-              state={{
-                chaletsImages,
-                dataChalets,
-              }}
-            >
-              <button className="booknow_button_events mt-4">
-                {uiText.reserveNow}
-              </button>
-            </Link>
+              </div>
+              
+              <div className="action-buttons">
+                <Link 
+                  to={userId ? `/${lang}/chatbot/${id}` : `/${lang}/login`}
+                  className="chat-now-link"
+                >
+                  <Button className="chat-now-button">
+                    {uiText.chatNow}
+                  </Button>
+                </Link>
+                
+                <Link
+                  to={`/${lang}/bookingchalet/${id}`}
+                  state={{
+                    chaletsImages,
+                    dataChalets,
+                  }}
+                  className="reserve-now-link"
+                >
+                  <Button className="reserve-now-button">
+                    {uiText.reserveNow}
+                  </Button>
+                </Link>
+              </div>
+            </div>
           </Col>
         </Row>
+        
+        {features.length > 0 && (
+          <section className="features-section">
+            <h2 className="section-title">{uiText.features}</h2>
+            <div className="features-grid">
+              {features.map((feature, index) => (
+                <div key={index} className="feature-item">
+                  <div className="feature-icon">
+                    {getFeatureIcon(feature)}
+                  </div>
+                  <div className="feature-text">{feature}</div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
       </Container>
+      
+      {/* Full-screen image gallery */}
+      {showImageGallery && (
+        <div className="fullscreen-gallery">
+          <button className="close-gallery" onClick={closeGallery}>
+            &times;
+          </button>
+          
+          <div className="gallery-content">
+            <button 
+              className="gallery-nav prev" 
+              onClick={() => navigateGallery('prev')}
+              aria-label={uiText.prevImage}
+            >
+              ‹
+            </button>
+            
+            <div className="gallery-image-container">
+              {isImage(chaletsImages[activeImageIndex]) ? (
+                <img
+                  src={chaletsImages[activeImageIndex]}
+                  alt="Gallery"
+                  className="gallery-image"
+                />
+              ) : isVideo(chaletsImages[activeImageIndex]) ? (
+                <video
+                  src={chaletsImages[activeImageIndex]}
+                  controls
+                  autoPlay
+                  className="gallery-video"
+                ></video>
+              ) : null}
+            </div>
+            
+            <button 
+              className="gallery-nav next" 
+              onClick={() => navigateGallery('next')}
+              aria-label={uiText.nextImage}
+            >
+              ›
+            </button>
+          </div>
+          
+          <div className="gallery-thumbnails">
+            {chaletsImages.map((image, index) => (
+              <div 
+                key={index}
+                className={`gallery-thumbnail ${activeImageIndex === index ? 'active' : ''}`}
+                onClick={() => setActiveImageIndex(index)}
+              >
+                {isImage(image) ? (
+                  <img src={image} alt={`Thumbnail ${index + 1}`} />
+                ) : (
+                  <div className="video-thumbnail-small">
+                    <div className="video-icon-small">▶</div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+          
+          <div className="gallery-counter">
+            {activeImageIndex + 1} / {chaletsImages.length}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

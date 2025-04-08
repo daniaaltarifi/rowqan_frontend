@@ -29,7 +29,7 @@ function Chalets() {
   const [selectedArea, setSelectedArea] = useState("");
   const [filterValues, setFilterValues] = useState({});
   const [availableAreas, setAvailableAreas] = useState([]);
-  const [message, setMessage] = useState("");
+  const [, setMessage] = useState("");
   const [dataToDisplay, setDataToDisplay] = useState([]);
   const [allData, setAllData] = useState([]);
 
@@ -303,9 +303,9 @@ function Chalets() {
         </Row>
 
         <Row>
-          {dataToDisplay.length > 0 ? (
+          {(
             dataToDisplay.map((chal) => {
-              // معالجة حالة تنسيق JSON غير صالح
+              
               let typeChalets = {};
               try {
                 typeChalets = JSON.parse(
@@ -313,15 +313,12 @@ function Chalets() {
                 );
               } catch (error) {
                 console.error("Error parsing JSON:", error);
-                // استخدام كائن فارغ كقيمة افتراضية
               }
 
-              // التحقق من وجود RightTimeModels قبل استخدام find
-              const eveningTime =
-                chal.RightTimeModels &&
-                chal.RightTimeModels.find(
-                  (time) => time.type_of_time === "Evening"
-                );
+              
+              const eveningTime = chal.rightTimes?.find(
+                (time) => time.type_of_time === "Evening"
+              );
               const eveningPrice = eveningTime ? eveningTime.price : 0;
 
               return (
@@ -403,10 +400,7 @@ function Chalets() {
                           </div>
                           <div className="d-flex justify-content-evenly mt-3">
                             <Card.Text className="text_card_det">
-                              {lang === "ar"
-                                ? "يبدأ السعر من "
-                                : "Starting Price :"}{" "}
-                              {eveningPrice} JD
+                            {lang === "ar" ? "يبدأ السعر من " : "Starting Price :"} {eveningPrice} JD
                             </Card.Text>
                           </div>
                         </Row>
@@ -441,8 +435,6 @@ function Chalets() {
                 </Col>
               );
             })
-          ) : (
-            <p className="text-center">{message}</p>
           )}
         </Row>
         {/* 

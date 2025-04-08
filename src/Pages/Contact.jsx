@@ -1,19 +1,19 @@
-import { Col, Container, Row, FloatingLabel, Form, Button, Alert } from "react-bootstrap";
+import { Col, Container, Row, Form, Button, Alert } from "react-bootstrap";
 import { useState } from "react";
-import contactimg from "../assets/contact.jpg";
+import contactImg from "../assets/contact.jpg";
 import { API_URL } from "../App";
 import axios from "axios";
-import '../Css/Contact.css'
-import { Globe2 } from "lucide-react";
+import '../Css/Contact.css';
+import { Globe2, MapPin, Phone, Mail, Clock, Send } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import SocialMediaButtons from "../Component/SocialMediaButtons";
 
-
 function Contact() {
-   const navigate = useNavigate();
-    const location = useLocation();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const lang = location.pathname.split("/")[1] || "en";
+  const isArabic = lang === "ar";
   const [validated, setValidated] = useState(false);
   const [formData, setFormData] = useState({
     First_Name: "",
@@ -25,9 +25,13 @@ function Contact() {
     lang: lang,
   });
   const [messageData, setMessageData] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [activeField, setActiveField] = useState(null);
+
+ 
 
   const toggleLanguage = () => {
-    const newLang = lang === "ar" ? "en" : "ar";
+    const newLang = isArabic ? "en" : "ar";
     const currentPath = location.pathname.split("/").slice(2).join("/");
     navigate(`/${newLang}${currentPath ? "/" + currentPath : "/chalets"}`);
   };
@@ -37,185 +41,304 @@ function Contact() {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleFocus = (fieldName) => {
+    setActiveField(fieldName);
+  };
+
+  const handleBlur = () => {
+    setActiveField(null);
+  };
+
   const handleSubmit = async (event) => {
-    event.preventDefault(); // Prevent the form from reloading the page
+    event.preventDefault();
     const form = event.currentTarget;
 
-    // Check if form is valid
     if (form.checkValidity() === false) {
       event.stopPropagation();
-      setValidated(true); // Mark form as validated
+      setValidated(true);
       return;
     }
 
+    setLoading(true);
     try {
-    await axios.post(`${API_URL}/ContactUs/createcontactus`, formData);
-        // Reset form fields to empty after successful submission
-        setFormData({
-          First_Name: "",
-          Last_Name: "",
-          EmailAddress: "",
-          Phone_Number: "",
-          Address: "",
-          Messages: "",
-          lang: lang,
-        });
+      await axios.post(`${API_URL}/ContactUs/createcontactus`, formData);
+      
+     
+      setFormData({
+        First_Name: "",
+        Last_Name: "",
+        EmailAddress: "",
+        Phone_Number: "",
+        Address: "",
+        Messages: "",
+        lang: lang,
+      });
 
-        // Reset validation state
-        setValidated(false);
-        // Show the success message
-        setMessageData("Message Sent Successfully");
-
+      setValidated(false);
+      setMessageData(isArabic ? "تم إرسال الرسالة بنجاح" : "Message Sent Successfully");
+      
+  
+      setTimeout(() => {
+        const alertElement = document.querySelector('.success-alert');
+        if (alertElement) alertElement.classList.add('bounce-in');
+      }, 100);
+      
     } catch (error) {
       console.error(error);
-      setMessageData("An error occurred, please try again.");
+      setMessageData(isArabic ? "حدث خطأ، يرجى المحاولة مرة أخرى" : "An error occurred, please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <>
-    <SocialMediaButtons/>
-      <div
-            className="language-toggle-container"
-            style={{
-              position: "absolute",
-              top: "140px",
-              right: "20px",
-              zIndex: 1000,
-            }}
-          >
-            <button
-              onClick={toggleLanguage}
-              className="btn btn-light rounded-circle p-2"
-              style={{
-                backgroundColor: "white",
-                border: "1px solid #ddd",
-                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-              }}
-            >
-              <Globe2 className="w-6 h-6" />
-            </button>
-          </div>
-      <section>
-        <Container className="cont_form_apply">
-          <Row>
-            <Col xl={5} md={12} sm={12} className="cont_backg_apply">
-              <h5 className="text-center mb-5 title_contact">
-                {lang === "ar" ? "تواصل معنا" : "Contact Information"}
-              </h5>
-              <img
-                src={contactimg}
-                alt="apply"
-                height={"320px"}
-                width={"100%"}
-                className="rounded"
-              />
-            </Col>
-            <Col xl={7} md={12} sm={12}>
+    <div className="contact-page" dir={isArabic ? "rtl" : "ltr"}>
+      <SocialMediaButtons />
+      
+      <div className="language-toggle-container">
+        <button
+          onClick={toggleLanguage}
+          className="language-btn"
+          aria-label="Toggle Language"
+        >
+          <Globe2 className="w-6 h-6" />
+        </button>
+      </div>
+      
+      <div className="contact-header">
+        <p className="text-center subtitle">
+          {isArabic 
+            ? "نحن هنا للإجابة على جميع استفساراتك" 
+            : "We're here to answer all your questions"}
+        </p>
+      </div>
+      
+      <Container className="contact-container">
+        <Row className="contact-row">
+          <Col lg={5} md={12} className="contact-info-col">
+            <div className="contact-info-card">
+              <h3 className="info-title">{isArabic ? "معلومات التواصل" : "Contact Information"}</h3>
+              
+              <div className="contact-image-wrapper">
+                <img 
+                  src={contactImg} 
+                  alt={isArabic ? "تواصل معنا" : "Contact us"} 
+                  className="contact-image"
+                />
+              </div>
+              
+              <div className="contact-details">
+                <div className="info-item">
+                  <MapPin className="info-icon" />
+                  <div>
+                    <h4>{isArabic ? "العنوان" : "Address"}</h4>
+                    <p>123 Street Name, City, Country</p>
+                  </div>
+                </div>
+                
+                <div className="info-item">
+                  <Phone className="info-icon" />
+                  <div>
+                    <h4>{isArabic ? "الهاتف" : "Phone"}</h4>
+                    <p>+1 234 567 8900</p>
+                  </div>
+                </div>
+                
+                <div className="info-item">
+                  <Mail className="info-icon" />
+                  <div>
+                    <h4>{isArabic ? "البريد الإلكتروني" : "Email"}</h4>
+                    <p>info@example.com</p>
+                  </div>
+                </div>
+                
+                <div className="info-item">
+                  <Clock className="info-icon" />
+                  <div>
+                    <h4>{isArabic ? "ساعات العمل" : "Working Hours"}</h4>
+                    <p>{isArabic ? "الإثنين - الجمعة: 9:00 ص - 5:00 م" : "Mon - Fri: 9:00 AM - 5:00 PM"}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Col>
+          
+          <Col lg={7} md={12} className="contact-form-col">
+            <div className="contact-form-card">
+              <h3 className="form-title">{isArabic ? "أرسل لنا رسالة" : "Send us a message"}</h3>
+              
               <Form
                 noValidate
                 validated={validated}
                 onSubmit={handleSubmit}
-                className="form_data"
+                className="contact-form"
               >
                 <Row className="mb-3">
-                  {/* Form fields */}
-                  <Form.Group as={Col} xl="6" md="12" sm="12" controlId="validationCustom01">
-                    <Form.Label className="input_form">{lang === "ar" ? "الاسم الاول" : "First name"}</Form.Label>
+                  <Form.Group as={Col} md="6" className={`form-field ${activeField === 'First_Name' ? 'active' : ''}`}>
+                    <Form.Label className="form-label">
+                      {isArabic ? "الاسم الأول" : "First name"}
+                    </Form.Label>
                     <Form.Control
                       required
                       type="text"
                       name="First_Name"
                       value={formData.First_Name}
                       onChange={handleChange}
+                      onFocus={() => handleFocus('First_Name')}
+                      onBlur={handleBlur}
+                      className="form-input"
+                      placeholder={isArabic ? "أدخل الاسم الأول" : "Enter first name"}
                     />
-                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                    <Form.Control.Feedback>
+                      {isArabic ? "يبدو جيداً!" : "Looks good!"}
+                    </Form.Control.Feedback>
                   </Form.Group>
 
-                  <Form.Group as={Col} xl="6" md="12" sm="12" controlId="validationCustom02">
-                    <Form.Label className="input_form">{lang === "ar" ? "الاسم الاخير" : "Last name"}</Form.Label>
+                  <Form.Group as={Col} md="6" className={`form-field ${activeField === 'Last_Name' ? 'active' : ''}`}>
+                    <Form.Label className="form-label">
+                      {isArabic ? "الاسم الأخير" : "Last name"}
+                    </Form.Label>
                     <Form.Control
                       required
                       type="text"
                       name="Last_Name"
                       value={formData.Last_Name}
                       onChange={handleChange}
+                      onFocus={() => handleFocus('Last_Name')}
+                      onBlur={handleBlur}
+                      className="form-input"
+                      placeholder={isArabic ? "أدخل الاسم الأخير" : "Enter last name"}
                     />
-                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                    <Form.Control.Feedback>
+                      {isArabic ? "يبدو جيداً!" : "Looks good!"}
+                    </Form.Control.Feedback>
                   </Form.Group>
+                </Row>
 
-                  <Form.Group as={Col} xl="6" md="12" sm="12" controlId="validationCustom03">
-                    <Form.Label className="input_form">{lang === "ar" ? "البريد الالكتروني" : "Email"}</Form.Label>
+                <Row className="mb-3">
+                  <Form.Group as={Col} md="6" className={`form-field ${activeField === 'EmailAddress' ? 'active' : ''}`}>
+                    <Form.Label className="form-label">
+                      {isArabic ? "البريد الإلكتروني" : "Email"}
+                    </Form.Label>
                     <Form.Control
                       required
                       type="email"
                       name="EmailAddress"
                       value={formData.EmailAddress}
                       onChange={handleChange}
+                      onFocus={() => handleFocus('EmailAddress')}
+                      onBlur={handleBlur}
+                      className="form-input"
+                      placeholder={isArabic ? "أدخل البريد الإلكتروني" : "Enter email address"}
                     />
-                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                    <Form.Control.Feedback>
+                      {isArabic ? "يبدو جيداً!" : "Looks good!"}
+                    </Form.Control.Feedback>
                   </Form.Group>
 
-                  <Form.Group as={Col} xl="6" md="12" sm="12" controlId="validationCustom04">
-                    <Form.Label className="input_form">{lang === "ar" ? "رقم الهاتف" : "Phone Number"}</Form.Label>
+                  <Form.Group as={Col} md="6" className={`form-field ${activeField === 'Phone_Number' ? 'active' : ''}`}>
+                    <Form.Label className="form-label">
+                      {isArabic ? "رقم الهاتف" : "Phone Number"}
+                    </Form.Label>
                     <Form.Control
                       required
-                      type="number"
+                      type="tel"
                       name="Phone_Number"
                       value={formData.Phone_Number}
                       onChange={handleChange}
+                      onFocus={() => handleFocus('Phone_Number')}
+                      onBlur={handleBlur}
+                      className="form-input"
+                      placeholder={isArabic ? "أدخل رقم الهاتف" : "Enter phone number"}
                     />
-                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                    <Form.Control.Feedback>
+                      {isArabic ? "يبدو جيداً!" : "Looks good!"}
+                    </Form.Control.Feedback>
                   </Form.Group>
+                </Row>
 
-                  <Form.Group as={Col} xl="6" md="12" sm="12" controlId="validationCustom05">
-                    <Form.Label className="input_form">{lang === "ar" ? "العنوان" : "Address"}</Form.Label>
+                <Row className="mb-3">
+                  <Form.Group as={Col} className={`form-field ${activeField === 'Address' ? 'active' : ''}`}>
+                    <Form.Label className="form-label">
+                      {isArabic ? "العنوان" : "Address"}
+                    </Form.Label>
                     <Form.Control
                       required
                       type="text"
                       name="Address"
                       value={formData.Address}
                       onChange={handleChange}
+                      onFocus={() => handleFocus('Address')}
+                      onBlur={handleBlur}
+                      className="form-input"
+                      placeholder={isArabic ? "أدخل العنوان" : "Enter address"}
                     />
-                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                    <Form.Control.Feedback>
+                      {isArabic ? "يبدو جيداً!" : "Looks good!"}
+                    </Form.Control.Feedback>
                   </Form.Group>
+                </Row>
 
-                  <Form.Label className="input_form">{lang === "ar" ? "الرسالة" : "Message"}</Form.Label>
-                  <FloatingLabel controlId="floatingTextarea2">
+                <Row className="mb-4">
+                  <Form.Group as={Col} className={`form-field ${activeField === 'Messages' ? 'active' : ''}`}>
+                    <Form.Label className="form-label">
+                      {isArabic ? "الرسالة" : "Message"}
+                    </Form.Label>
                     <Form.Control
                       as="textarea"
                       required
-                      style={{ height: "100px" }}
                       name="Messages"
                       value={formData.Messages}
                       onChange={handleChange}
+                      onFocus={() => handleFocus('Messages')}
+                      onBlur={handleBlur}
+                      className="form-textarea"
+                      rows={4}
+                      placeholder={isArabic ? "اكتب رسالتك هنا..." : "Write your message here..."}
                     />
-                  </FloatingLabel>
+                    <Form.Control.Feedback>
+                      {isArabic ? "يبدو جيداً!" : "Looks good!"}
+                    </Form.Control.Feedback>
+                  </Form.Group>
                 </Row>
 
-                <div className="div_btn_applynow">
-                  <Button className="btn_apply_now" type="submit">
-                    {lang === "ar" ? "ارسال الرسالة" : "Send Message"}
+                <div className="submit-btn-container">
+                  <Button 
+                    className="submit-button" 
+                    type="submit"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <div className="spinner">
+                        <div className="bounce1"></div>
+                        <div className="bounce2"></div>
+                        <div className="bounce3"></div>
+                      </div>
+                    ) : (
+                      <>
+                        <Send className="submit-icon" size={18} />
+                        {isArabic ? "إرسال الرسالة" : "Send Message"}
+                      </>
+                    )}
                   </Button>
                 </div>
 
                 {messageData && (
-                  <div className="mt-3">
+                  <div className="mt-4">
                     <Alert
-                      variant={
-                        messageData.toLowerCase().includes("error") ? "danger" : "success"
-                      }
+                      variant={messageData.toLowerCase().includes("error") || messageData.includes("خطأ") ? "danger" : "success"}
+                      className={`message-alert ${messageData.toLowerCase().includes("error") || messageData.includes("خطأ") ? 'error-alert' : 'success-alert'}`}
                     >
                       {messageData}
                     </Alert>
                   </div>
                 )}
               </Form>
-            </Col>
-          </Row>
-        </Container>
-      </section>
-    </>
+            </div>
+          </Col>
+        </Row>
+      </Container>
+    </div>
   );
 }
 

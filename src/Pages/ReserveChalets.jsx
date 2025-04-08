@@ -28,12 +28,11 @@ const ReserveChalets = () => {
   const navigate = useNavigate();
   const lang = location.pathname.split("/")[1] || "en";
   const { priceTime, timeId } = location.state || {};
-  const [numberOfFamilies, setNumberOfFamilies] = useState(null); // State to store the number of families
+  const [numberOfFamilies, setNumberOfFamilies] = useState(null); 
   const [timeIdDaily, setTimeIdDaily] = useState(null);
   const [timePriceDaily, setTimePriceDaily] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Convert the stored value to a number, or use 0 if it's null or not a valid number
   const storedPrice = Number(localStorage.getItem("price")) || 0;
   const intial_Amount = Number(localStorage.getItem("intial_Amount")) || 0;
 
@@ -57,18 +56,18 @@ const ReserveChalets = () => {
     setNumberOfFamilies(localStorage.getItem("Number of Visitors"));
   }, []);
 
-  // Helper functions
+
   const updateState = (stateSetter, currentValue, increment = true) => {
     stateSetter(increment ? currentValue + 1 : Math.max(0, currentValue - 1));
   };
   const handleTypeOfReservationChange = (e) => {
     const selectedType = e.target.value;
     setTypeOfReservation(selectedType);
-    // Reset related states and mark type as changed
+
     setNumberOfDaysValue(0);
     setAdditionalVisitorsValue(0);
     setTimePriceDaily(null);
-    setIsReservationTypeChanged(true); // Mark reservation type as changed
+    setIsReservationTypeChanged(true);
   };
 
   const calculatePrice = () => {
@@ -80,7 +79,7 @@ const ReserveChalets = () => {
       setIsReservationTypeChanged(false); // Reset the flag
       return storedPrice;
     }
-    // Use priceBerTime if it exists, otherwise use storedPrice
+   
     const basePrice = priceBerTime ?? storedPrice;
 
     const totalAmount = basePrice + additionalCost + visitorsCost;
@@ -103,7 +102,7 @@ const ReserveChalets = () => {
       setIsLoading(false);
       return;
     }
-     // Check for weekly or monthly reservation types
+     
    if ((typeOfReseravtion === "Weekly" || typeOfReseravtion === "Monthly") && !endDate) {
     setError("Please select an End Date for Weekly or Monthly reservations.");
     setIsLoading(false);
@@ -173,6 +172,7 @@ const ReserveChalets = () => {
   };
 
   return (
+    
     <>
     <SocialMediaButtons/>
      

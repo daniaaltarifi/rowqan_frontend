@@ -11,6 +11,8 @@ import ChatNowHeader from "../Component/ChatNowHeader.jsx";
 // import BestRated from "../Component/BestRated.jsx";
 import { useUser } from "../Component/UserContext";
 import SocialMediaButtons from "../Component/SocialMediaButtons.jsx";
+import { FaStar, FaStarHalfAlt } from 'react-icons/fa';
+import '../Css/BookingChalets.css'
 
 
 function BookingChalets() {
@@ -30,8 +32,23 @@ function BookingChalets() {
     grey: "#a9a9a9",
   };
 
+ 
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  // Star icon SVG component
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+ 
+  const getCarouselHeight = () => {
+    if (windowWidth < 576) return '300px';
+    if (windowWidth < 992) return '400px';
+    return '550px';
+  };
+
+  
   const StarIcon = ({ filled }) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -41,13 +58,13 @@ function BookingChalets() {
     >
       <path
         d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
-        fill={filled ? colors.orange : colors.grey} // Use colors.orange for filled and colors.grey for empty
+        fill={filled ? colors.orange : colors.grey}
       />
     </svg>
   );
-  // Prop types validation for StarIcon
+
   StarIcon.propTypes = {
-    filled: PropTypes.bool.isRequired, // Validate that 'filled' is a required boolean
+    filled: PropTypes.bool.isRequired, 
   };
 
   const getContact = useCallback(async () => {
@@ -79,116 +96,164 @@ function BookingChalets() {
 
   return (
     <div>
-      <SocialMediaButtons/>
+      <SocialMediaButtons />
       <ChatNowHeader dataChalets={dataChalets} chalet_id={id} price={price} />
 
-      <Container>
-        <Carousel fade>
-          {chaletsImages.map((image, index) => (
-            <Carousel.Item key={index}>
-              {isImage(image) ? (
-                <img
-                  alt="image"
-                  className="slider_img rounded"
-                  src={`${image}`}
-                />
-              ) : isVideo(image) ? (
-                <video
-                  controls
-                  width="100%"
-                  height="550px"
-                  src={`${image}`}
-                  type="video/mp4"
-                ></video>
-              ) : null}
-              <div className="top_left custom-breadcrumbs">
-                <BreadCrumbs page_to="/ Booking Chalet" />
-              </div>
-            </Carousel.Item>
-          ))}
-        </Carousel>
-
-        <Row>
-          <Col xl={8} md={12} sm={12}>
-            <div className="box_overview_chalets mt-4">
-              <h5> {lang === "ar" ? "الملخص " : "Overview"} </h5>
-              <div className="d-flex flex-wrap justify-content-evenly">
-                <b>{dataChalets.Additional_features}</b>
-              </div>
-              <h5 className="mt-3">
-                {" "}
-                {lang === "ar" ? "الوصف " : "Description"}{" "}
-              </h5>
-              <div>
-                {descriptionList.map((item, index) => (
-                  <p key={index}>
-                    {item} 
-                  </p>
-                ))}
-              </div>{" "}
-              <div className="cont_rating">
-                {[...Array(5)].map((_, index) => (
-                  <span
-                    key={index}
-                    style={{ display: "inline-block", marginRight: "5px" }}
-                  >
-                    <StarIcon filled={rating > index} />
-                  </span>
-                ))}
-              </div>
-              <div className=" mt-5 ">
-                <h4>
-                  {" "}
-                  {lang === "ar" ? "السعر" : "Price :"}
-                  {price} JD
-                </h4>
-              </div>
-            </div>
-          </Col>
-          <Col xl={4} md={12} sm={12}>
-            <div className="box_overview_chalets text-center my-4">
-              <img src={whats} alt="whats" height={"100px"} width={"100px"} />
-              <h6 className="my-3">
-                {" "}
-                {lang === "ar"
-                  ? "يسعدنا التواصل معك "
-                  : "We are pleased to contact you"}{" "}
-              </h6>
-              {contact.map((contactus) => (
-                <Link
-                  to={`${contactus.action}`}
-                  target="blank"
-                  key={contactus.id}
-                >
-                  <button className="booknow_button_events w-100 mb-3">
-                    <b>{contactus.title}</b>{" "}
-                  </button>
-                </Link>
+      <Container fluid className="chalet-container py-4">
+        <Container>
+         
+          <div className="carousel-container mb-4 shadow-lg rounded overflow-hidden">
+            <Carousel fade indicators={true} interval={3000} className="chalet-carousel">
+              {chaletsImages.map((image, index) => (
+                <Carousel.Item key={index}>
+                  {isImage(image) ? (
+                    <div className="carousel-image-container" style={{ height: getCarouselHeight() }}>
+                      <img
+                        alt="chalet view"
+                        className="carousel-image"
+                        src={`${image}`}
+                      />
+                    </div>
+                  ) : isVideo(image) ? (
+                    <div className="carousel-video-container" style={{ height: getCarouselHeight() }}>
+                      <video
+                        controls
+                        className="carousel-video"
+                        src={`${image}`}
+                        type="video/mp4"
+                      ></video>
+                    </div>
+                  ) : null}
+                  <div className="breadcrumb-overlay">
+                    <BreadCrumbs page_to="/ Booking Chalet" />
+                  </div>
+                </Carousel.Item>
               ))}
-              <Link to={userId ? `/${lang}/chatbot/${id}` : `/${lang}/login`}>
-                <button className="booknow_button_events w-100 mb-3">
-                  <b> {lang === "ar" ? "دردش الأن" : "Chat Now"}</b>{" "}
-                </button>
-              </Link>
-            </div>
-          </Col>
-        </Row>
-        <Row>
-          <Col xl={8} md={12} sm={12}>
-            <Link
-              to={`/${lang}/reservechalet/${id}`}
-            >
-              <button className="booknow_button_events w-100 my-5">
-                {lang === "ar" ? "احجز الشاليه " : " Reserve Now"}{" "}
-              </button>
-            </Link>
-          </Col>{" "}
-        </Row>
-        {/* <h4 style={{ color: "#152C5B", marginTop: "10vh" }}>
-          {lang === "ar" ? "خيارات مفضلة " : " Treasure to Choose"}{" "}
-        </h4> */}
+            </Carousel>
+          </div>
+
+          <Row className="gx-4 gy-4">
+            <Col lg={8} md={12}>
+              <div className="chalet-overview p-4 rounded shadow-sm bg-white h-100">
+                
+                <div className="overview-section mb-4">
+                  <h4 className="section-title position-relative">
+                    {lang === "ar" ? "الملخص" : "Overview"}
+                  </h4>
+                  <div className="additional-features p-3 mt-3 rounded">
+                    <Row className="g-3">
+                      {dataChalets.Additional_features && dataChalets.Additional_features.split(',').map((feature, idx) => (
+                        <Col xs={6} md={4} key={idx}>
+                          <div className="feature-item text-center p-2 rounded">
+                            <span>{feature.trim()}</span>
+                          </div>
+                        </Col>
+                      ))}
+                    </Row>
+                  </div>
+                </div>
+
+                
+                <div className="description-section mb-4">
+                  <h4 className="section-title position-relative">
+                    {lang === "ar" ? "الوصف" : "Description"}
+                  </h4>
+                  <div className="description-content p-3 mt-3">
+                    {descriptionList.map((item, index) => (
+                      <p key={index} className="mb-3">
+                        {item}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+
+                
+                <div className="rating-section d-flex align-items-center mb-4">
+                  <div className="rating-stars me-3">
+                    {[...Array(5)].map((_, index) => (
+                      <span
+                        key={index}
+                        className="star-icon"
+                      >
+                        {rating > index && rating < index + 1 ? 
+                          <FaStarHalfAlt className="text-warning" /> : 
+                          rating > index ? 
+                          <FaStar className="text-warning" /> : 
+                          <FaStar className="text-secondary opacity-50" />
+                        }
+                      </span>
+                    ))}
+                  </div>
+                  <div className="rating-value">
+                    <span className="fs-5 fw-bold">{rating}</span>
+                    <span className="text-muted ms-1">/ 5</span>
+                  </div>
+                </div>
+
+                
+                <div className="price-section mb-4">
+                  <div className="price-tag p-3 rounded text-center">
+                    <h3 className="mb-0">
+                      <span className="price-label">{lang === "ar" ? "السعر:" : "Price:"}</span>
+                      <span className="price-value">{price}</span>
+                      <span className="currency">JD</span>
+                    </h3>
+                  </div>
+                </div>
+
+               
+                <div className="booking-section">
+                  <Link to={`/${lang}/reservechalet/${id}`} className="text-decoration-none w-100">
+                    <button className="reserve-button w-100 py-3">
+                      <span className="fs-5 fw-bold">
+                        {lang === "ar" ? "احجز الشاليه الآن" : "Reserve Now"}
+                      </span>
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            </Col>
+
+            
+            <Col lg={4} md={12}>
+              <div className="contact-box p-4 rounded shadow-sm bg-white text-center h-100">
+                <div className="contact-icon mb-3">
+                  <img src={whats} alt="whatsapp" className="contact-image" />
+                </div>
+                <h5 className="contact-title mb-4">
+                  {lang === "ar" ? "يسعدنا التواصل معك" : "We are pleased to contact you"}
+                </h5>
+                <div className="contact-buttons">
+                  {contact.map((contactus) => (
+                    <Link
+                      to={`${contactus.action}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      key={contactus.id}
+                      className="text-decoration-none w-100 d-block mb-3"
+                    >
+                      <button className="contact-button w-100 py-2">
+                        <span className="fw-bold">{contactus.title}</span>
+                      </button>
+                    </Link>
+                  ))}
+                  <Link 
+                    to={userId ? `/${lang}/chatbot/${id}` : `/${lang}/login`}
+                    className="text-decoration-none w-100 d-block mb-3"
+                  >
+                    <button className="chat-button w-100 py-2">
+                      <span className="fw-bold">
+                        {lang === "ar" ? "دردش الآن" : "Chat Now"}
+                      </span>
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            </Col>
+          </Row>
+        </Container>
       </Container>
-      {/* <BestRated /> */}
+
     </div>
   );
 }

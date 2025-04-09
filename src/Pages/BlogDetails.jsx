@@ -49,7 +49,7 @@ function BlogDetails() {
           animate={{ opacity: 1, y: 0 }}
           className="text-end mb-4"
         >
-          <button
+          {/* <button
             onClick={toggleLanguage}
             className="btn btn-outline-secondary rounded-circle p-2"
             style={{
@@ -62,7 +62,7 @@ function BlogDetails() {
             <span className="ms-2 visually-hidden">
               {lang === "ar" ? "English" : "العربية"}
             </span>
-          </button>
+          </button> */}
         </motion.div>
       <Container>
         {blogs.map((blog) => (

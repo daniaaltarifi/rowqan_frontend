@@ -7,8 +7,8 @@ import React, { useCallback, useEffect, useState, useRef } from "react";
 import { API_URL } from "../App";
 import axios from "axios";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Globe2 } from "lucide-react";
+// import { motion } from "framer-motion";
+// import { Globe2 } from "lucide-react";
 import SocialMediaButtons from "../Component/SocialMediaButtons";
 
 
@@ -20,20 +20,20 @@ function Home() {
   const [heroes, setHeroes] = useState([]);
   const [services, setServices] = useState([]);
   const [chaletOffersData, setChaletOffersData] = useState([]);
-  const [lang, setLang] = useState(location.pathname.split("/")[1] || "en");
+  const [lang] = useState(location.pathname.split("/")[1] || "en");
   const [isServicesVisible, setIsServicesVisible] = useState(false);
   const [isOffersVisible, setIsOffersVisible] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(false);
   
  
 
-  const toggleLanguage = () => {
-    const newLang = lang === "ar" ? "en" : "ar";
+  // const toggleLanguage = () => {
+  //   const newLang = lang === "ar" ? "en" : "ar";
     
-    navigate(`/${newLang}`);
+  //   navigate(`/${newLang}`);
     
-    setLang(newLang);
-  };
+  //   setLang(newLang);
+  // };
 
 
   
@@ -126,7 +126,7 @@ function Home() {
     <div className="home-container">
         <SocialMediaButtons/>
       <Container>
-      <motion.div
+      {/* <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-end mb-4"
@@ -145,7 +145,7 @@ function Home() {
               {lang === "ar" ? "English" : "العربية"}
             </span>
           </button>
-        </motion.div>
+        </motion.div> */}
         <Row className="justify-content-end py-3">
           {/* <Col xs="auto">
             <button

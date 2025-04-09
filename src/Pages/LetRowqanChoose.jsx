@@ -1016,13 +1016,13 @@ const LetRowqanChoose = () => {
             <h1 className="display-5 fw-bold text-dark">{t.pageTitle}</h1>
             <p className="mt-2 text-secondary">{t.subTitle}</p>
           </div>
-          <button
+          {/* <button
             onClick={toggleLanguage}
             className="btn btn-light rounded-circle p-2"
             aria-label="Toggle language"
           >
             <Globe2 className="w-6 h-6" />
-          </button>
+          </button> */}
         </div>
 
         {/* Form */}

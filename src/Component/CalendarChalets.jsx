@@ -189,7 +189,7 @@ function CalendarChalets({
           zIndex: 1000,
         }}
       >
-        <button
+        {/* <button
           onClick={toggleLanguage}
           className="btn btn-light rounded-circle p-2"
           style={{
@@ -199,7 +199,7 @@ function CalendarChalets({
           }}
         >
           <Globe2 className="w-6 h-6" />
-        </button>
+        </button> */}
       </div>
 
       <div 

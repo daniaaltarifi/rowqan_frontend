@@ -88,7 +88,7 @@ function Blogs() {
       
       <div className="blog-header position-relative">
         <Container fluid>
-          <motion.div
+          {/* <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-end mb-4 pt-3"
@@ -103,7 +103,7 @@ function Blogs() {
                 {lang === "ar" ? "English" : "العربية"}
               </span>
             </button>
-          </motion.div>
+          </motion.div> */}
 
           <Row className="text-center">
             <Col className="header-content py-5">

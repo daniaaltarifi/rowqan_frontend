@@ -65,7 +65,7 @@ function Offers() {
   return (
     <>
     <SocialMediaButtons/>
-      <motion.div
+      {/* <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="text-end mb-4"
@@ -84,7 +84,7 @@ function Offers() {
             {lang === "ar" ? "English" : "العربية"}
           </span>
         </button>
-      </motion.div>
+      </motion.div> */}
       <div className="container_big_img">
         <img
           src={chalets}

@@ -3,23 +3,23 @@ import axios from "axios";
 import { Container, Row, Col } from "react-bootstrap";
 import { motion } from "framer-motion";
 import { API_URL } from "../App";
-import { Globe2 } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
+// import { Globe2 } from "lucide-react";
+import {useLocation } from "react-router-dom";
 import SocialMediaButtons from "../Component/SocialMediaButtons";
 
 function About() {
   const location = useLocation();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const lang = location.pathname.split("/")[1] || "en";
   const [heroes, setHeroes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const toggleLanguage = () => {
-    const newLang = lang === "ar" ? "en" : "ar";
-    const currentPath = location.pathname.split('/').slice(2).join('/');
-    navigate(`/${newLang}${currentPath ? '/' + currentPath : '/about'}`);
-  };
+  // const toggleLanguage = () => {
+  //   const newLang = lang === "ar" ? "en" : "ar";
+  //   const currentPath = location.pathname.split('/').slice(2).join('/');
+  //   navigate(`/${newLang}${currentPath ? '/' + currentPath : '/about'}`);
+  // };
 
   const getHero = useCallback(async () => {
     try {
@@ -80,7 +80,7 @@ function About() {
     <div className="about-page py-5" style={{ minHeight: '80vh' }}>
       <SocialMediaButtons/>
       <Container>
-      <motion.div
+      {/* <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-end mb-4"
@@ -99,7 +99,7 @@ function About() {
               {lang === "ar" ? "English" : "العربية"}
             </span>
           </button>
-        </motion.div>
+        </motion.div> */}
         {isLoading ? (
           <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
             <div className="spinner-border text-primary" role="status">

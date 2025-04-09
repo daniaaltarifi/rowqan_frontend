@@ -399,7 +399,7 @@ function Payment() {
           zIndex: 1000,
         }}
       >
-        <button
+        {/* <button
           onClick={toggleLanguage}
           className="btn btn-light rounded-circle p-2"
           style={{
@@ -409,7 +409,7 @@ function Payment() {
           }}
         >
           <Globe2 className="w-6 h-6" />
-        </button>
+        </button> */}
       </div>
       
       <article className="card_cont">

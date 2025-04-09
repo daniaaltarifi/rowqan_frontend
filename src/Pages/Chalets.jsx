@@ -225,7 +225,7 @@ function Chalets() {
   return (
     <>
     <SocialMediaButtons/>
-      <motion.div
+      {/* <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="text-end mb-4"
@@ -244,7 +244,7 @@ function Chalets() {
             {lang === "ar" ? "English" : "العربية"}
           </span>
         </button>
-      </motion.div>
+      </motion.div> */}
       <div className="container_big_img">
         <img
           src={chalets}
@@ -360,7 +360,7 @@ function Chalets() {
                         <Card.Title className="title_chalets mb-1">
                           {chal.title}
                         </Card.Title>
-                        <div className="location-container mb-2">
+                        <div className="location-container mb-2 b">
                           <i
                             className="fas fa-location-dot"
                             style={{ color: "#833988" }}

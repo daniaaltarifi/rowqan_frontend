@@ -251,13 +251,13 @@ function ChaletsDetails() {
     <div className={`chalets-details-page ${lang === "ar" ? "rtl" : "ltr"}`}>
       <SocialMediaButtons className="social-buttons" />
       
-      <button
+      {/* <button
         onClick={toggleLanguage}
         className="language-toggle-btn"
         aria-label={lang === "ar" ? "Switch to English" : "التبديل إلى العربية"}
       >
         <Globe2 />
-      </button>
+      </button> */}
       
       <ChatNowHeader 
         dataChalets={dataChalets || {}} 

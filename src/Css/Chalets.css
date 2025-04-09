@@ -28,8 +28,38 @@
   color: #666;
   font-size: 14px;
   font-weight: bolder;
-  margin-left: 130px;
+  margin-left: 130px; 
 }
+
+
+@media (max-width: 768px) {
+  .location-container {
+    justify-content: center; 
+    padding-left: 0; 
+  }
+  
+  .location-label {
+    margin-left: 0; 
+  }
+}
+
+
+
+
+html[lang="ar"] .location-container {
+  padding-right: 5px;
+  padding-left: 0;
+}
+
+@media (max-width: 768px) {
+  html[lang="ar"] .location-container {
+    padding-right: 0; 
+  }
+}
+
+
+
+
 
 html[lang="ar"] .location-container {
   padding-right: 5px;
@@ -311,6 +341,9 @@ padding-bottom: 5px;
   border: none;
   cursor: pointer;
 }
+
+
+
 
 
 
@@ -790,4 +823,21 @@ button:focus,
 .btn:focus {
   outline: none !important;
   box-shadow: none !important;
+}
+
+
+
+
+@media only screen and (width: 820px) and (height: 1180px) {
+  .language-toggle-container {
+    display: none !important;
+  }
+}
+
+
+@media only screen and (min-width: 810px) and (max-width: 830px) and 
+       (min-height: 1170px) and (max-height: 1190px) {
+  .language-toggle-container {
+    display: none !important;
+  }
 }

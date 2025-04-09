@@ -95,7 +95,7 @@ function Contact() {
     <div className="contact-page" dir={isArabic ? "rtl" : "ltr"}>
       <SocialMediaButtons />
       
-      <div className="language-toggle-container">
+      {/* <div className="language-toggle-container">
         <button
           onClick={toggleLanguage}
           className="language-btn"
@@ -104,7 +104,7 @@ function Contact() {
           <Globe2 className="w-6 h-6" />
         </button>
       </div>
-      
+       */}
       <div className="contact-header">
         <p className="text-center subtitle">
           {isArabic 

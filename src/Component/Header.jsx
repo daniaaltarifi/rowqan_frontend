@@ -8,15 +8,15 @@ import { useUser } from "./UserContext.jsx";
 
 const Header = () => {
   const { userId, logout } = useUser();
-  const [isOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const lang = location.pathname.split("/")[1] || "en";
   const [headers, setHeaders] = useState([]);
   const [logo, setLogo] = useState([]);
 
-  // const toggleMenu = () => {
-  //   setIsOpen(!isOpen);
-  // };
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
 
   const getheader = useCallback(async () => {
     try {
@@ -87,14 +87,14 @@ const Header = () => {
 
       <div
         className={`hamburger ${isOpen ? "toggle" : ""}`}
-        // onClick={toggleMenu}
+        onClick={toggleMenu}
       >
         <div className="line1"></div>
         <div className="line2"></div>
         <div className="line3"></div>
       </div>
 
-      <ul className={`nav-links ${isOpen ? "open" : ""}`}>
+      <ul className={`nav-links ${isOpen ? "open" : ""}`} onClick={toggleMenu}>
         {headers.map((header) => (
           <li key={header.id}>
             <Link to={getRoutePath(header.header_name)}>
